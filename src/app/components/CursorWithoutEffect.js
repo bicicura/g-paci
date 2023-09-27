@@ -18,6 +18,7 @@ const CursorWithoutEffect = () => {
     }
   }, [])
 
+  // este calc(${position.y}px - 5rem) corresponde al margen que tiene el padre en Carousel.js
   return (
     <span
       style={{
@@ -25,7 +26,7 @@ const CursorWithoutEffect = () => {
         top: 0,
         left: 0,
         color: '#000',
-        transform: `translate(${position.x}px, ${position.y}px)`,
+        transform: `translate(${position.x}px, calc(${position.y}px - 5rem)`,
         pointerEvents: 'none',
         transition: 'transform .1s ease',
       }}

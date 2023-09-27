@@ -49,7 +49,7 @@ const CursorWithEffect = () => {
         top: 0,
         left: 0,
         color: '#fff',
-        transform: `translate(${relativePosition.x}px, ${relativePosition.y - 2}px)`,
+        transform: `translate(${relativePosition.x}px, ${relativePosition.y}px)`,
         mixBlendMode: 'difference',
         pointerEvents: 'none',
         transition: 'transform .1s ease-out',
