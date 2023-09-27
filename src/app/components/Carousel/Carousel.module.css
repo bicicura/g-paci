@@ -1,0 +1,4 @@
+.customCursor {
+  cursor: url('/cursor/square.png'), auto;
+  overflow: hidden;
+}
