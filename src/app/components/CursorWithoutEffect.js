@@ -29,6 +29,7 @@ const CursorWithoutEffect = () => {
         transform: `translate(${position.x}px, calc(${position.y}px - 5rem)`,
         pointerEvents: 'none',
         transition: 'transform .1s ease',
+        zIndex: 10,
       }}
     >
       L’Officiel 1/4
