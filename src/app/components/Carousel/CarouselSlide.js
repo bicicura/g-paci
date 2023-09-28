@@ -2,34 +2,40 @@ import { useState } from 'react'
 import Image from 'next/image'
 
 export default function CarouselSlide(props) {
-  const [isActive, setIsActive] = useState(false)
   const images = ['slide-1', 'slide-2', 'slide-3']
-
   const [counter, setCounter] = useState(0)
+  const [opacity, setOpacity] = useState(1)
 
   const increment = () => {
-    if (counter === images.length - 1) {
-      return setCounter(0)
-    }
-
-    setCounter(counter + 1)
+    setOpacity(0)
+    setTimeout(() => {
+      if (counter === images.length - 1) {
+        setCounter(0)
+      } else {
+        setCounter(counter + 1)
+      }
+      setOpacity(1)
+    }, 200) // Asume una transición de 200ms
   }
 
   const decrement = () => {
-    if (counter === 0) {
-      return setCounter(images.length - 1)
-    }
-
-    setCounter(counter - 1)
-  }
-
-  const toggleClass = () => {
-    setIsActive(!isActive)
+    setOpacity(0)
+    setTimeout(() => {
+      if (counter === 0) {
+        setCounter(images.length - 1)
+      } else {
+        setCounter(counter - 1)
+      }
+      setOpacity(1)
+    }, 200) // Asume una transición de 200ms
   }
 
   return (
     <>
-      <div className={`transition-opacity duration-200 h-full`}>
+      <div
+        className={`transition-opacity duration-200 h-full`}
+        style={{ opacity }}
+      >
         <div
           className="h-full w-1/2 absolute left-0 z-10"
           onClick={() => decrement()}
