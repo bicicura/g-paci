@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import { CarouselContext } from '../contexts/CarouselContext'
 
 const CursorWithoutEffect = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
+  const { currentSlide } = useContext(CarouselContext)
+  console.log(currentSlide)
 
   const updatePosition = event => {
     setPosition({
@@ -26,13 +29,13 @@ const CursorWithoutEffect = () => {
         top: 0,
         left: 0,
         color: '#000',
-        transform: `translate(${position.x}px, calc(${position.y}px - 5rem)`,
+        transform: `translate(${position.x + 1}px, calc(${position.y + 1}px - 5rem)`,
         pointerEvents: 'none',
         transition: 'transform .1s ease',
         zIndex: 10,
       }}
     >
-      L’Officiel 1/4
+      L’Officiel {currentSlide}/3
     </span>
   )
 }

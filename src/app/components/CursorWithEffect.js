@@ -1,10 +1,12 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
+import { CarouselContext } from '../contexts/CarouselContext'
 
 const CursorWithEffect = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [relativePosition, setRelativePosition] = useState({ x: 0, y: 0 })
   const [containerOffset, setContainerOffset] = useState({ left: 0, top: 0 })
   const cursorRef = useRef(null)
+  const { currentSlide } = useContext(CarouselContext)
 
   // Escuchador para obtener la posición actual del mouse
   useEffect(() => {
@@ -49,14 +51,15 @@ const CursorWithEffect = () => {
         top: 0,
         left: 0,
         color: '#fff',
-        transform: `translate(${relativePosition.x}px, ${relativePosition.y}px)`,
+        transform: `translate(${relativePosition.x + 1}px, ${relativePosition.y + 1}px)`,
         mixBlendMode: 'difference',
         pointerEvents: 'none',
         transition: 'transform .1s ease-out',
         zIndex: 1000,
+        fontWeight: '500',
       }}
     >
-      <b>L’Officiel 1/4</b>
+      L’Officiel {currentSlide}/3
     </span>
   )
 }
