@@ -4,7 +4,6 @@ import { CarouselContext } from '../contexts/CarouselContext'
 const CursorWithoutEffect = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const { currentSlide } = useContext(CarouselContext)
-  console.log(currentSlide)
 
   const updatePosition = event => {
     setPosition({
