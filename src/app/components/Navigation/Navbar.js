@@ -112,6 +112,7 @@ const Navbar = () => {
               className={`hover:underline hover:font-bold cursor-pointer ${
                 isActiveLink(link.slug) ? 'font-bold' : ''
               }`}
+              onClick={() => toggleNavigation()}
               onMouseEnter={() => {
                 setHoverItem(link)
                 setIsHovering(true) // Setear isHovering a true
