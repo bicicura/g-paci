@@ -17,7 +17,7 @@ export default function Carousel() {
         <div className="relative w-[58rem] mx-auto overflow-hidden">
           <CarouselSlide />
           <CursorWithEffect />
-          <HoverCarousel opacity="opacity-0" />
+          <HoverCarousel />
         </div>
       </div>
     </CarouselProvider>

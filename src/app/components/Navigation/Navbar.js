@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useHover } from '@/app/contexts/HoverContext'
 
 const Navbar = () => {
   const pathname = usePathname()
   const [links, setLinks] = useState([])
   const [isActive, setIsActive] = useState(false)
   const [isInfoActive, setIsInfoActive] = useState(false)
+  const { setHoverItem, setIsHovering } = useHover()
 
   const toggleNavigation = () => {
     setIsActive(!isActive)
@@ -110,8 +112,13 @@ const Navbar = () => {
               className={`hover:underline hover:font-bold cursor-pointer ${
                 isActiveLink(link.slug) ? 'font-bold' : ''
               }`}
-              onMouseEnter={() => setHoverItem(link)}
-              onMouseLeave={() => setHoverItem(null)}
+              onMouseEnter={() => {
+                setHoverItem(link)
+                setIsHovering(true) // Setear isHovering a true
+              }}
+              onMouseLeave={() => {
+                setIsHovering(false) // Setear isHovering a false
+              }}
             >
               <Link href={`/work/${link.slug}`}>{link.title}</Link>
             </li>
