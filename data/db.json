@@ -1,0 +1,34 @@
+{
+  "work": [
+    {
+      "title": "Overview",
+      "slug": "overview",
+      "imgs": ["slide-1", "slide-2", "slide-3"],
+      "id": 1
+    },
+    {
+      "title": "L’Officiel",
+      "slug": "l-officiel",
+      "imgs": ["slide-1", "slide-2", "slide-3"],
+      "id": 2
+    },
+    {
+      "title": "The Ann Wagners",
+      "slug": "the-ann-wagners",
+      "imgs": ["slide-1", "slide-2", "slide-3"],
+      "id": 3
+    },
+    {
+      "title": "KOSTÜME",
+      "slug": "kostume",
+      "imgs": ["slide-1", "slide-2", "slide-3"],
+      "id": 4
+    },
+    {
+      "title": "Le Utthe",
+      "slug": "le-utthe",
+      "imgs": ["slide-1", "slide-2", "slide-3"],
+      "id": 5
+    }
+  ]
+}
