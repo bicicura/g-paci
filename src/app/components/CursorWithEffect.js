@@ -9,7 +9,7 @@ const CursorWithEffect = () => {
   const [containerOffset, setContainerOffset] = useState({ left: 0, top: 0 })
   const cursorRef = useRef(null)
   const { currentSlide, data, loading } = useContext(CarouselContext)
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState('Overview')
 
   // Escuchador para obtener la posición actual del mouse
   useEffect(() => {
@@ -42,7 +42,7 @@ const CursorWithEffect = () => {
     if (!loading) {
       const slug = pathname.split('/').pop()
       const item = data.find(project => project.slug === slug)
-      setTitle(item ? item.title : 'no-data')
+      setTitle(item ? item.title : 'Overview')
     }
   }, [pathname, data, loading])
 

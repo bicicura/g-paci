@@ -6,13 +6,13 @@ const CursorWithoutEffect = () => {
   const pathname = usePathname()
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const { currentSlide, data, loading } = useContext(CarouselContext)
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState('Overview')
 
   useEffect(() => {
     if (!loading) {
       const slug = pathname.split('/').pop()
       const item = data.find(project => project.slug === slug)
-      setTitle(item ? item.title : 'no-data')
+      setTitle(item ? item.title : 'Overview')
     }
   }, [pathname, data, loading])
 

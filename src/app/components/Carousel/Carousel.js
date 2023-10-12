@@ -3,6 +3,7 @@ import CursorWithEffect from '../CursorWithEffect.js'
 import CursorWithoutEffect from '../CursorWithoutEffect'
 import styles from './Carousel.module.css' // Importa el archivo de estilos
 import { CarouselProvider } from '@/app/contexts/CarouselContext'
+import HoverCarousel from './HoverCarousel'
 
 export default function Carousel() {
   return (
@@ -16,6 +17,7 @@ export default function Carousel() {
         <div className="relative w-[58rem] mx-auto overflow-hidden">
           <CarouselSlide />
           <CursorWithEffect />
+          <HoverCarousel opacity="opacity-0" />
         </div>
       </div>
     </CarouselProvider>

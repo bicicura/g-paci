@@ -8,10 +8,15 @@ export default function CarouselSlide() {
     useContext(CarouselContext)
 
   const pathname = usePathname()
-  const [item, setItem] = useState({})
+  const [item, setItem] = useState({
+    title: 'Overview',
+    slug: 'overview',
+    imgs: ['slide-1', 'slide-2', 'slide-3'],
+    id: 1,
+  })
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && pathname !== '/') {
       const slug = pathname.split('/').pop()
       setItem(data.find(project => project.slug === slug))
     }

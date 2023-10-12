@@ -110,6 +110,8 @@ const Navbar = () => {
               className={`hover:underline hover:font-bold cursor-pointer ${
                 isActiveLink(link.slug) ? 'font-bold' : ''
               }`}
+              onMouseEnter={() => setHoverItem(link)}
+              onMouseLeave={() => setHoverItem(null)}
             >
               <Link href={`/work/${link.slug}`}>{link.title}</Link>
             </li>
