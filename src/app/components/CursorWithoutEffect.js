@@ -1,9 +1,20 @@
 import { useState, useEffect, useContext } from 'react'
 import { CarouselContext } from '../contexts/CarouselContext'
+import { usePathname } from 'next/navigation'
 
 const CursorWithoutEffect = () => {
+  const pathname = usePathname()
   const [position, setPosition] = useState({ x: 0, y: 0 })
-  const { currentSlide } = useContext(CarouselContext)
+  const { currentSlide, data, loading } = useContext(CarouselContext)
+  const [title, setTitle] = useState('')
+
+  useEffect(() => {
+    if (!loading) {
+      const slug = pathname.split('/').pop()
+      const item = data.find(project => project.slug === slug)
+      setTitle(item ? item.title : 'no-data')
+    }
+  }, [pathname, data, loading])
 
   const updatePosition = event => {
     setPosition({
@@ -34,7 +45,7 @@ const CursorWithoutEffect = () => {
         zIndex: 10,
       }}
     >
-      L’Officiel {currentSlide}/3
+      {title} {currentSlide}/3
     </span>
   )
 }

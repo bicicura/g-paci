@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef, useContext } from 'react'
 import { CarouselContext } from '../contexts/CarouselContext'
+import { usePathname } from 'next/navigation'
 
 const CursorWithEffect = () => {
+  const pathname = usePathname()
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [relativePosition, setRelativePosition] = useState({ x: 0, y: 0 })
   const [containerOffset, setContainerOffset] = useState({ left: 0, top: 0 })
   const cursorRef = useRef(null)
-  const { currentSlide } = useContext(CarouselContext)
+  const { currentSlide, data, loading } = useContext(CarouselContext)
+  const [title, setTitle] = useState('')
 
   // Escuchador para obtener la posición actual del mouse
   useEffect(() => {
@@ -35,6 +38,14 @@ const CursorWithEffect = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (!loading) {
+      const slug = pathname.split('/').pop()
+      const item = data.find(project => project.slug === slug)
+      setTitle(item ? item.title : 'no-data')
+    }
+  }, [pathname, data, loading])
+
   // Calcular la posición relativa basada en el offset previamente calculado
   useEffect(() => {
     setRelativePosition({
@@ -59,7 +70,7 @@ const CursorWithEffect = () => {
         fontWeight: '500',
       }}
     >
-      L’Officiel {currentSlide}/3
+      {title} {currentSlide}/3
     </span>
   )
 }
