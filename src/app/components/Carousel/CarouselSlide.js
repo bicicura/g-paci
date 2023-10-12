@@ -1,12 +1,21 @@
-import { useContext } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import Image from 'next/image'
 import { CarouselContext } from '@/app/contexts/CarouselContext'
 import { usePathname } from 'next/navigation'
 
 export default function CarouselSlide() {
-  const { currentSlide, opacity, changeSlide } = useContext(CarouselContext)
+  const { currentSlide, opacity, changeSlide, data, loading } =
+    useContext(CarouselContext)
 
   const pathname = usePathname()
+  const [item, setItem] = useState({})
+
+  useEffect(() => {
+    if (!loading) {
+      const slug = pathname.split('/').pop()
+      setItem(data.find(project => project.slug === slug))
+    }
+  }, [pathname, data, loading])
 
   return (
     <>
@@ -23,7 +32,7 @@ export default function CarouselSlide() {
           onClick={() => changeSlide('next')}
         ></div>
         <Image
-          src={`/images/work/overview/slide-${currentSlide}.jpg`}
+          src={`/images/work/${item.slug}/slide-${currentSlide}.jpg`}
           alt="hero image"
           className={'absolute top-0 left-0 object-contain w-full h-full'}
           priority
