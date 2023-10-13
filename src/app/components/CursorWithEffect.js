@@ -56,6 +56,7 @@ const CursorWithEffect = () => {
 
   return (
     <span
+      className="tracking-wider"
       ref={cursorRef}
       style={{
         position: 'absolute',
