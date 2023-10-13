@@ -31,10 +31,10 @@ const Navbar = () => {
     <header
       className="fixed top-0 left-0 flex justify-between w-full p-12 bg-white"
       style={{
-        zIndex: 9999,
+        zIndex: 3000,
       }}
     >
-      <div className="w-56 flex justify-between">
+      <div className="flex justify-between w-56">
         <button
           type="button"
           className={`${
@@ -53,7 +53,7 @@ const Navbar = () => {
           ✖
         </button>
       </div>
-      <div className="flex gap-6 items-center relative">
+      <div className="relative flex items-center gap-6">
         <div className="cursor-pointer hover:underline hover:font-bold hover:text-purple-500 hover:fill-blacka">
           <a
             target="_blank"
@@ -87,11 +87,11 @@ const Navbar = () => {
         } fixed w-56 right-0 top-28 h-full bg-white flex flex-col transition duration-200 ease-in-out`}
         style={{ zIndex: 2000 }}
       >
-        <p className="hover:underline hover:font-bold cursor-pointer">
+        <p className="cursor-pointer hover:underline hover:font-bold">
           <a href="mailto:gastonpaci@gmail.com">gastonpaci@gmail.com</a>
         </p>
 
-        <div className="border-t w-12 border-gray-400 mt-2"></div>
+        <div className="w-12 mt-2 border-t border-gray-400"></div>
 
         <p className="mt-2 text-xs text-gray-400">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.

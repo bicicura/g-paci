@@ -42,7 +42,7 @@ const CursorWithoutEffect = () => {
         transform: `translate(${position.x + 1}px, calc(${position.y + 1}px - 5rem)`,
         pointerEvents: 'none',
         transition: 'transform .1s ease',
-        zIndex: 10,
+        zIndex: -1,
       }}
     >
       {title} {currentSlide}/3

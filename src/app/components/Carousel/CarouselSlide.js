@@ -14,6 +14,9 @@ export default function CarouselSlide() {
     if (!loading && pathname !== '/') {
       const slug = pathname.split('/').pop()
       setItem(data.find(project => project.slug === slug))
+    } else if (!loading && pathname === '/') {
+      const slug = 'overview'
+      setItem(data.find(project => project.slug === slug))
     }
   }, [pathname, data, loading])
 
@@ -28,11 +31,11 @@ export default function CarouselSlide() {
         {item && (
           <>
             <div
-              className="h-full w-1/2 absolute left-0 z-10"
+              className="absolute left-0 z-10 w-1/2 h-full"
               onClick={() => changeSlide('previous')}
             ></div>
             <div
-              className="h-full w-1/2 absolute right-0 z-10"
+              className="absolute right-0 z-10 w-1/2 h-full"
               onClick={() => changeSlide('next')}
             ></div>
             <Image
