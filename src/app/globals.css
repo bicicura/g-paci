@@ -11,3 +11,10 @@ body {
   font-weight: 400;
   font-style: normal;
 }
+
+/* Mobile */
+@media (max-width: 900px) {
+  :root {
+    font-size: 1rem;
+  }
+}

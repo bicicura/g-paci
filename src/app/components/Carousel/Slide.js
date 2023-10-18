@@ -4,7 +4,7 @@ import { SplideSlide } from '@splidejs/react-splide'
 export default function Splide(props) {
   return (
     <SplideSlide>
-      <div className="">
+      <div>
         <Image
           src={`/images/work/kostume/${props.img}`}
           alt="hero image"

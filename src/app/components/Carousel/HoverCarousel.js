@@ -21,10 +21,11 @@ const HoverCarousel = () => {
             <Image
               src={`/images/work/${item.slug}/slide-1.jpg`}
               alt="hero image"
-              className={'absolute top-0 left-0 object-contain w-full h-full'}
+              className={'absolute inset-0 w-full h-full'}
               priority
-              fill={true}
-              sizes="50vw"
+              width="0"
+              height="0"
+              sizes="100vw"
             />
           </div>
         ))}
