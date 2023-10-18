@@ -39,7 +39,7 @@ const CursorWithoutEffect = () => {
         top: 0,
         left: 0,
         color: '#000',
-        transform: `translate(${position.x + 1}px, calc(${position.y + 1}px - 5rem)`,
+        transform: `translate(${position.x + 1}px, calc(${position.y + 1}px - 0rem)`,
         pointerEvents: 'none',
         transition: 'transform .1s ease',
         zIndex: -1,

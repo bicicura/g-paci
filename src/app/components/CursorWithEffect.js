@@ -67,7 +67,7 @@ const CursorWithEffect = () => {
         mixBlendMode: 'difference',
         pointerEvents: 'none',
         transition: 'transform .1s ease-out',
-        zIndex: 1000,
+        zIndex: 4001,
         fontWeight: '500',
       }}
     >

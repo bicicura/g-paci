@@ -18,7 +18,7 @@ const Navbar = () => {
 
   useEffect(() => {
     ;(async () => {
-      const res = await fetch('http://localhost:8000/work')
+      const res = await fetch('http://192.168.0.173:8001/work')
       const data = await res.json()
       setLinks(data)
     })()
@@ -31,7 +31,7 @@ const Navbar = () => {
     <header
       className="fixed top-0 left-0 flex justify-between w-full p-12 bg-white"
       style={{
-        zIndex: 3000,
+        zIndex: 2000,
       }}
     >
       <div className="flex justify-between w-56">
