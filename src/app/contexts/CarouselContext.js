@@ -8,6 +8,7 @@ export const CarouselProvider = ({ children }) => {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [imagesLoaded, setImagesLoaded] = useState(false)
 
   const changeSlide = direction => {
     setOpacity(0)
@@ -40,7 +41,16 @@ export const CarouselProvider = ({ children }) => {
 
   return (
     <CarouselContext.Provider
-      value={{ currentSlide, opacity, changeSlide, data, loading, error }}
+      value={{
+        currentSlide,
+        opacity,
+        changeSlide,
+        data,
+        loading,
+        error,
+        imagesLoaded,
+        setImagesLoaded,
+      }}
     >
       {children}
     </CarouselContext.Provider>

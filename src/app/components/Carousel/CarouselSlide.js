@@ -39,7 +39,7 @@ export default function CarouselSlide() {
               onClick={() => changeSlide('next')}
             ></div>
             <Image
-              src={`/images/work/${item.slug}/slide-${currentSlide}.jpg`}
+              src={`/images/work/${item.slug}/${props.img}`}
               alt="hero image"
               className={'absolute top-0 left-0 object-contain w-full h-full'}
               priority

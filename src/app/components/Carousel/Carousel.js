@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useContext } from 'react'
 import CursorWithEffect from '../CursorWithEffect.js'
 import CursorWithoutEffect from '../CursorWithoutEffect'
 import styles from './Carousel.module.css' // Importa el archivo de estilos
@@ -8,19 +8,23 @@ import '@splidejs/react-splide/css/core'
 import Slide from './Slide'
 import HoverCarousel from './HoverCarousel'
 import useMobileDetect from '@/app/hooks/useMobileDetect.js'
+import CarouselBtns from './CarouselBtns.js'
 
 export default function Carousel() {
   const splideRef = useRef()
   const isMobile = useMobileDetect()
+  // const { changeSlide } = useContext(CarouselContext)
 
-  const handleLeftClick = () => {
+  const goBack = () => {
     const splide = splideRef.current.splide
     splide.go('<')
+    // changeSlide('previous')
   }
 
-  const handleRightClick = () => {
+  const goNext = () => {
     const splide = splideRef.current.splide
     splide.go('>')
+    // changeSlide('next')
   }
 
   const setVH = () => {
@@ -41,7 +45,7 @@ export default function Carousel() {
       <div
         className={`${
           styles.customCursor + ' ' + styles.customMinHScreen
-        } flex justify-center items-center w-full lg:min-h-screen relative p-3`}
+        } flex justify-center items-center w-full relative p-3 lg:p-0`}
       >
         {!isMobile && <CursorWithoutEffect />}
         <div className="relative carousel-container overflow-hidden">
@@ -67,16 +71,10 @@ export default function Carousel() {
             <Slide img="slide-2.jpg" />
             <Slide img="slide-3.jpg" />
           </Splide>
-          <div
-            onClick={handleLeftClick}
-            className="absolute inset-y-0 left-0 w-1/2 hidden lg:block"
-            style={{ zIndex: 40003 }}
-          ></div>
-          <div
-            onClick={handleRightClick}
-            className="absolute inset-y-0 right-0 w-1/2 hidden lg:block"
-            style={{ zIndex: 40003 }}
-          ></div>
+          <CarouselBtns
+            goBack={goBack}
+            goNext={goNext}
+          />
           {!isMobile && <CursorWithEffect />}
           {!isMobile && <HoverCarousel />}
         </div>

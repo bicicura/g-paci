@@ -8,8 +8,13 @@ const CursorWithEffect = () => {
   const [relativePosition, setRelativePosition] = useState({ x: 0, y: 0 })
   const [containerOffset, setContainerOffset] = useState({ left: 0, top: 0 })
   const cursorRef = useRef(null)
-  const { currentSlide, data, loading } = useContext(CarouselContext)
+  const { currentSlide, data, loading, imagesLoaded, setImagesLoaded } =
+    useContext(CarouselContext)
   const [title, setTitle] = useState('Overview')
+
+  useEffect(() => {
+    handleContainerOffset()
+  }, [imagesLoaded])
 
   // Escuchador para obtener la posición actual del mouse
   useEffect(() => {
@@ -29,6 +34,10 @@ const CursorWithEffect = () => {
 
   // Calcular el offset del contenedor padre una vez al montar el componente
   useEffect(() => {
+    handleContainerOffset()
+  }, [])
+
+  const handleContainerOffset = () => {
     if (cursorRef.current) {
       const containerRect = cursorRef.current.parentElement.getBoundingClientRect()
       setContainerOffset({
@@ -36,7 +45,7 @@ const CursorWithEffect = () => {
         top: containerRect.top,
       })
     }
-  }, [])
+  }
 
   useEffect(() => {
     if (!loading) {
