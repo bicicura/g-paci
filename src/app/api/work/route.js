@@ -35,6 +35,9 @@ export async function GET(Request) {
 
   // Enviar los datos simulados como respuesta en formato JSON
   return new Response(JSON.stringify(mockData), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*', // Esto permite que cualquier origen acceda a tu API
+    },
   })
 }
