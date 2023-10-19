@@ -12,7 +12,7 @@ const NavLinksList = props => {
 
   useEffect(() => {
     ;(async () => {
-      const res = await fetch('http://192.168.0.173:8001/work')
+      const res = await fetch('http://192.168.0.173:3000/api/work')
       const data = await res.json()
       setLinks(data)
     })()

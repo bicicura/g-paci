@@ -25,7 +25,7 @@ export const CarouselProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        const response = await fetch('http://192.168.0.173:8001/work')
+        const response = await fetch('http://192.168.0.173:3000/api/work')
         const result = await response.json()
         setData(result)
       } catch (error) {
