@@ -48,9 +48,6 @@ export default function Carousel() {
           <Splide
             ref={splideRef}
             className="absolute inset-0"
-            style={{
-              zIndex: 4000,
-            }}
             options={{
               rewind: true,
               width: '50rem',
