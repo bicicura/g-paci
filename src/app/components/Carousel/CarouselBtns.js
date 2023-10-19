@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { CarouselContext } from '@/app/contexts/CarouselContext'
 
 const CarouselBtns = props => {
@@ -13,6 +13,26 @@ const CarouselBtns = props => {
     changeSlide('next')
     props.goNext()
   }
+
+  const handleKeyDown = event => {
+    if (event.keyCode === 37) {
+      // Código de tecla de flecha izquierda es 37
+      handleGoBack()
+    } else if (event.keyCode === 39) {
+      // Código de tecla de flecha derecha es 39
+      handleGoNext()
+    }
+  }
+
+  useEffect(() => {
+    // Agregar el manejador de eventos de teclado al montar
+    window.addEventListener('keydown', handleKeyDown)
+
+    // Eliminar el manejador de eventos de teclado al desmontar
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }) // Dependencias vacías significa que esto se ejecuta solo una vez, al montar y desmontar
 
   return (
     <>

@@ -9,22 +9,20 @@ import Slide from './Slide'
 import HoverCarousel from './HoverCarousel'
 import useMobileDetect from '@/app/hooks/useMobileDetect.js'
 import CarouselBtns from './CarouselBtns.js'
+import MobileIndex from './MobileIndex.js'
 
 export default function Carousel() {
   const splideRef = useRef()
   const isMobile = useMobileDetect()
-  // const { changeSlide } = useContext(CarouselContext)
 
   const goBack = () => {
     const splide = splideRef.current.splide
     splide.go('<')
-    // changeSlide('previous')
   }
 
   const goNext = () => {
     const splide = splideRef.current.splide
     splide.go('>')
-    // changeSlide('next')
   }
 
   const setVH = () => {
@@ -78,6 +76,7 @@ export default function Carousel() {
           {!isMobile && <CursorWithEffect />}
           {!isMobile && <HoverCarousel />}
         </div>
+        {isMobile && <MobileIndex />}
       </div>
     </CarouselProvider>
   )

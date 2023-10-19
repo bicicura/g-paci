@@ -1,6 +1,4 @@
-'use client'
-
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import useMobileDetect from '@/app/hooks/useMobileDetect'
 import Navlist from './NavLinksList'
 import NavWorkBtn from './NavWorkBtn'
@@ -15,6 +13,27 @@ const Navbar = () => {
   const toggleNavigation = () => {
     setIsWorkActive(!isWorkActive)
   }
+
+  const handleEscapeKey = useCallback(
+    event => {
+      if (event.key === 'Escape') {
+        if (isWorkActive) {
+          setIsWorkActive(false)
+        }
+        if (isInfoActive) {
+          setIsInfoActive(false)
+        }
+      }
+    },
+    [isWorkActive, isInfoActive]
+  ) // ahora handleEscapeKey está memorizado con useCallback
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleEscapeKey)
+    return () => {
+      window.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [handleEscapeKey])
 
   return (
     <header
