@@ -29,7 +29,7 @@ const SplideCarousel = props => {
   return (
     <Splide
       ref={props.splideRef}
-      className="absolute inset-0 lg:border-2 lg:border-red-500 xl:border-green-500 2xl:border-purple-500 xl:mx-auto xl:w-[55rem] 2xl:w-[67rem] 2xl:border-blue-500"
+      className="absolute inset-0 xl:mx-auto xl:w-[55rem] 2xl:w-[67rem]"
       options={{
         rewind: true,
         gap: '1rem',
