@@ -43,6 +43,7 @@ const CursorWithoutEffect = () => {
         pointerEvents: 'none',
         transition: 'transform .1s ease',
         zIndex: -1,
+        fontSize: '12px',
       }}
     >
       {title} {currentSlide}/3

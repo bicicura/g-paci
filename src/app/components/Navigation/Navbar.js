@@ -37,7 +37,7 @@ const Navbar = () => {
 
   return (
     <header
-      className="fixed top-0 left-0 flex justify-between w-full p-3 lg:p-12 lg:bg-white"
+      className="fixed top-0 left-0 flex justify-between w-full p-3 lg:p-0 lg:bg-white"
       style={{
         zIndex: 2000,
       }}

@@ -78,6 +78,7 @@ const CursorWithEffect = () => {
         transition: 'transform .1s ease-out',
         zIndex: 4001,
         fontWeight: '500',
+        fontSize: '12px',
       }}
     >
       {title} {currentSlide}/3

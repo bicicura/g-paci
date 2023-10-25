@@ -24,7 +24,7 @@ const NavLinksList = props => {
         props.isWorkActive
           ? 'opacity-100 translate-x-none'
           : '-translate-x-8 opacity-0 pointer-events-none'
-      } fixed w-full lg:w-56 left-0 pl-12 top-20 h-full bg-white flex flex-col justify-between transition duration-200 ease-in-out`}
+      } fixed w-full lg:px-[40px] lg:py-[33px] lg:w-[250px] left-0 pl-12 top-20 h-full bg-white flex flex-col justify-between transition duration-200 ease-in-out`}
       style={{ zIndex: 2000 }}
     >
       <ul className="w-full space-y-2">
@@ -47,7 +47,7 @@ const NavLinksList = props => {
           </li>
         ))}
       </ul>
-      <h6 className="mb-32 text-xs text-gray-400">© 2023 Gastón Paci</h6>
+      <h6 className="mb-16 text-xs text-gray-400">© 2023 Gastón Paci</h6>
     </nav>
   )
 }

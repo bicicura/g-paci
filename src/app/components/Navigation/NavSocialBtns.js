@@ -3,7 +3,7 @@ const NavSocialBtns = props => {
     <div
       className={`${
         props.isWorkActive && props.isMobile ? 'hidden opacity-0' : 'opacity-100'
-      } relative flex items-center gap-6`}
+      } relative flex items-center gap-6 lg:px-[40px] lg:py-[33px]`}
     >
       <div className="cursor-pointer hover:font-bold hover:text-purple-500 hover:fill-black">
         <a
@@ -25,7 +25,7 @@ const NavSocialBtns = props => {
         onClick={() => props.setIsInfoActive(!props.isInfoActive)}
         className={`${
           props.isInfoActive ? 'font-bold ' : ''
-        } cursor-pointer hover:font-bold w-[2.5rem] lg:w-13 `}
+        } cursor-pointer hover:font-bold w-[2.5rem] lg:w-12`}
       >
         Info {props.isInfoActive ? '-' : '+'}
       </button>
