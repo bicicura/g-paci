@@ -31,7 +31,7 @@ const NavLinksList = props => {
         {links.map(link => (
           <li
             key={link.id}
-            className={`hover:underline hover:font-bold cursor-pointer ${
+            className={`hover:font-bold cursor-pointer ${
               isActiveLink(link.slug) ? 'font-bold' : ''
             }`}
             onClick={() => props.toggleNavigation()}

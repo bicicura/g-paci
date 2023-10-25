@@ -4,8 +4,8 @@ const NavWorkBtn = props => {
       <button
         type="button"
         className={`${
-          props.isWorkActive ? 'font-bold underline' : ''
-        } cursor-pointer hover:underline hover:font-bold`}
+          props.isWorkActive ? 'font-bold' : ''
+        } cursor-pointer hover:font-bold`}
         onClick={() => props.toggleNavigation()}
       >
         Work

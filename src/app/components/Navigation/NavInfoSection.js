@@ -8,7 +8,7 @@ const NavInfoSection = props => {
       } fixed w-56 right-0 top-20 lg:h-full bg-white flex flex-col transition duration-200 ease-in-out`}
       style={{ zIndex: 2000 }}
     >
-      <p className="cursor-pointer hover:underline hover:font-bold">
+      <p className="cursor-pointer hover:font-bold">
         <a href="mailto:gastonpaci@gmail.com">gastonpaci@gmail.com</a>
       </p>
 
