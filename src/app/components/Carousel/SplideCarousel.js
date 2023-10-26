@@ -10,7 +10,7 @@ const SplideCarousel = props => {
 
   // const vh = calculateVH()
 
-  const [vh, setVh] = useState(10)
+  const [vh, setVh] = useState(null)
 
   useEffect(() => {
     const calculateVH = () => {
@@ -51,43 +51,45 @@ const SplideCarousel = props => {
   }, [props.isMobile, props.splideRef, changeSlide])
 
   return (
-    <Splide
-      key={vh}
-      ref={props.splideRef}
-      className="absolute inset-0 xl:mx-auto"
-      options={{
-        rewind: true,
-        gap: '1rem',
-        arrows: false,
-        perPage: 1,
-        type: 'fade',
-        breakpoints: {
-          640: {
-            width: `100%`,
+    vh && (
+      <Splide
+        key={vh}
+        ref={props.splideRef}
+        className="absolute inset-0 xl:mx-auto"
+        options={{
+          rewind: true,
+          gap: '1rem',
+          arrows: false,
+          perPage: 1,
+          type: 'fade',
+          breakpoints: {
+            640: {
+              width: `100%`,
+            },
+            768: {
+              width: `100%`,
+            },
+            1024: {
+              width: `${vh * 10}px`,
+            },
+            1280: {
+              width: `${vh * 100}px`,
+            },
+            1536: {
+              width: `${vh * 110}px`,
+            },
+            2000: {
+              width: `${vh * 120}px`,
+            },
           },
-          768: {
-            width: `100%`,
-          },
-          1024: {
-            width: `${vh * 10}px`,
-          },
-          1280: {
-            width: `${vh * 100}px`,
-          },
-          1536: {
-            width: `${vh * 110}px`,
-          },
-          2000: {
-            width: `${vh * 120}px`,
-          },
-        },
-      }}
-      aria-label="My Favorite Images"
-    >
-      <Slide img="slide-1.jpg" />
-      <Slide img="slide-2.jpg" />
-      <Slide img="slide-3.jpg" />
-    </Splide>
+        }}
+        aria-label="My Favorite Images"
+      >
+        <Slide img="slide-1.jpg" />
+        <Slide img="slide-2.jpg" />
+        <Slide img="slide-3.jpg" />
+      </Splide>
+    )
   )
 }
 
