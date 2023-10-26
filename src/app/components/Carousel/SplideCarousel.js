@@ -30,6 +30,8 @@ const SplideCarousel = props => {
 
   const { changeSlide } = useContext(CarouselContext)
 
+  console.log(vh, 'vh')
+
   useEffect(() => {
     if (props.isMobile) {
       const splide = props.splideRef.current.splide
