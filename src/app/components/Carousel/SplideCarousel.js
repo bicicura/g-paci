@@ -4,13 +4,29 @@ import { CarouselContext } from '@/app/contexts/CarouselContext'
 import { useContext, useEffect, useState } from 'react'
 
 const SplideCarousel = props => {
-  const setVH = () => {
-    return window.innerHeight * 0.01
-  }
+  // const calculateVH = () => {
+  //   return window.innerHeight * 0.01
+  // }
 
-  console.log(setVH() * 50, 'vh')
+  // const vh = calculateVH()
 
-  const vh = setVH()
+  const [vh, setVh] = useState(10)
+
+  useEffect(() => {
+    const calculateVH = () => {
+      setVh(window.innerHeight * 0.01)
+    }
+
+    calculateVH()
+
+    const handleResize = () => {
+      calculateVH()
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const { changeSlide } = useContext(CarouselContext)
 
@@ -36,6 +52,7 @@ const SplideCarousel = props => {
 
   return (
     <Splide
+      key={vh}
       ref={props.splideRef}
       className="absolute inset-0 xl:mx-auto"
       options={{
@@ -44,7 +61,6 @@ const SplideCarousel = props => {
         arrows: false,
         perPage: 1,
         type: 'fade',
-        width: `${vh * 125}px`,
         breakpoints: {
           640: {
             width: `100%`,
@@ -61,7 +77,7 @@ const SplideCarousel = props => {
           1536: {
             width: `${vh * 110}px`,
           },
-          1792: {
+          2000: {
             width: `${vh * 120}px`,
           },
         },
