@@ -12,8 +12,6 @@ const SplideCarousel = props => {
 
   const vh = setVH()
 
-  const [isMobile, setIsMobile] = useState(false)
-
   const { changeSlide } = useContext(CarouselContext)
 
   useEffect(() => {
@@ -39,32 +37,32 @@ const SplideCarousel = props => {
   return (
     <Splide
       ref={props.splideRef}
-      className="absolute inset-0 xl:mx-auto w-full border-2 border-blue-300"
+      className="absolute inset-0 xl:mx-auto"
       options={{
         rewind: true,
         gap: '1rem',
         arrows: false,
         perPage: 1,
         type: 'fade',
-        width: `${vh * 110}px`,
+        width: `${vh * 125}px`,
         breakpoints: {
           640: {
-            width: `${vh * 50}px`,
+            width: `100%`,
           },
           768: {
-            width: `${vh * 60}px`,
+            width: `100%`,
           },
           1024: {
             width: `${vh * 10}px`,
           },
           1280: {
-            width: `${vh * 107}px`,
+            width: `${vh * 100}px`,
           },
           1536: {
             width: `${vh * 110}px`,
           },
-          2000: {
-            width: `${vh * 125}px`,
+          1792: {
+            width: `${vh * 120}px`,
           },
         },
       }}

@@ -25,7 +25,7 @@ const NavSocialBtns = props => {
         onClick={() => props.setIsInfoActive(!props.isInfoActive)}
         className={`${
           props.isInfoActive ? 'font-bold ' : ''
-        } cursor-pointer hover:font-bold w-[2.5rem] lg:w-12`}
+        } cursor-pointer hover:font-bold w-[3rem] lg:w-12`}
       >
         Info {props.isInfoActive ? '-' : '+'}
       </button>

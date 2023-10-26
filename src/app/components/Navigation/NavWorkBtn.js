@@ -22,7 +22,7 @@ const NavWorkBtn = props => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="xl:w-[12px] xl:h-[12px]"
+          className="w-3 h-3 xl:w-[12px] xl:h-[12px]"
         >
           <path
             strokeLinecap="round"
