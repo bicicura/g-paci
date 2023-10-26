@@ -53,7 +53,6 @@ const SplideCarousel = props => {
   return (
     vh && (
       <Splide
-        key={vh}
         ref={props.splideRef}
         className="absolute inset-0 xl:mx-auto"
         options={{
