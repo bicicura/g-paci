@@ -11,8 +11,7 @@ const CursorWithEffect = () => {
   const { currentSlide, data, loading, imagesLoaded, setImagesLoaded } =
     useContext(CarouselContext)
   const [title, setTitle] = useState('Overview')
-
-  const mutationObserver = useRef(null)
+  const resizeObserver = useRef(null)
 
   useEffect(() => {
     handleContainerOffset()
@@ -50,6 +49,20 @@ const CursorWithEffect = () => {
   }
 
   useEffect(() => {
+    resizeObserver.current = new ResizeObserver(handleContainerOffset)
+    if (cursorRef.current && cursorRef.current.parentElement) {
+      resizeObserver.current.observe(cursorRef.current.parentElement)
+    }
+
+    // Limpiar al desmontar
+    return () => {
+      if (resizeObserver.current) {
+        resizeObserver.current.disconnect()
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     if (!loading) {
       const slug = pathname.split('/').pop()
       const item = data.find(project => project.slug === slug)
@@ -64,28 +77,6 @@ const CursorWithEffect = () => {
       y: position.y - containerOffset.top,
     })
   }, [position, containerOffset])
-
-  useEffect(() => {
-    if (cursorRef.current) {
-      const parentElement = cursorRef.current.parentElement
-
-      mutationObserver.current = new MutationObserver(() => {
-        handleContainerOffset()
-      })
-
-      mutationObserver.current.observe(parentElement, {
-        attributes: true,
-        childList: true,
-        subtree: true,
-      })
-    }
-
-    return () => {
-      if (mutationObserver.current) {
-        mutationObserver.current.disconnect()
-      }
-    }
-  }, [cursorRef.current])
 
   return (
     <span
