@@ -12,6 +12,8 @@ const CursorWithEffect = () => {
     useContext(CarouselContext)
   const [title, setTitle] = useState('Overview')
 
+  const mutationObserver = useRef(null)
+
   useEffect(() => {
     handleContainerOffset()
   }, [imagesLoaded])
@@ -62,6 +64,28 @@ const CursorWithEffect = () => {
       y: position.y - containerOffset.top,
     })
   }, [position, containerOffset])
+
+  useEffect(() => {
+    if (cursorRef.current) {
+      const parentElement = cursorRef.current.parentElement
+
+      mutationObserver.current = new MutationObserver(() => {
+        handleContainerOffset()
+      })
+
+      mutationObserver.current.observe(parentElement, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      })
+    }
+
+    return () => {
+      if (mutationObserver.current) {
+        mutationObserver.current.disconnect()
+      }
+    }
+  }, [cursorRef.current])
 
   return (
     <span
