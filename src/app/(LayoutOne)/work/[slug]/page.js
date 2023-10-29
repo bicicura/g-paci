@@ -1,6 +1,6 @@
 'use client'
 
-import Carousel from '../../components/Carousel/Carousel.js'
+import Carousel from '@/app/components/Carousel/Carousel'
 
 export default function Page() {
   return (

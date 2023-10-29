@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect, useCallback } from 'react'
 import useMobileDetect from '@/app/hooks/useMobileDetect'
 import Navlist from './NavLinksList'

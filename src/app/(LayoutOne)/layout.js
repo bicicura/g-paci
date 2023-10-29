@@ -1,5 +1,5 @@
-import './globals.css'
-import ClientContainer from './components/ClientContainer.js'
+import '../globals.css'
+import ClientContainer from '../components/ClientContainer.js'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
           href="https://use.typekit.net/ljf6fkv.css"
         ></link>
       </head>
-      <body className="inter.className">
+      <body className={inter.className}>
         <ClientContainer>{children}</ClientContainer>
       </body>
     </html>

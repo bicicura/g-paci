@@ -3,12 +3,12 @@ import CursorWithEffect from '../CursorWithEffect.js'
 import CursorWithoutEffect from '../CursorWithoutEffect'
 import styles from './Carousel.module.css' // Importa el archivo de estilos
 import SplideCarousel from './SplideCarousel.js'
-import '@splidejs/react-splide/css/core'
 import HoverCarousel from './HoverCarousel'
 import useMobileDetect from '@/app/hooks/useMobileDetect.js'
 import CarouselBtns from './CarouselBtns.js'
 import { CarouselProvider } from '@/app/contexts/CarouselContext'
 import MobileIndex from './MobileIndex.js'
+import '@splidejs/react-splide/css/core'
 
 export default function Carousel() {
   const splideRef = useRef()
@@ -45,7 +45,7 @@ export default function Carousel() {
         } flex justify-center items-center w-full relative p-3 lg:p-0`}
       >
         {!isMobile && <CursorWithoutEffect />}
-        <div className="relative carousel-container overflow-hidden">
+        <div className="relative overflow-hidden carousel-container">
           <SplideCarousel
             isMobile={isMobile}
             splideRef={splideRef}
