@@ -11,12 +11,17 @@ import {
   Chip,
   Tooltip,
   getKeyValue,
+  Button,
+  Input,
 } from '@nextui-org/react'
 import { EditIcon } from './EditIcon'
 import { DeleteIcon } from './DeleteIcon'
 import { EyeIcon } from './EyeIcon'
 import { columns, users } from './data'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import { PlusIcon } from './PlusIcon'
+import { SearchIcon } from './SearchIcon'
+import Link from 'next/link'
 
 const statusColorMap = {
   active: 'success',
@@ -25,6 +30,17 @@ const statusColorMap = {
 }
 
 export default function DashboardTable() {
+  const [filterValue, setFilterValue] = useState('')
+
+  const onSearchChange = useCallback(value => {
+    if (value) {
+      setFilterValue(value)
+      // setPage(1)
+    } else {
+      setFilterValue('')
+    }
+  }, [])
+
   const renderCell = useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
 
@@ -86,24 +102,52 @@ export default function DashboardTable() {
   }, [])
 
   return (
-    <Table aria-label="Example table with custom cells">
-      <TableHeader columns={columns}>
-        {column => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === 'actions' ? 'center' : 'start'}
+    <>
+      {' '}
+      <div className="flex justify-between mt-20 mb-4">
+        <Input
+          isClearable
+          classNames={{
+            base: 'w-full sm:max-w-[44%]',
+            inputWrapper: 'border-1',
+          }}
+          placeholder="Search by name..."
+          size="sm"
+          startContent={<SearchIcon className="text-default-300" />}
+          value={filterValue}
+          variant="bordered"
+          onClear={() => setFilterValue('')}
+          onValueChange={onSearchChange}
+        />
+        <Link href={'/proyectos/create'}>
+          <Button
+            className="bg-foreground text-background"
+            endContent={<PlusIcon />}
+            size="sm"
           >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody items={users}>
-        {item => (
-          <TableRow key={item.id}>
-            {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+            Add New
+          </Button>
+        </Link>
+      </div>
+      <Table aria-label="Example table with custom cells">
+        <TableHeader columns={columns}>
+          {column => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === 'actions' ? 'center' : 'start'}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody items={users}>
+          {item => (
+            <TableRow key={item.id}>
+              {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   )
 }

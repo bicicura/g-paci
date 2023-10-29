@@ -18,14 +18,6 @@ const DashboardNav = () => (
       className="hidden gap-4 sm:flex"
       justify="center"
     >
-      <NavbarItem>
-        <Link
-          color="foreground"
-          href="#"
-        >
-          Overview
-        </Link>
-      </NavbarItem>
       <NavbarItem isActive>
         <Link
           href="/proyectos"

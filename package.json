@@ -11,10 +11,14 @@
   "dependencies": {
     "@nextui-org/react": "^2.1.13",
     "@splidejs/react-splide": "^0.7.12",
+    "filepond": "^4.30.4",
+    "filepond-plugin-image-exif-orientation": "^1.0.11",
+    "filepond-plugin-image-preview": "^4.6.11",
     "framer-motion": "^10.16.4",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-filepond": "^7.1.2"
   },
   "devDependencies": {
     "autoprefixer": "latest",

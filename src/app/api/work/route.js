@@ -41,3 +41,12 @@ export async function GET(Request) {
     },
   })
 }
+
+export async function POST(Request) {
+  console.log(Request.body) // This will log the body of the incoming request
+  return new Response(JSON.stringify({ status: 'ok' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
