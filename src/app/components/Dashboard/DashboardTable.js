@@ -8,6 +8,7 @@ import {
   TableRow,
   TableCell,
   User,
+  Link,
   Chip,
   Tooltip,
   getKeyValue,
@@ -16,17 +17,16 @@ import {
 } from '@nextui-org/react'
 import { EditIcon } from './EditIcon'
 import { DeleteIcon } from './DeleteIcon'
-import { EyeIcon } from './EyeIcon'
 import { columns, users } from './data'
 import { useCallback, useState } from 'react'
 import { PlusIcon } from './PlusIcon'
 import { SearchIcon } from './SearchIcon'
-import Link from 'next/link'
+import NextLink from 'next/link'
 
 const statusColorMap = {
   active: 'success',
   paused: 'danger',
-  vacation: 'warning',
+  inactive: 'warning',
 }
 
 export default function DashboardTable() {
@@ -48,18 +48,18 @@ export default function DashboardTable() {
       case 'name':
         return (
           <User
-            avatarProps={{ radius: 'lg', src: user.avatar }}
-            description={user.email}
+            avatarProps={{
+              radius: 'sm',
+              src: user.avatar,
+              size: 'lg',
+            }}
             name={cellValue}
-          >
-            {user.email}
-          </User>
+          />
         )
       case 'role':
         return (
           <div className="flex flex-col">
             <p className="text-sm capitalize text-bold">{cellValue}</p>
-            <p className="text-sm capitalize text-bold text-default-400">{user.team}</p>
           </div>
         )
       case 'status':
@@ -75,20 +75,24 @@ export default function DashboardTable() {
         )
       case 'actions':
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg cursor-pointer text-default-400 active:opacity-50">
-                <EyeIcon />
-              </span>
+          <div className="relative flex text-black items-center gap-4">
+            <Tooltip
+              className="text-black"
+              content="Edit"
+            >
+              <Link
+                href={`/dashboard/edit/${user.slug}`}
+                as={NextLink}
+              >
+                <span className="text-lg cursor-pointer active:opacity-50">
+                  <EditIcon />
+                </span>
+              </Link>
             </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="text-lg cursor-pointer text-default-400 active:opacity-50">
-                <EditIcon />
-              </span>
-            </Tooltip>
+
             <Tooltip
               color="danger"
-              content="Delete user"
+              content="Delete"
             >
               <span className="text-lg cursor-pointer text-danger active:opacity-50">
                 <DeleteIcon />
@@ -102,34 +106,34 @@ export default function DashboardTable() {
   }, [])
 
   return (
-    <>
+    <section className="">
       {' '}
       <div className="flex justify-between mt-20 mb-4">
         <Input
           isClearable
           classNames={{
-            base: 'w-full sm:max-w-[44%]',
+            base: 'w-full sm:max-w-[44%] text-black',
             inputWrapper: 'border-1',
           }}
           placeholder="Search by name..."
           size="sm"
-          startContent={<SearchIcon className="text-default-300" />}
+          startContent={<SearchIcon className="text-gray-300" />}
           value={filterValue}
           variant="bordered"
           onClear={() => setFilterValue('')}
           onValueChange={onSearchChange}
         />
-        <Link href={'/proyectos/create'}>
-          <Button
-            className="bg-foreground text-background"
-            endContent={<PlusIcon />}
-            size="sm"
-          >
-            Add New
-          </Button>
+
+        <Link
+          className="bg-black rounded-lg transtion-colors ease-in-out duration-200 shadow-sm hover:shadow-lg flex gap-2 hover:bg-default-100 hover:text-black transition-colors duration-500 text-white px-4 py-2 hover:underline"
+          as={NextLink}
+          href="/dashboard/create"
+        >
+          <span>Add new</span>
+          <PlusIcon />
         </Link>
       </div>
-      <Table aria-label="Example table with custom cells">
+      <Table aria-label="Gastón Paci portfolio's table">
         <TableHeader columns={columns}>
           {column => (
             <TableColumn
@@ -142,12 +146,15 @@ export default function DashboardTable() {
         </TableHeader>
         <TableBody items={users}>
           {item => (
-            <TableRow key={item.id}>
+            <TableRow
+              className="text-black"
+              key={item.id}
+            >
               {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
             </TableRow>
           )}
         </TableBody>
       </Table>
-    </>
+    </section>
   )
 }

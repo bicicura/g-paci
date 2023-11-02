@@ -1,18 +1,12 @@
 'use client'
 
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  Link,
-  Button,
-} from '@nextui-org/react'
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link } from '@nextui-org/react'
+import NextLink from 'next/link'
 
 const DashboardNav = () => (
   <Navbar>
     <NavbarBrand>
-      <p className="font-bold text-inherit">Gastón Paci</p>
+      <p className="font-bold text-black">Gastón Paci</p>
     </NavbarBrand>
     <NavbarContent
       className="hidden gap-4 sm:flex"
@@ -20,16 +14,21 @@ const DashboardNav = () => (
     >
       <NavbarItem isActive>
         <Link
-          href="/proyectos"
-          aria-current="page"
+          href="/dashboard"
+          as={NextLink}
         >
-          Work
+          Dashboard
         </Link>
       </NavbarItem>
     </NavbarContent>
     <NavbarContent justify="end">
       <NavbarItem className="hidden lg:flex">
-        <Link href="#">Log out</Link>
+        <Link
+          href="/dashboard"
+          as={NextLink}
+        >
+          Log out
+        </Link>
       </NavbarItem>
     </NavbarContent>
   </Navbar>

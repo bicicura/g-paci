@@ -1,5 +1,11 @@
-'use client'
+import DashboardTable from '@/app/components/Dashboard/DashboardTable'
 
-export default function Dashboard() {
-  return <p>Dashboard!</p>
+const Proyectos = () => {
+  return (
+    <section className="mx-auto max-w-2xl w-full">
+      <DashboardTable />
+    </section>
+  )
 }
+
+export default Proyectos
