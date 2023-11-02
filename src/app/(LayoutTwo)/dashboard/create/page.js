@@ -15,7 +15,7 @@ const CreateWork = () => {
   const [files, setFiles] = useState([])
 
   return (
-    <section className="max-w-3xl mx-auto mt-20">
+    <section>
       <div className="mb-12 flex gap-4 items-center">
         <Link href="/dashboard">
           <svg

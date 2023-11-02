@@ -1,11 +1,11 @@
 import DashboardTable from '@/app/components/Dashboard/DashboardTable'
 
-const Proyectos = () => {
+const Dashboard = () => {
   return (
-    <section className="mx-auto max-w-2xl w-full">
+    <section>
       <DashboardTable />
     </section>
   )
 }
 
-export default Proyectos
+export default Dashboard

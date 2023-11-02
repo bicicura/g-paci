@@ -108,7 +108,7 @@ export default function DashboardTable() {
   return (
     <section className="">
       {' '}
-      <div className="flex justify-between mt-20 mb-4">
+      <div className="flex justify-between mb-4">
         <Input
           isClearable
           classNames={{
