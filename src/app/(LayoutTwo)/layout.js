@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className + ' text-white min-h-screen bg-background'}>
         <DashboardNav />
-        <main className="mt-20 mb-16 max-w-3xl mx-auto">
+        <main className="mt-20 mb-16 max-w-3xl mx-auto ">
           <Providers>{children}</Providers>
         </main>
       </body>
