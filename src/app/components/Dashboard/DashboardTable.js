@@ -75,7 +75,7 @@ export default function DashboardTable() {
         )
       case 'actions':
         return (
-          <div className="relative flex text-black items-center gap-4">
+          <div className="relative flex items-center gap-4 text-black">
             <Tooltip
               className="text-black"
               content="Edit"
@@ -125,7 +125,7 @@ export default function DashboardTable() {
         />
 
         <Link
-          className="bg-black rounded-lg transtion-colors ease-in-out duration-200 shadow-sm hover:shadow-lg flex gap-2 hover:bg-default-100 hover:text-black transition-colors duration-500 text-white px-4 py-2 hover:underline"
+          className="flex gap-2 px-4 py-2 text-white transition-colors duration-200 ease-in-out bg-black rounded-lg shadow-sm transtion-colors hover:shadow-lg hover:bg-default-100 hover:text-black hover:underline"
           as={NextLink}
           href="/dashboard/create"
         >

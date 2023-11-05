@@ -6,9 +6,9 @@ import { Input } from '@nextui-org/react'
 
 const Login = () => {
   return (
-    <section className="w-max mx-auto  absolute inset-0 my-auto h-fit">
+    <section className="absolute inset-0 mx-auto my-auto w-max h-fit">
       <form className="space-y-6">
-        <legend className="text-3xl text-default-700 font-bold">Dashboard</legend>
+        <legend className="text-3xl font-bold text-default-700">Dashboard</legend>
         <Input
           type="text"
           label="email"
@@ -23,7 +23,7 @@ const Login = () => {
         />
 
         <Link
-          className="bg-black rounded-lg transtion-colors ease-in-out duration-200 shadow-sm hover:shadow-lg flex gap-2 hover:bg-default-100 hover:text-black transition-colors duration-500 text-white px-4 py-2 hover:underline text-center justify-center"
+          className="flex justify-center gap-2 px-4 py-2 text-center text-white transition-colors duration-200 ease-in-out bg-black rounded-lg shadow-sm transtion-colors hover:shadow-lg hover:bg-default-100 hover:text-black hover:underline"
           href="/dashboard"
         >
           Log in
