@@ -19,7 +19,8 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-filepond": "^7.1.2"
+    "react-filepond": "^7.1.2",
+    "slugify": "^1.6.6"
   },
   "devDependencies": {
     "autoprefixer": "latest",

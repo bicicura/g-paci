@@ -1,16 +1,15 @@
 'use client'
 
-import { Button, Input, Divider } from '@nextui-org/react'
+import { Button, Input, Divider, Chip } from '@nextui-org/react'
 import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
 import { useEffect, useState } from 'react'
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
 import Link from 'next/link'
-import { users } from '@/app/components/Dashboard/data'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
-// import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
-// import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+import supabase from '../../../../../../utils/supabaseClient'
+import { Checkbox } from '@nextui-org/react'
 
 registerPlugin(FilePondPluginImageExifOrientation)
 
@@ -18,11 +17,33 @@ const EditWork = () => {
   const pathname = usePathname()
   const [files, setFiles] = useState([])
   const [work, setWork] = useState({})
+  const [isActive, setIsActive] = useState(false)
+
+  const statusColorMap = {
+    active: 'success',
+    paused: 'danger',
+    inactive: 'warning',
+  }
+
+  async function getTableData() {
+    try {
+      const slug = pathname.split('/').pop()
+      let { data, error } = await supabase
+        .from('works')
+        .select('*')
+        .eq('slug', slug)
+        .limit(1)
+        .single()
+      setWork(data)
+      setIsActive(data.status === 'active' ? true : false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
-    const slug = pathname.split('/').pop()
-    setWork(users.find(work => work.slug === slug))
-  }, [pathname])
+    getTableData()
+  }, [])
 
   return (
     <>
@@ -46,15 +67,33 @@ const EditWork = () => {
               </svg>
             </Link>
 
-            <h1 className="text-3xl text-default-700 font-bold">{work.name}</h1>
+            <div className="flex gap-4 items-center">
+              <h1 className="text-3xl text-default-700 font-bold">{work.name}</h1>
+              <Chip
+                className="capitalize"
+                color={statusColorMap[work.status]}
+                size="sm"
+                variant="flat"
+              >
+                {work.status}
+              </Chip>
+            </div>
           </div>
-          <Input
-            type="text"
-            label="Título"
-            description="Ingrese el nombre del proyecto."
-            value={work.name}
-            className="max-w-xs text-black"
-          />
+          <div className="flex items-center gap-8">
+            <Input
+              type="text"
+              label="Título"
+              description="Ingrese el nombre del proyecto."
+              value={work.name}
+              className="max-w-xs text-black"
+            />
+            <Checkbox
+              isSelected={isActive}
+              onValueChange={setIsActive}
+            >
+              Active
+            </Checkbox>
+          </div>
 
           <Divider className="my-8" />
 

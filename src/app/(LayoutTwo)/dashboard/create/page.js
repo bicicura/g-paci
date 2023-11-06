@@ -6,13 +6,70 @@ import 'filepond/dist/filepond.min.css'
 import { useState } from 'react'
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
 import Link from 'next/link'
-// import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
-// import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+import supabase from '../../../../../utils/supabaseClient'
+import slugify from 'slugify'
 
 registerPlugin(FilePondPluginImageExifOrientation)
 
 const CreateWork = () => {
+  const [name, setName] = useState('')
   const [files, setFiles] = useState([])
+
+  const handleNameChange = event => {
+    setName(event.target.value) // Actualiza el estado `name` con el valor actual del input
+  }
+
+  function generateSlug(text) {
+    return slugify(text, {
+      replacement: '-', // reemplazar espacios y caracteres especiales por guiones
+      remove: undefined, // patrón de regex para caracteres a eliminar, undefined elimina los no permitidos en una URL
+      lower: true, // convertir a minúsculas
+      strict: true, // recortar caracteres que no son palabras ni números
+      locale: 'en', // idioma para la transliteración
+    })
+  }
+
+  async function createUniqueSlug(baseSlug, supabase) {
+    let uniqueSlug = generateSlug(baseSlug)
+    let counter = 2 // Comienza en 2 para que el primer duplicado sea '-2'
+
+    while (true) {
+      let { data, error } = await supabase
+        .from('works')
+        .select('slug')
+        .eq('slug', uniqueSlug)
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      if (data.length === 0) {
+        break // Si data está vacío, el slug es único y podemos salir del bucle
+      }
+
+      // Si el slug ya existe, agrega o incrementa el contador al final del slug
+      uniqueSlug = `${generateSlug(baseSlug)}-${counter}`
+      counter++
+    }
+
+    return uniqueSlug
+  }
+
+  const handleSubmit = async () => {
+    try {
+      await insertWork()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const insertWork = async slug => {
+    const uniqueSlug = await createUniqueSlug(name, supabase)
+    const { data, error } = await supabase
+      .from('works')
+      .insert([{ name: name, slug: uniqueSlug, status: 'active' }])
+      .select()
+  }
 
   return (
     <section>
@@ -39,6 +96,8 @@ const CreateWork = () => {
       <Input
         type="text"
         label="Título"
+        value={name}
+        onChange={handleNameChange}
         description="Ingrese el nombre del proyecto."
         className="max-w-xs text-black"
       />
@@ -60,6 +119,7 @@ const CreateWork = () => {
         <Button
           className="font-bold"
           color="primary"
+          onClick={() => handleSubmit()}
         >
           Save
         </Button>

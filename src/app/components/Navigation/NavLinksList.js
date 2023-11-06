@@ -10,12 +10,10 @@ const NavLinksList = props => {
   const [links, setLinks] = useState([])
   const pathname = usePathname()
   const { setHoverItem, setIsHovering } = useHover()
-  const [tableData, setTableData] = useState([])
 
   async function getTableData() {
     let { data, error } = await supabase.from('works').select()
     setLinks(data)
-    console.log(links)
   }
 
   useEffect(() => {

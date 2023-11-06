@@ -17,11 +17,12 @@ import {
 } from '@nextui-org/react'
 import { EditIcon } from './EditIcon'
 import { DeleteIcon } from './DeleteIcon'
-import { columns, users } from './data'
-import { useCallback, useState } from 'react'
+import { columns } from './data'
+import { useCallback, useState, useEffect } from 'react'
 import { PlusIcon } from './PlusIcon'
 import { SearchIcon } from './SearchIcon'
 import NextLink from 'next/link'
+import supabase from '../../../../utils/supabaseClient'
 
 const statusColorMap = {
   active: 'success',
@@ -31,6 +32,7 @@ const statusColorMap = {
 
 export default function DashboardTable() {
   const [filterValue, setFilterValue] = useState('')
+  const [tableData, setTableData] = useState([])
 
   const onSearchChange = useCallback(value => {
     if (value) {
@@ -39,6 +41,29 @@ export default function DashboardTable() {
     } else {
       setFilterValue('')
     }
+  }, [])
+
+  async function getTableData() {
+    try {
+      let { data, error } = await supabase.from('works').select()
+      const newData = data.map(item => {
+        return {
+          id: item.id,
+          name: item.name,
+          status: item.status,
+          slug: item.slug,
+          avatar: `images/work/${item.slug}/slide-1.jpg`,
+          images_count: 3,
+        }
+      })
+      setTableData(newData)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getTableData()
   }, [])
 
   const renderCell = useCallback((user, columnKey) => {
@@ -144,7 +169,7 @@ export default function DashboardTable() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={users}>
+        <TableBody items={tableData}>
           {item => (
             <TableRow
               className="text-black"
