@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { useHover } from '@/app/contexts/HoverContext'
+import supabase from '../../../../utils/supabaseClient'
 
 const NavLinksList = props => {
   const isActiveLink = slug =>
@@ -9,13 +10,16 @@ const NavLinksList = props => {
   const [links, setLinks] = useState([])
   const pathname = usePathname()
   const { setHoverItem, setIsHovering } = useHover()
+  const [tableData, setTableData] = useState([])
+
+  async function getTableData() {
+    let { data, error } = await supabase.from('works').select()
+    setLinks(data)
+    console.log(links)
+  }
 
   useEffect(() => {
-    ;(async () => {
-      const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/work')
-      const data = await res.json()
-      setLinks(data)
-    })()
+    getTableData()
   }, [])
 
   return (
@@ -43,7 +47,7 @@ const NavLinksList = props => {
               setIsHovering(false) // Setear isHovering a false
             }}
           >
-            <Link href={`/work/${link.slug}`}>{link.title}</Link>
+            <Link href={`/work/${link.slug}`}>{link.name}</Link>
           </li>
         ))}
       </ul>
