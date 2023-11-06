@@ -55,19 +55,68 @@ const CreateWork = () => {
     return uniqueSlug
   }
 
+  const uploadFilesToS3 = async (files, slug) => {
+    // Asegúrate de que 'files' es un array
+    if (!Array.isArray(files)) {
+      throw new Error('files is not iterable')
+    }
+
+    // Mapea cada archivo a una promesa de carga
+    const uploadPromises = files.map(fileItem => {
+      const formData = new FormData()
+      formData.append('slug', slug)
+      formData.append('file', fileItem.file)
+      // Devuelve la promesa de fetch directamente
+      return fetch('/api/work', {
+        method: 'POST',
+        body: formData, // No establezcas el Content-Type aquí, fetch lo manejará.
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
+        return response.json()
+      })
+    })
+
+    // Devuelve el array de promesas
+    return uploadPromises
+  }
+
   const handleSubmit = async () => {
     try {
-      await insertWork()
+      const uniqueSlug = await createUniqueSlug(name, supabase)
+      // Asegúrate de que 'files' es un array antes de pasar a la función
+      const uploadPromises = await uploadFilesToS3(files, uniqueSlug)
+
+      // Espera a que todas las cargas terminen
+      const imageUrls = await Promise.all(uploadPromises)
+      console.log(imageUrls)
+
+      // Inserta la información en Supabase aquí
+      // Crear una nueva entrada en la tabla 'works'
+      const { data: workData, error: workError } = await insertWork(uniqueSlug)
+
+      if (workError) {
+        throw new Error(workError.message)
+      }
+
+      // Obtener el id del trabajo insertado
+      const workId = workData[0].id
+
+      // Insertar registros en 'work_images' para cada imagen
+      const imageInsertPromises = imageUrls.map(url => insertWorkImage(workId, url))
+      await Promise.all(imageInsertPromises)
+
+      console.log('Work and images uploaded successfully')
     } catch (error) {
-      console.log(error)
+      console.error('Error during the upload process:', error)
     }
   }
 
   const insertWork = async slug => {
-    const uniqueSlug = await createUniqueSlug(name, supabase)
-    const { data, error } = await supabase
+    return await supabase
       .from('works')
-      .insert([{ name: name, slug: uniqueSlug, status: 'active' }])
+      .insert([{ name: name, slug: slug, status: 'active' }])
       .select()
   }
 
@@ -105,6 +154,7 @@ const CreateWork = () => {
       <div className="mt-8">
         <h3 className="text-black text-lg mb-4">Imagenes</h3>
         <FilePond
+          instantUpload={false}
           files={files}
           onupdatefiles={setFiles}
           allowMultiple={true}
