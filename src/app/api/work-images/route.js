@@ -31,7 +31,7 @@ export async function POST(request) {
     try {
       // Realiza la carga a S3
       const s3Response = await s3.upload(params).promise()
-      return { status: 'ok', file_name: randomGeneratedName, url: s3Response.Location } // Retorna el estado y la URL
+      return { file_name: randomGeneratedName, url: s3Response.Location } // Retorna el estado y la URL
     } catch (error) {
       throw new Error(error.message) // Lanza un error que será capturado más abajo
     }
@@ -40,17 +40,21 @@ export async function POST(request) {
   try {
     // Espera a que todas las promesas de carga se resuelvan
     const uploadResults = await Promise.all(uploadPromises)
+    console.log(uploadResults)
 
     // Inserta los registros en la tabla 'work_images'
-    const imageInsertPromises = insertWorkImage({ ...uploadPromises, workId })
-    await Promise.all(imageInsertPromises)
+    const imageUploads = await insertWorkImage({ uploadResults, workId })
 
     // Retorna las URLs de los archivos subidos
-    return new Response(JSON.stringify({ ...uploadResults, ...imageInsertPromises }), {
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return new Response(
+      JSON.stringify({ ...uploadResults, ...imageUploads, status: 'ok' }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
   } catch (error) {
     // Maneja cualquier error que ocurra durante la carga
+    console.error(error)
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -65,10 +69,20 @@ function generateFileName(file) {
   return `${randomName}.${extension}`
 }
 
-const insertWorkImage = async images => {
-  console.log(images)
+// --------------------------------------------------------------
+// ESTOY POR ACA QUIERO DARLE EL ORDER CORRESPONDIENTE A CADA IMG
+// --------------------------------------------------------------
+const insertWorkImage = async ({ uploadResults, workId }) => {
   return await supabase
     .from('works_images')
-    .insert(images.map(image => ({ work_id: image.work_id, img: image.name })))
+    .insert(
+      uploadResults.map((image, index) => {
+        return {
+          work_id: workId,
+          img: image.file_name,
+          order: index,
+        }
+      })
+    )
     .select()
 }

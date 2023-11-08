@@ -87,14 +87,12 @@ const useCreateWork = () => {
       const workId = workData[0].id
 
       // Insertar registros en 'work_images' para cada imagen
-      const uploadPromises = await uploadFilesToS3({ uniqueSlug, workId })
+      const uploadPromises = await uploadFilesToS3({ slug: uniqueSlug, workId })
 
       // Espera a que todas las cargas terminen
       const imageUrls = await Promise.all(uploadPromises)
-      console.log(imageUrls)
 
-      // const imageInsertPromises = imageUrls.map(url => insertWorkImage(workId, url))
-      // await Promise.all(imageInsertPromises)
+      console.log(imageUrls)
 
       console.log('Work and images uploaded successfully')
     } catch (error) {
@@ -109,7 +107,10 @@ const useCreateWork = () => {
     })
   }
 
+  const handleImageReorder = reorderedFiles => setFiles(reorderedFiles)
+
   return {
+    handleImageReorder,
     handleNameChange,
     handleSubmit,
     setFiles,

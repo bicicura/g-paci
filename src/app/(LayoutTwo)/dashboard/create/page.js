@@ -10,7 +10,8 @@ import useCreateWork from '@/app/hooks/useCreateWork'
 registerPlugin(FilePondPluginImageExifOrientation)
 
 const CreateWork = () => {
-  const { name, files, handleNameChange, setFiles, handleSubmit } = useCreateWork()
+  const { name, files, handleNameChange, setFiles, handleSubmit, handleImageReorder } =
+    useCreateWork()
   return (
     <section>
       <div className="mb-12 flex gap-4 items-center">
@@ -48,9 +49,9 @@ const CreateWork = () => {
           instantUpload={false}
           files={files}
           onupdatefiles={setFiles}
+          onreorderfiles={handleImageReorder}
           allowMultiple={true}
           allowReorder={true}
-          label="holis"
           server="/api/work"
           name="files" /* sets the file input name, it's filepond by default */
           labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
