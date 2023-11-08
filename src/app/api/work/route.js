@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import supabase from '../../../../utils/supabaseClient'
 
 export async function GET(Request) {
   // Definir los datos simulados
@@ -44,70 +44,34 @@ export async function GET(Request) {
   })
 }
 
-// export async function POST(Request) {
-//   const s3 = new AWS.S3()
-//   // console.log(Request.body)
-//   ;(async () => {
-//     s3.putObject({
-//       Key: 'my-file.txt',
-//       Bucket: 'flm-g-paci',
-//       Body: 'Hello World!',
-//     }).promise()
-//   })()
-
-//   return new Response(JSON.stringify({ status: 'ok' }), {
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//   })
-// }
-
-export async function POST(request) {
-  const s3 = new AWS.S3()
-  const formData = await request.formData()
-  const files = formData.getAll('file') // Obtiene todos los archivos de FormData
-  const slug = formData.get('slug')
-
-  if (!files.length) {
-    return new Response(JSON.stringify({ error: 'No files found.' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  }
-
-  const uploadPromises = files.map(async file => {
-    // Lee el archivo como buffer
-    const buffer = await file.arrayBuffer()
-
-    // Configura los parámetros de carga
-    const params = {
-      Bucket: 'flm-g-paci',
-      Key: `${slug}/${Date.now()}_${file.name}`, // Asegúrate de que el nombre del archivo sea único
-      Body: Buffer.from(buffer), // Convierte el arrayBuffer a Buffer
-      ContentType: file.type,
-    }
-
-    try {
-      // Realiza la carga a S3
-      const s3Response = await s3.upload(params).promise()
-      return { status: 'ok', url: s3Response.Location } // Retorna el estado y la URL
-    } catch (error) {
-      throw new Error(error.message) // Lanza un error que será capturado más abajo
-    }
-  })
+export async function POST(Request) {
+  const { name, slug, status } = await Request.json()
 
   try {
-    // Espera a que todas las promesas de carga se resuelvan
-    const uploadResults = await Promise.all(uploadPromises)
-    // Retorna las URLs de los archivos subidos
-    return new Response(JSON.stringify(uploadResults), {
+    const { data: workData, error: workError } = await insertWork({ name, slug, status })
+
+    if (workError) {
+      // Devuelve una respuesta con un código de estado 400 y el mensaje de error
+      return new Response(JSON.stringify({ error: workError.message }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Si todo salió bien, devuelve una respuesta con código de estado 200 y los datos insertados
+    return new Response(JSON.stringify(workData), {
+      status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (error) {
-    // Maneja cualquier error que ocurra durante la carga
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.log(error)
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })
   }
+}
+
+const insertWork = async ({ name, slug, status }) => {
+  return await supabase.from('works').insert([{ name, slug, status }]).select()
 }

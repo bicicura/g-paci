@@ -3,123 +3,14 @@
 import { Button, Input } from '@nextui-org/react'
 import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
-import { useState } from 'react'
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
 import Link from 'next/link'
-import supabase from '../../../../../utils/supabaseClient'
-import slugify from 'slugify'
+import useCreateWork from '@/app/hooks/useCreateWork'
 
 registerPlugin(FilePondPluginImageExifOrientation)
 
 const CreateWork = () => {
-  const [name, setName] = useState('')
-  const [files, setFiles] = useState([])
-
-  const handleNameChange = event => {
-    setName(event.target.value) // Actualiza el estado `name` con el valor actual del input
-  }
-
-  function generateSlug(text) {
-    return slugify(text, {
-      replacement: '-', // reemplazar espacios y caracteres especiales por guiones
-      remove: undefined, // patrón de regex para caracteres a eliminar, undefined elimina los no permitidos en una URL
-      lower: true, // convertir a minúsculas
-      strict: true, // recortar caracteres que no son palabras ni números
-      locale: 'en', // idioma para la transliteración
-    })
-  }
-
-  async function createUniqueSlug(baseSlug, supabase) {
-    let uniqueSlug = generateSlug(baseSlug)
-    let counter = 2 // Comienza en 2 para que el primer duplicado sea '-2'
-
-    while (true) {
-      let { data, error } = await supabase
-        .from('works')
-        .select('slug')
-        .eq('slug', uniqueSlug)
-
-      if (error) {
-        throw new Error(error.message)
-      }
-
-      if (data.length === 0) {
-        break // Si data está vacío, el slug es único y podemos salir del bucle
-      }
-
-      // Si el slug ya existe, agrega o incrementa el contador al final del slug
-      uniqueSlug = `${generateSlug(baseSlug)}-${counter}`
-      counter++
-    }
-
-    return uniqueSlug
-  }
-
-  const uploadFilesToS3 = async (files, slug) => {
-    // Asegúrate de que 'files' es un array
-    if (!Array.isArray(files)) {
-      throw new Error('files is not iterable')
-    }
-
-    // Mapea cada archivo a una promesa de carga
-    const uploadPromises = files.map(fileItem => {
-      const formData = new FormData()
-      formData.append('slug', slug)
-      formData.append('file', fileItem.file)
-      // Devuelve la promesa de fetch directamente
-      return fetch('/api/work', {
-        method: 'POST',
-        body: formData, // No establezcas el Content-Type aquí, fetch lo manejará.
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        return response.json()
-      })
-    })
-
-    // Devuelve el array de promesas
-    return uploadPromises
-  }
-
-  const handleSubmit = async () => {
-    try {
-      const uniqueSlug = await createUniqueSlug(name, supabase)
-      // Asegúrate de que 'files' es un array antes de pasar a la función
-      const uploadPromises = await uploadFilesToS3(files, uniqueSlug)
-
-      // Espera a que todas las cargas terminen
-      const imageUrls = await Promise.all(uploadPromises)
-      console.log(imageUrls)
-
-      // Inserta la información en Supabase aquí
-      // Crear una nueva entrada en la tabla 'works'
-      const { data: workData, error: workError } = await insertWork(uniqueSlug)
-
-      if (workError) {
-        throw new Error(workError.message)
-      }
-
-      // Obtener el id del trabajo insertado
-      const workId = workData[0].id
-
-      // Insertar registros en 'work_images' para cada imagen
-      const imageInsertPromises = imageUrls.map(url => insertWorkImage(workId, url))
-      await Promise.all(imageInsertPromises)
-
-      console.log('Work and images uploaded successfully')
-    } catch (error) {
-      console.error('Error during the upload process:', error)
-    }
-  }
-
-  const insertWork = async slug => {
-    return await supabase
-      .from('works')
-      .insert([{ name: name, slug: slug, status: 'active' }])
-      .select()
-  }
-
+  const { name, files, handleNameChange, setFiles, handleSubmit } = useCreateWork()
   return (
     <section>
       <div className="mb-12 flex gap-4 items-center">
