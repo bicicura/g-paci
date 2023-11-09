@@ -16,8 +16,9 @@ registerPlugin(FilePondPluginImageExifOrientation)
 const EditWork = () => {
   const pathname = usePathname()
   const [files, setFiles] = useState([])
-  const [work, setWork] = useState({ name: '', status: '', slug: '' })
+  const [work, setWork] = useState({ name: '', status: '', slug: '', id: null })
   const [isActive, setIsActive] = useState(false)
+  const [workImages, setWorkImages] = useState([])
 
   const statusColorMap = {
     active: 'success',
@@ -41,9 +42,48 @@ const EditWork = () => {
     }
   }
 
+  async function getWorkImages() {
+    try {
+      let { data, error } = await supabase
+        .from('works_images')
+        .select('*')
+        .eq('work_id', work.id) // Suponiendo que 'work_id' es la columna de la tabla 'work_images' que referencia 'id' de la tabla 'works'
+
+      if (error) throw error
+
+      // Procesar data, que contiene las imágenes relacionadas con el trabajo
+      console.log(data)
+      setWorkImages(data)
+    } catch (error) {
+      console.error('Error fetching work images: ', error)
+    }
+  }
+
+  const handleDeleteImg = async ({ id, img }) => {
+    try {
+      await fetch('/api/work-images', {
+        method: 'DELETE',
+        body: JSON.stringify({
+          'img-id': id,
+          slug: work.slug,
+          'file-name': img,
+        }),
+      })
+      await getWorkImages()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     getTableData()
   }, [])
+
+  useEffect(() => {
+    if (work.id) {
+      getWorkImages(work.id)
+    }
+  }, [work.id])
 
   return (
     <>
@@ -99,37 +139,42 @@ const EditWork = () => {
 
           <div>
             <h3 className="text-black text-lg mb-4">Reordenar imagenes</h3>
-            <section className="p-3 flex gap-3 bg-default-100 rounded-xl border border-gray-100">
-              <div className="h-20 w-32 relative rounded-lg shadow-md cursor-grab overflow-hidden border border-default-300 ">
-                <Image
-                  className=" object-contain rounded-lg"
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/slide-1.jpg`}
-                  alt="hero image"
-                  priority
-                  fill
-                  sizes="200px"
-                />
-              </div>
-              <div className="h-20 w-32 relative rounded-lg shadow-md cursor-grab overflow-hidden border border-default-300 ">
-                <Image
-                  className=" object-contain rounded-lg"
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/slide-2.jpg`}
-                  alt="hero image"
-                  priority
-                  fill
-                  sizes="200px"
-                />
-              </div>
-              <div className="h-20 w-32 relative rounded-lg shadow-md cursor-grab overflow-hidden border border-default-300 ">
-                <Image
-                  className=" object-contain rounded-lg"
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/slide-3.jpg`}
-                  alt="hero image"
-                  priority
-                  fill
-                  sizes="200px"
-                />
-              </div>
+            <section className="p-3 flex gap-6 bg-default-100 rounded-xl w-full flex-wrap border border-gray-100">
+              {workImages.length &&
+                workImages.map(image => (
+                  <div
+                    key={image.id}
+                    className="group h-20 w-32 relative rounded-lg shadow-md cursor-grab border border-default-300 "
+                  >
+                    <button
+                      className="opacity-0 group-hover:opacity-100 translate-y-1.5 group-hover:translate-y-0 duration-200 ease-in-out transition-all tran absolute z-10 flex items-center justify-center w-8 h-8 bg-red-500 rounded-full -top-4 -right-4"
+                      onClick={() => {
+                        handleDeleteImg(image)
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="rotate-45"
+                        width="13"
+                        height="14"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="#fff"
+                          d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"
+                        ></path>
+                      </svg>
+                    </button>
+                    <Image
+                      className=" object-contain rounded-lg"
+                      src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/${image.img}`}
+                      alt="hero image"
+                      priority
+                      fill
+                      sizes="200px"
+                    />
+                  </div>
+                ))}
             </section>
           </div>
 
@@ -139,12 +184,21 @@ const EditWork = () => {
             <h3 className="text-black text-lg mb-4">Cargar nuevas imagenes</h3>
             <FilePond
               files={files}
+              onprocessfile={e => getWorkImages()}
               onupdatefiles={setFiles}
               allowMultiple={true}
-              allowReorder={true}
-              label="holis"
-              server="/api/work"
-              name="files" /* sets the file input name, it's filepond by default */
+              server={{
+                url: `/api/work-images-instant-upload`,
+                process: {
+                  headers: {
+                    'work-id': work.id, // Puedes enviar datos adicionales a través de encabezados
+                    'work-slug': work.slug,
+                  },
+                  onload: response => JSON.parse(response).data,
+                  onerror: response => JSON.parse(response).error,
+                },
+              }}
+              name="files"
               labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
             />
           </div>

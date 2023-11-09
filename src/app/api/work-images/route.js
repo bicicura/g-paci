@@ -1,9 +1,58 @@
 import AWS from 'aws-sdk'
 import supabase from '../../../../utils/supabaseClient'
 
-export async function POST(request) {
+export async function DELETE(Request) {
+  const body = await Request.json()
+  const imgId = body['img-id']
+  const slug = body['slug']
+  const fileName = body['file-name']
+
   const s3 = new AWS.S3()
-  const formData = await request.formData()
+
+  // Eliminar el archivo de S3
+  const params = {
+    Bucket: 'flm-g-paci',
+    Key: `${slug}/${fileName}`, // Asegúrate de que el Key sea correcto
+  }
+
+  try {
+    // Intenta eliminar el archivo de S3
+    await s3.deleteObject(params).promise()
+    console.log(`File ${imgId} deleted successfully from S3`)
+
+    // Intenta eliminar la referencia en Supabase
+    const { data, error } = await supabase
+      .from('works_images')
+      .delete()
+      .match({ id: imgId })
+
+    if (error) {
+      throw error
+    }
+
+    console.log(`Reference to file ${imgId} deleted successfully from Supabase`, data)
+
+    // Si todo fue bien, envía una respuesta exitosa
+    return new Response(
+      JSON.stringify({ message: 'File and reference deleted successfully.' }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
+  } catch (error) {
+    console.error('Deletion error:', error)
+    // Si hubo un error, envía una respuesta de error
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}
+
+export async function POST(Request) {
+  const s3 = new AWS.S3()
+  const formData = await Request.formData()
   const files = formData.getAll('file') // Obtiene todos los archivos de FormData
   const slug = formData.get('slug')
   const workId = formData.get('workId')
