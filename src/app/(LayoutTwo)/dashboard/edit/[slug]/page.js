@@ -16,7 +16,7 @@ registerPlugin(FilePondPluginImageExifOrientation)
 const EditWork = () => {
   const pathname = usePathname()
   const [files, setFiles] = useState([])
-  const [work, setWork] = useState({})
+  const [work, setWork] = useState({ name: '', status: '', slug: '' })
   const [isActive, setIsActive] = useState(false)
 
   const statusColorMap = {
@@ -47,7 +47,7 @@ const EditWork = () => {
 
   return (
     <>
-      {work && (
+      {work.slug ? (
         <section>
           <div className="mb-12 flex gap-4 items-center">
             <Link href="/dashboard">
@@ -103,28 +103,31 @@ const EditWork = () => {
               <div className="h-20 w-32 relative rounded-lg shadow-md cursor-grab overflow-hidden border border-default-300 ">
                 <Image
                   className=" object-contain rounded-lg"
-                  src={`/images/work/${work.slug}/slide-1.jpg`}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/slide-1.jpg`}
                   alt="hero image"
                   priority
-                  layout="fill"
+                  fill
+                  sizes="200px"
                 />
               </div>
               <div className="h-20 w-32 relative rounded-lg shadow-md cursor-grab overflow-hidden border border-default-300 ">
                 <Image
                   className=" object-contain rounded-lg"
-                  src={`/images/work/${work.slug}/slide-2.jpg`}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/slide-2.jpg`}
                   alt="hero image"
                   priority
-                  layout="fill"
+                  fill
+                  sizes="200px"
                 />
               </div>
               <div className="h-20 w-32 relative rounded-lg shadow-md cursor-grab overflow-hidden border border-default-300 ">
                 <Image
                   className=" object-contain rounded-lg"
-                  src={`/images/work/${work.slug}/slide-3.jpg`}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/slide-3.jpg`}
                   alt="hero image"
                   priority
-                  layout="fill"
+                  fill
+                  sizes="200px"
                 />
               </div>
             </section>
@@ -154,6 +157,8 @@ const EditWork = () => {
             </Button>
           </div>
         </section>
+      ) : (
+        <p>Loading</p>
       )}
     </>
   )

@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import slugify from 'slugify'
 import supabase from '../../../utils/supabaseClient'
+import { useRouter } from 'next/navigation'
 
 const useCreateWork = () => {
   const [name, setName] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [files, setFiles] = useState([])
+  const router = useRouter()
 
   const handleNameChange = event => {
     setName(event.target.value) // Actualiza el estado `name` con el valor actual del input
@@ -76,6 +79,12 @@ const useCreateWork = () => {
   }
 
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return alert('Por favor, completa todos los campos.')
+    }
+
+    setIsLoading(true)
+
     try {
       const uniqueSlug = await createUniqueSlug(name, supabase)
 
@@ -90,13 +99,13 @@ const useCreateWork = () => {
       const uploadPromises = await uploadFilesToS3({ slug: uniqueSlug, workId })
 
       // Espera a que todas las cargas terminen
-      const imageUrls = await Promise.all(uploadPromises)
+      await Promise.all(uploadPromises)
 
-      console.log(imageUrls)
-
-      console.log('Work and images uploaded successfully')
+      router.push('/dashboard')
     } catch (error) {
       console.error('Error during the upload process:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -109,10 +118,14 @@ const useCreateWork = () => {
 
   const handleImageReorder = reorderedFiles => setFiles(reorderedFiles)
 
+  const validateForm = () => name.length > 0 && files.length > 0
+
   return {
     handleImageReorder,
     handleNameChange,
     handleSubmit,
+    validateForm,
+    isLoading,
     setFiles,
     setName,
     files,

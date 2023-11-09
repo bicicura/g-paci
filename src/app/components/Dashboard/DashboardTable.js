@@ -43,22 +43,44 @@ export default function DashboardTable() {
     }
   }, [])
 
+  const getImageCount = async workId => {
+    let { data, error } = await supabase
+      .from('works_images')
+      .select('id', { count: 'exact' })
+      .eq('work_id', workId)
+
+    if (error) {
+      console.error('Error fetching image count:', error)
+      return 0 // return 0 if there's an error
+    }
+
+    return data.length // this will return the count of images for the given work_id
+  }
+
   async function getTableData() {
     try {
       let { data, error } = await supabase.from('works').select()
-      const newData = data.map(item => {
+
+      if (error) {
+        throw error
+      }
+
+      const promises = data.map(async item => {
+        const imagesCount = await getImageCount(item.id)
         return {
           id: item.id,
           name: item.name,
           status: item.status,
           slug: item.slug,
-          avatar: `images/work/${item.slug}/slide-1.jpg`,
-          images_count: 3,
+          avatar: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/slide-1.jpg`,
+          images_count: imagesCount, // use the dynamic count from getImageCount
         }
       })
+
+      const newData = await Promise.all(promises)
       setTableData(newData)
     } catch (error) {
-      console.log(error)
+      console.error('Error getting table data:', error)
     }
   }
 
