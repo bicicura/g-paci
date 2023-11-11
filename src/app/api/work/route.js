@@ -1,4 +1,5 @@
 import supabase from '../../../../utils/supabaseClient'
+import AWS from 'aws-sdk'
 
 export async function GET(Request) {
   // Definir los datos simulados
@@ -66,6 +67,70 @@ export async function POST(Request) {
   } catch (error) {
     console.log(error)
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}
+
+export async function DELETE(Request, context) {
+  // ... tus variables iniciales ...
+
+  const url = Request.nextUrl
+
+  // Acceder a los searchParams y extraer los parámetros necesarios
+  const slug = url.searchParams.get('slug')
+  const workId = url.searchParams.get('workId')
+
+  const s3 = new AWS.S3()
+  const bucketName = 'flm-g-paci'
+
+  try {
+    // Listar todos los objetos en el "directorio"
+    const listParams = {
+      Bucket: bucketName,
+      Prefix: `${slug}/`,
+    }
+    const listedObjects = await s3.listObjectsV2(listParams).promise()
+
+    // Verificar si hay objetos para eliminar
+    if (listedObjects.Contents.length === 0) return
+
+    // Preparar la eliminación de los objetos
+    const deleteParams = {
+      Bucket: bucketName,
+      Delete: { Objects: [] },
+    }
+    listedObjects.Contents.forEach(({ Key }) => {
+      deleteParams.Delete.Objects.push({ Key })
+    })
+
+    // Eliminar los objetos
+    await s3.deleteObjects(deleteParams).promise()
+
+    // Manejar referencias en Supabase (ajustar según tu lógica)
+    const { data, error } = await supabase.from('works').delete().match({ id: workId })
+
+    if (error) {
+      throw error
+    }
+
+    // Respuesta de éxito
+    return new Response(
+      JSON.stringify({
+        message: `Work: ${workId + ' ' + slug} Deleted successfully`,
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        status: 200,
+      }
+    )
+  } catch (error) {
+    console.error('Deletion error:', error)
+    // Si hubo un error, envía una respuesta de error
+    return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })
