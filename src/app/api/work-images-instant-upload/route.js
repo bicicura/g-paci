@@ -1,6 +1,12 @@
 import AWS from 'aws-sdk'
 import supabase from '../../../../utils/supabaseClient'
 
+// Configuración del SDK de AWS con credenciales
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+})
+
 export async function POST(Request) {
   const s3 = new AWS.S3()
   const formData = await Request.formData()

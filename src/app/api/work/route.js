@@ -1,6 +1,12 @@
 import supabase from '../../../../utils/supabaseClient'
 import AWS from 'aws-sdk'
 
+// Configuración del SDK de AWS con credenciales
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+})
+
 export async function GET(Request) {
   // Definir los datos simulados
   const mockData = [
