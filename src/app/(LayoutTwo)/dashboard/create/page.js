@@ -4,10 +4,16 @@ import { Button, Input } from '@nextui-org/react'
 import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import Link from 'next/link'
 import useCreateWork from '@/app/hooks/useCreateWork'
 
-registerPlugin(FilePondPluginImageExifOrientation)
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginFileValidateType,
+  FilePondPluginFileValidateSize
+)
 
 const CreateWork = () => {
   const {
@@ -21,7 +27,7 @@ const CreateWork = () => {
   } = useCreateWork()
   return (
     <section>
-      <div className="mb-12 flex gap-4 items-center">
+      <div className="flex items-center gap-4 mb-12">
         <Link href="/dashboard">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +35,7 @@ const CreateWork = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-8 h-8 text-default-700 cursor-pointer hover:text-default-400 transition-colors duration-200"
+            className="w-8 h-8 transition-colors duration-200 cursor-pointer text-default-700 hover:text-default-400"
           >
             <path
               strokeLinecap="round"
@@ -39,7 +45,7 @@ const CreateWork = () => {
           </svg>
         </Link>
 
-        <h1 className="text-3xl text-default-700 font-bold">Crear proyecto</h1>
+        <h1 className="text-3xl font-bold text-default-700">Crear proyecto</h1>
       </div>
       <Input
         isRequired
@@ -54,8 +60,12 @@ const CreateWork = () => {
       />
 
       <div className="mt-8">
-        <h3 className="text-black text-lg mb-4">Imagenes</h3>
+        <h3 className="mb-4 text-lg text-black">Imagenes</h3>
         <FilePond
+          allowFileSizeValidation
+          allowFileTypeValidation
+          maxFileSize={5000000}
+          acceptedFileTypes={['image/*']}
           disabled={isLoading}
           instantUpload={false}
           files={files}
@@ -68,7 +78,7 @@ const CreateWork = () => {
           labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
         />
       </div>
-      <div className="flex mt-8 justify-end">
+      <div className="flex justify-end mt-8">
         <Button
           disabled={isLoading}
           className="font-bold disabled:opacity-70 disabled:cursor-not-allowed"

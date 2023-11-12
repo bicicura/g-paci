@@ -5,13 +5,19 @@ import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
 import { useEffect, useState } from 'react'
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import supabase from '../../../../../../utils/supabaseClient'
 import { Checkbox } from '@nextui-org/react'
 
-registerPlugin(FilePondPluginImageExifOrientation)
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginFileValidateType,
+  FilePondPluginFileValidateSize
+)
 
 const EditWork = () => {
   const pathname = usePathname()
@@ -89,7 +95,7 @@ const EditWork = () => {
     <>
       {work.slug ? (
         <section>
-          <div className="mb-12 flex gap-4 items-center">
+          <div className="flex items-center gap-4 mb-12">
             <Link href="/dashboard">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +103,7 @@ const EditWork = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-8 h-8 text-default-700 cursor-pointer hover:text-default-400 transition-colors duration-200"
+                className="w-8 h-8 transition-colors duration-200 cursor-pointer text-default-700 hover:text-default-400"
               >
                 <path
                   strokeLinecap="round"
@@ -107,8 +113,8 @@ const EditWork = () => {
               </svg>
             </Link>
 
-            <div className="flex gap-4 items-center">
-              <h1 className="text-3xl text-default-700 font-bold">{work.name}</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-3xl font-bold text-default-700">{work.name}</h1>
               <Chip
                 className="capitalize"
                 color={statusColorMap[work.status]}
@@ -138,13 +144,13 @@ const EditWork = () => {
           <Divider className="my-8" />
 
           <div>
-            <h3 className="text-black text-lg mb-4">Reordenar imagenes</h3>
-            <section className="p-3 flex gap-6 bg-default-100 rounded-xl w-full flex-wrap border border-gray-100">
+            <h3 className="mb-4 text-lg text-black">Reordenar imagenes</h3>
+            <section className="flex flex-wrap w-full gap-6 p-3 border border-gray-100 bg-default-100 rounded-xl">
               {workImages.length &&
                 workImages.map(image => (
                   <div
                     key={image.id}
-                    className="group h-20 w-32 relative rounded-lg shadow-md cursor-grab border border-default-300 "
+                    className="relative w-32 h-20 border rounded-lg shadow-md group cursor-grab border-default-300 "
                   >
                     <button
                       className="opacity-0 group-hover:opacity-100 translate-y-1.5 group-hover:translate-y-0 duration-200 ease-in-out transition-all tran absolute z-10 flex items-center justify-center w-8 h-8 bg-red-500 rounded-full -top-4 -right-4"
@@ -166,7 +172,7 @@ const EditWork = () => {
                       </svg>
                     </button>
                     <Image
-                      className=" object-contain rounded-lg"
+                      className="object-contain rounded-lg "
                       src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/${image.img}`}
                       alt="hero image"
                       priority
@@ -181,8 +187,12 @@ const EditWork = () => {
           <Divider className="my-8" />
 
           <div>
-            <h3 className="text-black text-lg mb-4">Cargar nuevas imagenes</h3>
+            <h3 className="mb-4 text-lg text-black">Cargar nuevas imagenes</h3>
             <FilePond
+              allowFileSizeValidation
+              allowFileTypeValidation
+              maxFileSize={5000000}
+              acceptedFileTypes={['image/*']}
               files={files}
               onprocessfile={e => getWorkImages()}
               onupdatefiles={setFiles}
@@ -202,7 +212,7 @@ const EditWork = () => {
               labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
             />
           </div>
-          <div className="flex mt-8 justify-end">
+          <div className="flex justify-end mt-8">
             <Button
               className="font-bold"
               color="primary"
