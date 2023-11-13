@@ -51,7 +51,7 @@ const CreateWork = () => {
         isRequired
         disabled={isLoading}
         type="text"
-        label="Título"
+        label="Title"
         value={name}
         onChange={handleNameChange}
         description="Ingrese el nombre del proyecto."
