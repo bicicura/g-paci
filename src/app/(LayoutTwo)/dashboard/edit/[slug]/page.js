@@ -3,16 +3,13 @@
 import { Button, Input, Divider, Chip } from '@nextui-org/react'
 import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
-import { useEffect, useState, useRef } from 'react'
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import Image from 'next/image'
-import supabase from '../../../../../../utils/supabaseClient'
 import { Checkbox } from '@nextui-org/react'
-import Sortable from 'sortablejs'
+import useEditWork from '@/app/hooks/useEditWork'
 
 registerPlugin(
   FilePondPluginImageExifOrientation,
@@ -21,96 +18,22 @@ registerPlugin(
 )
 
 const EditWork = () => {
-  const pathname = usePathname()
-  const [files, setFiles] = useState([])
-  const [work, setWork] = useState({ name: '', status: '', slug: '', id: null })
-  const [isActive, setIsActive] = useState(false)
-  const [workImages, setWorkImages] = useState([])
-  const sortableContainerRef = useRef(null)
-
-  const statusColorMap = {
-    active: 'success',
-    paused: 'danger',
-    inactive: 'warning',
-  }
-
-  useEffect(() => {
-    if (sortableContainerRef.current) {
-      new Sortable(sortableContainerRef.current, {
-        animation: 150,
-        onEnd: function () {
-          // Obtener los hijos del contenedor ordenable
-          const orderedNodes = sortableContainerRef.current.children
-          // Crear un array basado en esos hijos
-          const orderedIds = Array.from(orderedNodes).map(node => node.dataset.id)
-          // Mostrar el nuevo orden en la consola
-          console.log('Nuevo orden de IDs:', orderedIds)
-
-          // Aquí puedes actualizar el estado o hacer otras acciones necesarias
-          // con el nuevo orden de los ítems
-        },
-      })
-    }
-  }, [workImages]) // Asegúrate de incluir las dependencias necesarias aquí
-
-  async function getTableData() {
-    try {
-      const slug = pathname.split('/').pop()
-      let { data, error } = await supabase
-        .from('works')
-        .select('*')
-        .eq('slug', slug)
-        .limit(1)
-        .single()
-      setWork(data)
-      setIsActive(data.status === 'active' ? true : false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  async function getWorkImages() {
-    try {
-      let { data, error } = await supabase
-        .from('works_images')
-        .select('*')
-        .eq('work_id', work.id) // Suponiendo que 'work_id' es la columna de la tabla 'work_images' que referencia 'id' de la tabla 'works'
-
-      if (error) throw error
-
-      // Procesar data, que contiene las imágenes relacionadas con el trabajo
-      console.log(data)
-      setWorkImages(data)
-    } catch (error) {
-      console.error('Error fetching work images: ', error)
-    }
-  }
-
-  const handleDeleteImg = async ({ id, img }) => {
-    try {
-      await fetch('/api/work-images', {
-        method: 'DELETE',
-        body: JSON.stringify({
-          'img-id': id,
-          slug: work.slug,
-          'file-name': img,
-        }),
-      })
-      await getWorkImages()
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  useEffect(() => {
-    getTableData()
-  }, [])
-
-  useEffect(() => {
-    if (work.id) {
-      getWorkImages(work.id)
-    }
-  }, [work.id])
+  const {
+    statusColorMap,
+    getWorkImages,
+    handleSubmit,
+    isLoading,
+    handleDeleteImg,
+    handleNameChange,
+    isActive,
+    setWork,
+    work,
+    sortableContainerRef,
+    workImages,
+    setIsActive,
+    files,
+    setFiles,
+  } = useEditWork()
 
   return (
     <>
@@ -148,16 +71,21 @@ const EditWork = () => {
           </div>
           <div className="flex items-center gap-8">
             <Input
+              disabled={isLoading}
               isRequired
               type="text"
               label="Title"
               description="Ingrese el nombre del proyecto."
               value={work.name}
+              onChange={handleNameChange}
               className="max-w-xs text-black"
             />
             <Checkbox
               isSelected={isActive}
-              onValueChange={setIsActive}
+              onValueChange={value => {
+                setIsActive(value)
+                setWork({ ...work, status: value ? 'active' : 'inactive' })
+              }}
             >
               Active
             </Checkbox>
@@ -169,7 +97,9 @@ const EditWork = () => {
             <h3 className="mb-4 text-lg text-black">Reordenar imagenes</h3>
             <section
               ref={sortableContainerRef}
-              className="flex flex-wrap w-full gap-6 p-3 border border-gray-100 bg-default-100 rounded-xl"
+              className={`${
+                isLoading ? 'pointer-events-none cursor-not-allowed opacity-70' : ''
+              } flex flex-wrap w-full gap-6 p-3 border border-gray-100 bg-default-100 rounded-xl`}
             >
               {workImages.length &&
                 workImages.map(image => (
@@ -209,53 +139,13 @@ const EditWork = () => {
                 ))}
             </section>
           </div>
-          {/* <div>
-            <h3 className="mb-4 text-lg text-black">Reordenar imagenes</h3>
-            <section className="flex flex-wrap w-full gap-6 p-3 border border-gray-100 bg-default-100 rounded-xl">
-              {workImages.length &&
-                workImages.map(image => (
-                  <div
-                    draggable="true"
-                    key={image.id}
-                    className="relative w-32 h-20 border rounded-lg shadow-md group cursor-grab border-default-300 "
-                  >
-                    <button
-                      className="opacity-0 group-hover:opacity-100 translate-y-1.5 group-hover:translate-y-0 duration-200 ease-in-out transition-all tran absolute z-10 flex items-center justify-center w-8 h-8 bg-red-500 rounded-full -top-4 -right-4"
-                      onClick={() => {
-                        handleDeleteImg(image)
-                      }}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="rotate-45"
-                        width="13"
-                        height="14"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="#fff"
-                          d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"
-                        ></path>
-                      </svg>
-                    </button>
-                    <Image
-                      className="object-contain rounded-lg "
-                      src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${work.slug}/${image.img}`}
-                      alt="hero image"
-                      priority
-                      fill
-                      sizes="200px"
-                    />
-                  </div>
-                ))}
-            </section>
-          </div> */}
 
           <Divider className="my-8" />
 
           <div>
             <h3 className="mb-4 text-lg text-black">Cargar nuevas imagenes</h3>
             <FilePond
+              disabled={isLoading}
               allowFileSizeValidation
               allowFileTypeValidation
               maxFileSize={5000000}
@@ -281,9 +171,29 @@ const EditWork = () => {
           </div>
           <div className="flex justify-end mt-8">
             <Button
-              className="font-bold"
+              className="font-bold disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={isLoading}
               color="primary"
+              onClick={() => handleSubmit()}
             >
+              {isLoading && (
+                <svg
+                  aria-hidden="true"
+                  className="inline w-5 h-5 text-gray-200 animate-spin fill-slate-900"
+                  viewBox="0 0 100 101"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                    fill="currentFill"
+                  />
+                </svg>
+              )}
               Save
             </Button>
           </div>
