@@ -2,12 +2,14 @@ import { useState } from 'react'
 import slugify from 'slugify'
 import supabase from '../../../utils/supabaseClient'
 import { useRouter } from 'next/navigation'
+import { useSnackbar } from '../contexts/SnackbarContext'
 
 const useCreateWork = () => {
   const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [files, setFiles] = useState([])
   const router = useRouter()
+  const { showSnackbar } = useSnackbar()
 
   const handleNameChange = event => {
     setName(event.target.value) // Actualiza el estado `name` con el valor actual del input
@@ -80,12 +82,11 @@ const useCreateWork = () => {
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      return alert('Por favor, completa todos los campos.')
+      return showSnackbar('Por favor, completa todos los campos.', 'error')
     }
 
-    setIsLoading(true)
-
     try {
+      setIsLoading(true)
       const uniqueSlug = await createUniqueSlug(name, supabase)
 
       // Crear una nueva entrada en la tabla 'works'
@@ -102,8 +103,10 @@ const useCreateWork = () => {
       await Promise.all(uploadPromises)
 
       router.push('/dashboard')
+      showSnackbar('Work creado exitosamente.', 'success')
     } catch (error) {
       console.error('Error during the upload process:', error)
+      showSnackbar('Hubo un error, intente más tarde.', 'error')
     } finally {
       setIsLoading(false)
     }

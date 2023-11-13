@@ -4,6 +4,7 @@ import supabase from '../../../utils/supabaseClient'
 import { EditIcon } from '../components/Dashboard/EditIcon'
 import { DeleteIcon } from '../components/Dashboard/DeleteIcon'
 import NextLink from 'next/link'
+import { useSnackbar } from '../contexts/SnackbarContext'
 
 const useDashboardTable = () => {
   const [filterValue, setFilterValue] = useState('')
@@ -11,6 +12,7 @@ const useDashboardTable = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [selectedWork, setSelectedWork] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const { showSnackbar } = useSnackbar()
 
   const statusColorMap = {
     active: 'success',
@@ -34,10 +36,18 @@ const useDashboardTable = () => {
       await fetch(url, {
         method: 'DELETE',
       })
-      await getTableData()
+      showSnackbar('Work eliminado exitosamente.', 'success')
+      try {
+        await getTableData()
+      } catch (error) {
+        showSnackbar(
+          'Se ha eliminado el work, pero hubo un error al refrescar la tabla.',
+          'error'
+        )
+      }
     } catch (error) {
       // show error message
-      console.log(error)
+      showSnackbar('Hubo un error, intente más tarde.', 'error')
     } finally {
       setIsLoading(false)
     }

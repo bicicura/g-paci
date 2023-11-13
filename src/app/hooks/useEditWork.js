@@ -3,6 +3,7 @@ import { usePathname } from 'next/navigation'
 import supabase from '../../../utils/supabaseClient'
 import Sortable from 'sortablejs'
 import { useRouter } from 'next/navigation'
+import { useSnackbar } from '../contexts/SnackbarContext'
 
 const useEditWork = () => {
   const pathname = usePathname()
@@ -13,6 +14,7 @@ const useEditWork = () => {
   const sortableContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const { showSnackbar } = useSnackbar()
 
   const statusColorMap = {
     active: 'success',
@@ -113,12 +115,11 @@ const useEditWork = () => {
           images: workImages,
         }),
       })
-      const data = await res.json()
-      console.log(data)
-
+      await res.json()
       router.push('/dashboard')
+      showSnackbar('Work editado exitosamente.', 'success')
     } catch (error) {
-      console.error('Error during the upload process:', error)
+      showSnackbar('Hubo un error, intente más tarde.', 'error')
     } finally {
       setIsLoading(false)
     }
