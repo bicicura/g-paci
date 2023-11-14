@@ -80,11 +80,7 @@ const useDashboardTable = () => {
     try {
       setIsLoading(true)
 
-      // let { data, error } = await supabase.from('works').select()
-      const { data, error } = await supabase.from('works').select(`
-      *,
-      works_images!inner(order=0)
-    `)
+      let { data, error } = await supabase.from('works').select()
 
       if (error) {
         throw error
