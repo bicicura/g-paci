@@ -15,6 +15,7 @@ import {
   ModalBody,
   ModalHeader,
   ModalFooter,
+  Spinner,
 } from '@nextui-org/react'
 import useDashboardTable from '@/app/hooks/useDashboardTable'
 import { columns } from './data'
@@ -63,7 +64,10 @@ export default function DashboardTable() {
             <PlusIcon />
           </Link>
         </div>
-        <Table aria-label="Gastón Paci portfolio's table">
+        <Table
+          aria-label="Gastón Paci portfolio's table"
+          style={{ minHeight: '300px' }}
+        >
           <TableHeader columns={columns}>
             {column => (
               <TableColumn
@@ -74,7 +78,18 @@ export default function DashboardTable() {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody items={tableData}>
+          <TableBody
+            items={tableData}
+            isLoading={isLoading}
+            loadingContent={
+              <div className="bg-default-200 h-full w-full z-10 flex justify-center items-center">
+                <Spinner
+                  label="Loading..."
+                  color="primary"
+                />{' '}
+              </div>
+            }
+          >
             {item => (
               <TableRow
                 className="text-black"

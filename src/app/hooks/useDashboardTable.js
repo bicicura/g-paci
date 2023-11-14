@@ -11,7 +11,7 @@ const useDashboardTable = () => {
   const [tableData, setTableData] = useState([])
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [selectedWork, setSelectedWork] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const { showSnackbar } = useSnackbar()
 
   const statusColorMap = {
@@ -78,7 +78,13 @@ const useDashboardTable = () => {
 
   async function getTableData() {
     try {
-      let { data, error } = await supabase.from('works').select()
+      setIsLoading(true)
+
+      // let { data, error } = await supabase.from('works').select()
+      const { data, error } = await supabase.from('works').select(`
+      *,
+      works_images!inner(order=0)
+    `)
 
       if (error) {
         throw error
@@ -100,6 +106,8 @@ const useDashboardTable = () => {
       setTableData(newData)
     } catch (error) {
       console.error('Error getting table data:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 

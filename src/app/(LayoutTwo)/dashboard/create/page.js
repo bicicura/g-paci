@@ -72,7 +72,6 @@ const CreateWork = () => {
           onupdatefiles={setFiles}
           onreorderfiles={handleImageReorder}
           allowMultiple={true}
-          allowReorder={true}
           server="/api/work"
           name="files" /* sets the file input name, it's filepond by default */
           labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
