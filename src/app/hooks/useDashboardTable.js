@@ -70,6 +70,7 @@ const useDashboardTable = () => {
 
     if (error) {
       console.error('Error fetching image count:', error)
+      showSnackbar('Hubo un error, al obtener la cantidad de imagenes.', 'error')
       return 0 // return 0 if there's an error
     }
 
@@ -80,20 +81,40 @@ const useDashboardTable = () => {
     try {
       setIsLoading(true)
 
-      let { data, error } = await supabase.from('works').select()
+      // let { data, error } = await supabase.from('works').select()
+      const { data, error } = await supabase.from('works').select(`
+    *,
+    works_images (
+      id,
+      img
+    )
+    .order(orden, { foreignTable: 'works_images', ascending: true })
+    .limit(1, { foreignTable: 'works_images' })
+  `)
 
       if (error) {
+        showSnackbar(
+          'Hubo un error al obtener los registros, intente más tarde.',
+          'error'
+        )
         throw error
       }
 
-      const promises = data.map(async item => {
+      // sort the data, put the one with slug 'overview' first
+      const hi = data.sort((a, b) => {
+        if (a.slug === 'overview') return -1
+        if (b.slug === 'overview') return 1
+        return 0
+      })
+
+      const promises = hi.map(async item => {
         const imagesCount = await getImageCount(item.id)
         return {
           id: item.id,
           name: item.name,
           status: item.status,
           slug: item.slug,
-          avatar: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/slide-1.jpg`,
+          avatar: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/${item.works_images[0].img}`,
           images_count: imagesCount, // use the dynamic count from getImageCount
         }
       })

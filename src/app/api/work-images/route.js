@@ -135,7 +135,7 @@ const insertWorkImage = async ({ uploadResults, workId }) => {
         return {
           work_id: workId,
           img: image.file_name,
-          order: index,
+          order: 0,
         }
       })
     )

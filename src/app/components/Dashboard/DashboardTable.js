@@ -53,6 +53,7 @@ export default function DashboardTable() {
             variant="bordered"
             onClear={() => setFilterValue('')}
             onValueChange={onSearchChange}
+            disabled
           />
 
           <Link
@@ -82,7 +83,7 @@ export default function DashboardTable() {
             items={tableData}
             isLoading={isLoading}
             loadingContent={
-              <div className="bg-default-200 h-full w-full z-10 flex justify-center items-center">
+              <div className="z-10 flex items-center justify-center w-full h-full bg-default-200">
                 <Spinner
                   label="Loading..."
                   color="primary"
@@ -109,14 +110,14 @@ export default function DashboardTable() {
           {onClose => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Estas por eliminar el Work: WorkName
+                Estas por eliminar un registro.
               </ModalHeader>
               <ModalBody>
                 <p>
                   Una vez eliminado el work, se procede a borrar todo su contenido. Estoy
                   incluye información e imágenes
                 </p>
-                <p className="font-bold text-sm">¿Estás segurx?</p>
+                <p className="text-sm font-bold">¿Estás segurx?</p>
               </ModalBody>
               <ModalFooter>
                 <Button
