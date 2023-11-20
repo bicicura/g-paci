@@ -8,40 +8,6 @@ AWS.config.update({
 })
 
 export async function GET(request) {
-  // Definir los datos simulados
-  const mockData = [
-    {
-      title: 'Overview',
-      slug: 'overview',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 1,
-    },
-    {
-      title: 'L’Officiel',
-      slug: 'l-officiel',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 2,
-    },
-    {
-      title: 'The Ann Wagners',
-      slug: 'the-ann-wagners',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 3,
-    },
-    {
-      title: 'KOSTÜME',
-      slug: 'kostume',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 4,
-    },
-    {
-      title: 'Ossira',
-      slug: 'ossira',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 5,
-    },
-  ]
-
   const url = request.nextUrl
 
   // Acceder a los searchParams y extraer los parámetros necesarios
@@ -80,14 +46,6 @@ export async function GET(request) {
       headers: { 'Content-Type': 'application/json' },
     })
   }
-
-  // Enviar los datos simulados como respuesta en formato JSON
-  return new Response(JSON.stringify(mockData), {
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*', // Esto permite que cualquier origen acceda a tu API
-    },
-  })
 }
 
 export async function POST(Request) {

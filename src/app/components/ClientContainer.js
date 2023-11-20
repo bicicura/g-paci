@@ -5,6 +5,7 @@ import Navbar from './Navigation/Navbar.js'
 import { HoverProvider } from '../contexts/HoverContext.js'
 import { useState, useEffect } from 'react'
 import ContinuousImageFilter from './ContinuousImageFilter.js'
+import NavigationProvider from '../contexts/NavigationContext.js'
 
 const ClientContainer = ({ children }) => {
   const [showIntro, setShowIntro] = useState(true)
@@ -38,10 +39,12 @@ const ClientContainer = ({ children }) => {
             opacity === 1 ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <HoverProvider>
-            <Navbar />
-            {children}
-          </HoverProvider>
+          <NavigationProvider>
+            <HoverProvider>
+              <Navbar />
+              {children}
+            </HoverProvider>
+          </NavigationProvider>
         </div>
       )}
     </>

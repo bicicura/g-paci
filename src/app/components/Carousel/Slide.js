@@ -18,7 +18,7 @@ export default function Splide(props) {
   return (
     <SplideSlide>
       <div>
-        {item && (
+        {item.slug && props.img && (
           <Image
             src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/${props.img}`}
             alt="hero image"

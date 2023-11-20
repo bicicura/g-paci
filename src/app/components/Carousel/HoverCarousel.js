@@ -1,50 +1,17 @@
 import Image from 'next/image'
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { useHover } from '@/app/contexts/HoverContext'
 import { CarouselContext } from '@/app/contexts/CarouselContext'
+import { NavigationContext } from '@/app/contexts/NavigationContext'
 
 const HoverCarousel = () => {
   const { isHovering, hoverItem } = useHover()
-  const { loading } = useContext(CarouselContext)
-
-  // @TODO: Obtener data de api | mock
-  const data = [
-    {
-      title: 'Overview',
-      slug: 'overview',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 1,
-    },
-    {
-      title: 'L’Officiel',
-      slug: 'l-officiel',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 2,
-    },
-    {
-      title: 'The Ann Wagners',
-      slug: 'the-ann-wagners',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 3,
-    },
-    {
-      title: 'KOSTÜME',
-      slug: 'kostume',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 4,
-    },
-    {
-      title: 'Ossira',
-      slug: 'ossira',
-      imgs: ['slide-1', 'slide-2', 'slide-3'],
-      id: 5,
-    },
-  ]
+  const { links: data, loading } = useContext(NavigationContext)
 
   return (
     // Verificar si isHovering es true antes de renderizar la imagen
     <>
-      {data !== null &&
+      {!loading &&
         data.map(item => (
           <div
             key={item.id}
@@ -52,7 +19,8 @@ const HoverCarousel = () => {
             ${isHovering && item.id === hoverItem.id ? 'opacity-100' : ''}`}
           >
             <Image
-              src={`/images/work/${item.slug}/slide-1.jpg`}
+              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/${item.works_images[0].img}`}
+              // src={`/images/work/${item.slug}/slide-1.jpg`}
               alt="hero image"
               className={'absolute inset-0 w-full '}
               priority

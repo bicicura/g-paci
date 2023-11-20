@@ -21,7 +21,6 @@ export const CarouselProvider = ({ children }) => {
   const pathname = usePathname()
 
   const slug = pathname.split('/').pop()
-  console.log(slug === '')
 
   const changeSlide = direction => {
     setOpacity(0)
@@ -47,12 +46,10 @@ export const CarouselProvider = ({ children }) => {
         // Create a URL object
         const url = new URL('/api/work', process.env.NEXT_PUBLIC_BASE_URL)
 
-        if (slug === '') {
-          url.searchParams.append('slug', 'overview')
-        } else {
-          // Append the slug parameter
-          url.searchParams.append('slug', slug)
-        }
+        // Append the slug parameter, default is overview
+        slug === ''
+          ? url.searchParams.append('slug', 'overview')
+          : url.searchParams.append('slug', slug)
 
         const response = await fetch(url.toString())
         const result = await response.json()
