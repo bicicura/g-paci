@@ -10,11 +10,8 @@ export default function Splide(props) {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (!loading && pathname !== '/') {
+    if (!loading) {
       setItem(data)
-    } else if (!loading && pathname === '/') {
-      const slug = 'overview'
-      setItem(data.find(project => project.slug === slug))
     }
   }, [pathname, data, loading])
 
