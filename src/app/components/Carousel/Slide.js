@@ -6,13 +6,12 @@ import { usePathname } from 'next/navigation'
 
 export default function Splide(props) {
   const { data, loading, setImagesLoaded } = useContext(CarouselContext)
-  const [item, setItem] = useState()
+  const [item, setItem] = useState({})
   const pathname = usePathname()
 
   useEffect(() => {
     if (!loading && pathname !== '/') {
-      const slug = pathname.split('/').pop()
-      setItem(data.find(project => project.slug === slug))
+      setItem(data)
     } else if (!loading && pathname === '/') {
       const slug = 'overview'
       setItem(data.find(project => project.slug === slug))
@@ -24,7 +23,7 @@ export default function Splide(props) {
       <div>
         {item && (
           <Image
-            src={`/images/work/${item.slug}/${props.img}`}
+            src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/${props.img}`}
             alt="hero image"
             priority
             width="0"

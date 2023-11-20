@@ -2,15 +2,23 @@ import { Splide } from '@splidejs/react-splide'
 import Slide from './Slide'
 import { CarouselContext } from '@/app/contexts/CarouselContext'
 import { useContext, useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 const SplideCarousel = props => {
-  // const calculateVH = () => {
-  //   return window.innerHeight * 0.01
-  // }
-
-  // const vh = calculateVH()
-
+  const { data, loading, setImagesLoaded, changeSlide } = useContext(CarouselContext)
+  const [item, setItem] = useState({})
   const [vh, setVh] = useState(null)
+  const pathname = usePathname()
+
+  useEffect(() => {
+    if (!loading && pathname !== '/') {
+      console.log(data, 'data from Splide')
+      setItem(data)
+    } else if (!loading && pathname === '/') {
+      const slug = 'overview'
+      setItem(data.find(project => project.slug === slug))
+    }
+  }, [pathname, data, loading])
 
   useEffect(() => {
     const calculateVH = () => {
@@ -27,8 +35,6 @@ const SplideCarousel = props => {
 
     return () => window.removeEventListener('resize', handleResize)
   }, [])
-
-  const { changeSlide } = useContext(CarouselContext)
 
   useEffect(() => {
     if (props.isMobile) {
@@ -84,9 +90,18 @@ const SplideCarousel = props => {
         }}
         aria-label="My Favorite Images"
       >
-        <Slide img="slide-1.jpg" />
+        {item.works_images &&
+          item.works_images.map((image, index) => (
+            <Slide
+              key={image.img}
+              slug={item.slug}
+              img={image.img}
+            />
+          ))}
+
+        {/* <Slide img="slide-1.jpg" />
         <Slide img="slide-2.jpg" />
-        <Slide img="slide-3.jpg" />
+        <Slide img="slide-3.jpg" /> */}
       </Splide>
     )
   )

@@ -10,9 +10,7 @@ const CursorWithoutEffect = () => {
 
   useEffect(() => {
     if (!loading) {
-      const slug = pathname.split('/').pop()
-      const item = data.find(project => project.slug === slug)
-      setTitle(item ? item.title : 'Overview')
+      setTitle(data ? data.name : 'Overview')
     }
   }, [pathname, data, loading])
 
@@ -46,7 +44,7 @@ const CursorWithoutEffect = () => {
         fontSize: '12px',
       }}
     >
-      {title} {currentSlide}/3
+      {title} {currentSlide}/{data?.works_images.length}
     </span>
   )
 }

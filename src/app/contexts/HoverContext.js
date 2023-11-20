@@ -8,13 +8,13 @@ export const useHover = () => {
 
 export const HoverProvider = ({ children }) => {
   const [hoverItem, setHoverItem] = useState(null)
-  const [isHovering, setIsHovering] = useState(false) // Nueva flag
+  const [isHovering, setIsHovering] = useState(false) // flag
 
   const value = {
     hoverItem,
     setHoverItem,
-    isHovering, // Exponer isHovering
-    setIsHovering, // Exponer setIsHovering
+    isHovering,
+    setIsHovering,
   }
 
   return <HoverContext.Provider value={value}>{children}</HoverContext.Provider>

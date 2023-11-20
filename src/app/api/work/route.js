@@ -7,7 +7,7 @@ AWS.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 })
 
-export async function GET(Request) {
+export async function GET(request) {
   // Definir los datos simulados
   const mockData = [
     {
@@ -41,6 +41,45 @@ export async function GET(Request) {
       id: 5,
     },
   ]
+
+  const url = request.nextUrl
+
+  // Acceder a los searchParams y extraer los parámetros necesarios
+  const slug = url.searchParams.get('slug')
+
+  try {
+    const { data, error } = await supabase
+      .from('works')
+      .select(
+        `
+        *,
+        works_images (
+          img,
+          order
+        )
+      `
+      )
+      .eq('slug', slug)
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // Esto permite que cualquier origen acceda a tu API
+      },
+    })
+  } catch (error) {
+    // Devuelve una respuesta con un código de estado 500 y el mensaje de error
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
 
   // Enviar los datos simulados como respuesta en formato JSON
   return new Response(JSON.stringify(mockData), {
