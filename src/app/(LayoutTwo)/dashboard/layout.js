@@ -38,7 +38,7 @@ export default function DashboardLayout({ children }) {
             fill="currentFill"
           />
         </svg>
-        <span className="text-sm">Loading...</span>
+        <span className="text-sm">Loading</span>
       </div>
     )
   }
