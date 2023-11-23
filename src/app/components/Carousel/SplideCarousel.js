@@ -19,16 +19,16 @@ const SplideCarousel = props => {
       width: `100%`,
     },
     1024: {
-      width: `${vh * 10}px`,
+      width: `${vh * 12}px`,
     },
     1280: {
-      width: `${vh * 100}px`,
+      width: `${vh * 107}px`,
     },
     1536: {
-      width: `${vh * 110}px`,
+      width: `${vh * 117}px`,
     },
     2000: {
-      width: `${vh * 120}px`,
+      width: `${vh * 127}px`,
     },
   }
 
