@@ -16,7 +16,7 @@ export async function POST(request) {
     .eq('email', email)
     .single()
 
-  if (error || !data || !comparePasswords(process.env.DEFAULT_PASSWORD, data.password)) {
+  if (error || !data || !comparePasswords(password, data.password)) {
     return NextResponse.json(
       {
         message: 'Unauthorized',

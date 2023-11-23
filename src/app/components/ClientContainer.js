@@ -6,11 +6,13 @@ import { HoverProvider } from '../contexts/HoverContext.js'
 import { useState, useEffect } from 'react'
 import ContinuousImageFilter from './ContinuousImageFilter.js'
 import NavigationProvider from '../contexts/NavigationContext.js'
+import { usePathname } from 'next/navigation.js'
 
 const ClientContainer = ({ children }) => {
   const [showIntro, setShowIntro] = useState(true)
   const [introOpacity, setIntroOpacity] = useState(1)
   const [opacity, setOpacity] = useState(0)
+  const pathname = usePathname()
 
   const dismissIntro = () => {
     setIntroOpacity(0)
@@ -23,7 +25,7 @@ const ClientContainer = ({ children }) => {
 
   return (
     <>
-      {showIntro && (
+      {showIntro && pathname === '/' ? (
         <div className="flex items-center justify-center w-full min-h-screen">
           <div className="w-2/6">
             <ContinuousImageFilter
@@ -32,8 +34,7 @@ const ClientContainer = ({ children }) => {
             />
           </div>
         </div>
-      )}
-      {!showIntro && (
+      ) : (
         <div
           className={`transition-opacity duration-500 ${
             opacity === 1 ? 'opacity-100' : 'opacity-0'
