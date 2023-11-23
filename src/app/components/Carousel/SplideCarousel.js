@@ -19,7 +19,7 @@ const SplideCarousel = props => {
       width: `100%`,
     },
     1024: {
-      width: `${vh * 12}px`,
+      width: `${vh * 100}px`,
     },
     1280: {
       width: `${vh * 107}px`,
@@ -28,9 +28,11 @@ const SplideCarousel = props => {
       width: `${vh * 117}px`,
     },
     2000: {
-      width: `${vh * 127}px`,
+      width: `${vh * 126.5}px`,
     },
   }
+
+  // 2000 -> mackbook 16'
 
   useEffect(() => {
     if (!loading) {
