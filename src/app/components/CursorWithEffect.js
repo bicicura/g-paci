@@ -78,7 +78,7 @@ const CursorWithEffect = () => {
 
   return (
     <span
-      className="tracking-wider"
+      className="tracking-wider custom-cursor-effect"
       ref={cursorRef}
       style={{
         position: 'absolute',

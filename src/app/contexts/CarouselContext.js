@@ -20,6 +20,8 @@ export const CarouselProvider = ({ children }) => {
   const [imagesLoaded, setImagesLoaded] = useState(false)
   const pathname = usePathname()
 
+  const [firstImageLoaded, setFirstImageLoaded] = useState(false)
+
   const slug = pathname.split('/').pop()
 
   const changeSlide = direction => {
@@ -72,6 +74,8 @@ export const CarouselProvider = ({ children }) => {
         changeSlide,
         data,
         loading,
+        firstImageLoaded,
+        setFirstImageLoaded,
         error,
         imagesLoaded,
         setImagesLoaded,

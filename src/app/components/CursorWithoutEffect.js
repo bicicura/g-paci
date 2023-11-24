@@ -32,8 +32,9 @@ const CursorWithoutEffect = () => {
   // este calc(${position.y}px - 5rem) corresponde al margen que tiene el padre en Carousel.js
   return (
     <span
+      className="custom-cursor-effect"
       style={{
-        fontSize: '12px!important',
+        fontSize: '12px',
         position: 'absolute',
         top: 0,
         left: 0,
