@@ -61,10 +61,9 @@ const SplideCarousel = props => {
   }, [pathname, data, loading])
 
   useEffect(() => {
-    if (props.isMobile && props.splideRef.current) {
+    if (props.isMobile) {
       const splide = props.splideRef.current.splide
 
-      // REVER ESTO
       const onMoved = (newIndex, prevIndex) => {
         if (newIndex > prevIndex || (newIndex === 0 && prevIndex === splide.length - 1)) {
           changeSlide('next')
@@ -72,15 +71,14 @@ const SplideCarousel = props => {
           changeSlide('previous')
         }
       }
+
       splide.on('moved', onMoved)
 
       return () => {
-        if (splide) {
-          splide.off('moved', onMoved)
-        }
+        splide.off('moved', onMoved)
       }
     }
-  }, [props.isMobile, props.splideRef])
+  }, [props.isMobile, props.splideRef, changeSlide])
 
   return loading ? (
     <div>

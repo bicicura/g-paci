@@ -7,11 +7,13 @@ import { useState, useEffect } from 'react'
 import ContinuousImageFilter from './ContinuousImageFilter.js'
 import NavigationProvider from '../contexts/NavigationContext.js'
 import { usePathname } from 'next/navigation.js'
+import useMobileDetect from '@/app/hooks/useMobileDetect.js'
 
 const ClientContainer = ({ children }) => {
   const [showIntro, setShowIntro] = useState(true)
   const [introOpacity, setIntroOpacity] = useState(1)
   const [opacity, setOpacity] = useState(0)
+  const isMobile = useMobileDetect()
   const pathname = usePathname()
 
   const dismissIntro = () => {
@@ -25,7 +27,7 @@ const ClientContainer = ({ children }) => {
 
   return (
     <>
-      {showIntro && pathname === '/' ? (
+      {showIntro && pathname === '/' && !isMobile ? (
         <div className="flex items-center justify-center w-full min-h-screen">
           <div className="w-2/6">
             <ContinuousImageFilter
