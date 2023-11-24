@@ -26,6 +26,9 @@ export async function GET(request) {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*', // Esto permite que cualquier origen acceda a tu API
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate', // Evita el almacenamiento en caché
+        Pragma: 'no-cache', // HTTP 1.0 backward compatibility
+        Expires: '0', // Proxies
       },
     })
   } catch (error) {
