@@ -10,9 +10,13 @@ const NavigationProvider = ({ children }) => {
   async function getTableData() {
     try {
       setLoading(true)
-      const response = await fetch('/api/navigation-data', {
-        cache: 'no-store',
-      })
+      const response = await fetch(
+        `/api/navigation-data?timestamp=${new Date().getTime()}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+        }
+      )
       const data = await response.json()
       // Find the overview item
       const overview = data.find(item => item.slug === 'overview')
