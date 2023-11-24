@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
+import supabase from '../../../utils/supabaseClient'
 
 export const NavigationContext = createContext()
 
@@ -10,15 +11,31 @@ const NavigationProvider = ({ children }) => {
   async function getTableData() {
     try {
       setLoading(true)
-      const response = await fetch(
-        `/api/navigation-data?timestamp=${new Date().getTime()}`,
-        {
-          method: 'GET',
-          cache: 'no-store',
-          next: { revalidate: 10 },
-        }
-      )
-      const data = await response.json()
+      // const response = await fetch(
+      //   `/api/navigation-data?timestamp=${new Date().getTime()}`,
+      //   {
+      //     method: 'GET',
+      //     cache: 'no-store',
+      //     next: { revalidate: 10 },
+      //   }
+      // )
+      // const data = await response.json()
+
+      const { data, error } = await supabase
+        .from('works')
+        .select(
+          `
+    *,
+    works_images (
+      img,
+      order
+    )
+  `
+        )
+        .eq('status', 'active')
+        .order('id', { foreignTable: 'works_images' }) // Assuming 'id' is your primary key in 'works_images'
+        .limit(1, { foreignTable: 'works_images' })
+
       // Find the overview item
       const overview = data.find(item => item.slug === 'overview')
 
