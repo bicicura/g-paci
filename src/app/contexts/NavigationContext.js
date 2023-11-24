@@ -15,6 +15,7 @@ const NavigationProvider = ({ children }) => {
         {
           method: 'GET',
           cache: 'no-store',
+          next: { revalidate: 10 },
         }
       )
       const data = await response.json()
