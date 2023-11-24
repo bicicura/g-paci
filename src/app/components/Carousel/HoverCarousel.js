@@ -7,11 +7,13 @@ import { NavigationContext } from '@/app/contexts/NavigationContext'
 const HoverCarousel = () => {
   const { isHovering, hoverItem } = useHover()
   const { links: data, loading } = useContext(NavigationContext)
+  const { loading: workLoading } = useContext(CarouselContext)
 
   return (
     // Verificar si isHovering es true antes de renderizar la imagen
     <>
       {!loading &&
+        !workLoading &&
         data.map(item => (
           <div
             key={item.id}
