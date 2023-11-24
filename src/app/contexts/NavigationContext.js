@@ -33,7 +33,7 @@ const NavigationProvider = ({ children }) => {
   `
         )
         .eq('status', 'active')
-        .order('id', { foreignTable: 'works_images' }) // Assuming 'id' is your primary key in 'works_images'
+        .order('order', { ascending: true, foreignTable: 'works_images' })
         .limit(1, { foreignTable: 'works_images' })
 
       // Find the overview item
