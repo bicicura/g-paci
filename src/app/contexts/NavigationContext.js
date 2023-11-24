@@ -5,11 +5,12 @@ export const NavigationContext = createContext()
 const NavigationProvider = ({ children }) => {
   const [links, setLinks] = useState([])
   const [loading, setLoading] = useState(true)
+  const { signal } = new AbortController()
 
   async function getTableData() {
     try {
       setLoading(true)
-      const response = await fetch('/api/navigation-data')
+      const response = await fetch('/api/navigation-data', { signal })
       const data = await response.json()
       // Find the overview item
       const overview = data.find(item => item.slug === 'overview')
