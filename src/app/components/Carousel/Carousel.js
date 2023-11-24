@@ -11,17 +11,21 @@ import MobileIndex from './MobileIndex.js'
 import '@splidejs/react-splide/css/core'
 
 export default function Carousel() {
-  const splideRef = useRef()
+  const splideRef = useRef(null)
   const isMobile = useMobileDetect()
 
   const goBack = () => {
-    const splide = splideRef.current.splide
-    splide.go('<')
+    if (splideRef.current && splideRef.current.splide) {
+      const splide = splideRef.current.splide
+      splide.go('<')
+    }
   }
 
   const goNext = () => {
-    const splide = splideRef.current.splide
-    splide.go('>')
+    if (splideRef.current && splideRef.current.splide) {
+      const splide = splideRef.current.splide
+      splide.go('>')
+    }
   }
 
   const setVH = () => {
@@ -51,8 +55,8 @@ export default function Carousel() {
             splideRef={splideRef}
           />
           <CarouselBtns
-            goBack={goBack}
-            goNext={goNext}
+            goBack={() => goBack()}
+            goNext={() => goNext()}
           />
           {!isMobile && <CursorWithEffect />}
           {!isMobile && <HoverCarousel />}

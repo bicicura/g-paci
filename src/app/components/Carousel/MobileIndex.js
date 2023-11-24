@@ -10,15 +10,18 @@ const MobileIndex = () => {
   useEffect(() => {
     if (!loading) {
       const slug = pathname.split('/').pop()
-      const item = data.find(project => project.slug === slug)
-      setTitle(item ? item.title : 'Overview')
+      setTitle(data ? data.name : 'Overview')
     }
   }, [pathname, data, loading])
 
   return (
-    <span className="absolute bottom-16 left-0 mx-auto right-0 w-max">
-      <b>{title}</b> {currentSlide}/3
-    </span>
+    <>
+      {!loading && (
+        <span className="absolute bottom-16 left-0 mx-auto right-0 w-max">
+          <b>{title}</b> {currentSlide}/{data?.works_images.length}
+        </span>
+      )}
+    </>
   )
 }
 

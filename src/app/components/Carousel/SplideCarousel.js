@@ -10,6 +10,21 @@ const SplideCarousel = props => {
   const [vh, setVh] = useState(null)
   const pathname = usePathname()
 
+  useEffect(() => {
+    const calculateVH = () => {
+      setVh(window.innerHeight * 0.01)
+    }
+
+    // Calcula el valor inicial de vh cuando se monta el componente
+    calculateVH()
+
+    // Agrega el listener para actualizar vh cuando la ventana se redimensiona
+    window.addEventListener('resize', calculateVH)
+
+    // Limpia el listener cuando el componente se desmonta
+    return () => window.removeEventListener('resize', calculateVH)
+  }, []) // Sin dependencias, se ejecuta solo al montar y desmontar
+
   // carousel breakpoints
   const breakpoints = {
     640: {
@@ -30,9 +45,14 @@ const SplideCarousel = props => {
     2000: {
       width: `${vh * 126.5}px`,
     },
+    3100: {
+      width: `${vh * 131}px`,
+    },
   }
 
+  // 1280 -> dell vostro lab
   // 2000 -> mackbook 16'
+  // 3000 -> samnsug de lio
 
   useEffect(() => {
     if (!loading) {
@@ -41,40 +61,22 @@ const SplideCarousel = props => {
   }, [pathname, data, loading])
 
   useEffect(() => {
-    const calculateVH = () => {
-      setVh(window.innerHeight * 0.01)
-    }
-
-    calculateVH()
-
-    const handleResize = () => {
-      calculateVH()
-    }
-
-    window.addEventListener('resize', handleResize)
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  useEffect(() => {
-    if (props.isMobile) {
+    if (props.isMobile && props.splideRef.current) {
       const splide = props.splideRef.current.splide
 
       const onMoved = (newIndex, prevIndex) => {
-        if (newIndex > prevIndex || (newIndex === 0 && prevIndex === splide.length - 1)) {
-          changeSlide('next')
-        } else {
-          changeSlide('previous')
-        }
+        // Your existing logic...
       }
 
       splide.on('moved', onMoved)
 
       return () => {
-        splide.off('moved', onMoved)
+        if (splide) {
+          splide.off('moved', onMoved)
+        }
       }
     }
-  }, [props.isMobile, props.splideRef, changeSlide])
+  }, [props.isMobile, props.splideRef])
 
   return loading ? (
     <div>
@@ -99,31 +101,32 @@ const SplideCarousel = props => {
         ></path>
       </svg>
     </div>
+  ) : vh !== null ? (
+    <Splide
+      ref={props.splideRef}
+      className="absolute inset-0 xl:mx-auto"
+      options={{
+        rewind: true,
+        gap: '1rem',
+        arrows: false,
+        perPage: 1,
+        type: 'fade',
+        width: '1200px',
+        breakpoints,
+      }}
+      aria-label="My Favorite Images"
+    >
+      {item.works_images &&
+        item.works_images.map((image, index) => (
+          <Slide
+            key={image.img}
+            slug={item.slug}
+            img={image.img}
+          />
+        ))}
+    </Splide>
   ) : (
-    vh && (
-      <Splide
-        ref={props.splideRef}
-        className="absolute inset-0 xl:mx-auto"
-        options={{
-          rewind: true,
-          gap: '1rem',
-          arrows: false,
-          perPage: 1,
-          type: 'fade',
-          breakpoints,
-        }}
-        aria-label="My Favorite Images"
-      >
-        {item.works_images &&
-          item.works_images.map((image, index) => (
-            <Slide
-              key={image.img}
-              slug={item.slug}
-              img={image.img}
-            />
-          ))}
-      </Splide>
-    )
+    ''
   )
 }
 

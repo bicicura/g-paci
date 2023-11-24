@@ -33,6 +33,7 @@ const CursorWithoutEffect = () => {
   return (
     <span
       style={{
+        fontSize: '12px!important',
         position: 'absolute',
         top: 0,
         left: 0,
@@ -41,7 +42,6 @@ const CursorWithoutEffect = () => {
         pointerEvents: 'none',
         transition: 'transform .1s ease',
         zIndex: -1,
-        fontSize: '12px',
       }}
     >
       {title} {currentSlide}/{data?.works_images.length}
