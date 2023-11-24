@@ -11,8 +11,7 @@ const NavigationProvider = ({ children }) => {
     try {
       setLoading(true)
       const response = await fetch('/api/navigation-data', {
-        ...signal,
-        cache: 'no-cache',
+        cache: 'no-store',
       })
       const data = await response.json()
       // Find the overview item
