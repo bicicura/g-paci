@@ -61,8 +61,12 @@ const SplideCarousel = props => {
   }, [pathname, data, loading])
 
   useEffect(() => {
-    if (props.isMobile) {
+    if (props.isMobile && props.splideRef.current) {
       const splide = props.splideRef.current.splide
+
+      if (!splide) {
+        return // Sale del useEffect si splide no está definido
+      }
 
       const onMoved = (newIndex, prevIndex) => {
         if (newIndex > prevIndex || (newIndex === 0 && prevIndex === splide.length - 1)) {
