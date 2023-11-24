@@ -30,6 +30,9 @@ export async function GET(request) {
 
     if (error) {
       throw error
+    } else if (data) {
+      // Ordenar works_images por 'order' de manera descendente
+      data.works_images.sort((a, b) => a.order - b.order)
     }
 
     return new Response(JSON.stringify(data), {
