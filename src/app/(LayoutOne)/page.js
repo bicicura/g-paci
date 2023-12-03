@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="text-sm">
       {/* <Carousel /> */}
-      <InteractiveImage imageUrl="/path/to/your/image.jpg" />
+      <InteractiveImage imageUrl="/test-effect.jpg" />
     </main>
   )
 }

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@nextui-org/react": "^2.1.13",
+    "@react-three/fiber": "^8.15.11",
     "@splidejs/react-splide": "^0.7.12",
     "@supabase/supabase-js": "^2.38.4",
     "aws-sdk": "^2.1488.0",
@@ -26,13 +27,15 @@
     "react-dom": "latest",
     "react-filepond": "^7.1.2",
     "slugify": "^1.6.6",
-    "sortablejs": "^1.15.0"
+    "sortablejs": "^1.15.0",
+    "three": "^0.159.0"
   },
   "devDependencies": {
     "autoprefixer": "latest",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
+    "raw-loader": "^4.0.2",
     "tailwindcss": "latest"
   }
 }
