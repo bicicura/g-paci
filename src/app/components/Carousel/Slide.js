@@ -11,6 +11,7 @@ export default function Splide(props) {
   const pathname = usePathname()
 
   console.log(props.operatingSystem)
+  console.log(props.elementWidth)
 
   useEffect(() => {
     if (!loading) {

@@ -40,6 +40,10 @@ const SplideCarousel = props => {
     return 'Other'
   }
 
+  useEffect(() => {
+    setCurrentBreakpoint(getCurrentBreakpoint(breakpoints).width)
+  }, [firstImageLoaded])
+
   function getCurrentBreakpoint(breakpoints) {
     // Ensure breakpoints is defined and is an object
     if (!breakpoints || typeof breakpoints !== 'object' || Array.isArray(breakpoints)) {
