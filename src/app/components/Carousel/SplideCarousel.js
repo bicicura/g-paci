@@ -5,12 +5,71 @@ import { useContext, useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 
 const SplideCarousel = props => {
-  const { data, loading, changeSlide } = useContext(CarouselContext)
+  const { data, loading, changeSlide, firstImageLoaded } = useContext(CarouselContext)
   const [item, setItem] = useState({})
   const [vh, setVh] = useState(null)
   const pathname = usePathname()
+  const [currentBreakpoint, setCurrentBreakpoint] = useState(null)
+
+  async function getOperatingSystem() {
+    // Try using navigator.platform
+    if (navigator.platform) {
+      const platform = navigator.platform.toLowerCase()
+      if (platform.includes('win')) {
+        return 'Windows'
+      } else if (platform.includes('mac')) {
+        return 'Mac'
+      }
+    }
+
+    // If navigator.platform is not available, use navigator.userAgentData
+    if (navigator.userAgentData) {
+      try {
+        const uaData = await navigator.userAgentData.getHighEntropyValues(['platform'])
+        const platform = uaData.platform.toLowerCase()
+        if (platform.includes('windows')) {
+          return 'Windows'
+        } else if (platform.includes('macos')) {
+          return 'Mac'
+        }
+      } catch (error) {
+        console.error('Error getting user agent data:', error)
+      }
+    }
+
+    return 'Other'
+  }
+
+  function getCurrentBreakpoint(breakpoints) {
+    // Ensure breakpoints is defined and is an object
+    if (!breakpoints || typeof breakpoints !== 'object' || Array.isArray(breakpoints)) {
+      throw new Error('Invalid breakpoints object')
+    }
+
+    const width = window.innerWidth
+    let breakpointKeys = Object.keys(breakpoints)
+      .map(Number)
+      .sort((a, b) => a - b)
+    let nextBreakpoint = null // Set to null by default
+
+    for (let i = 0; i < breakpointKeys.length; i++) {
+      if (width < breakpointKeys[i]) {
+        nextBreakpoint = breakpointKeys[i]
+        break
+      }
+    }
+
+    // Check if a next breakpoint was found; otherwise, return null or a default value
+    return nextBreakpoint ? breakpoints[nextBreakpoint] : null
+  }
+
+  const [operatingSystem, setOperatingSystem] = useState('')
 
   useEffect(() => {
+    ;(async () => {
+      setOperatingSystem(await getOperatingSystem())
+    })()
+
     const calculateVH = () => {
       setVh(window.innerHeight * 0.01)
     }
@@ -60,6 +119,7 @@ const SplideCarousel = props => {
     }
   }, [pathname, data, loading])
 
+  // CREO QUE EL .CURRENT NUNCA VA A SER DEFINIDO, REVER EL IF
   useEffect(() => {
     if (props.isMobile && props.splideRef.current) {
       const splide = props.splideRef.current.splide
@@ -117,7 +177,7 @@ const SplideCarousel = props => {
         arrows: false,
         perPage: 1,
         type: 'fade',
-        width: '1200px',
+        width: '57.7rem',
         breakpoints,
       }}
       aria-label="My Favorite Images"
@@ -125,6 +185,8 @@ const SplideCarousel = props => {
       {item.works_images &&
         item.works_images.map((image, index) => (
           <Slide
+            operatingSystem={operatingSystem}
+            elementWidth={currentBreakpoint}
             key={image.img}
             slug={item.slug}
             img={image.img}

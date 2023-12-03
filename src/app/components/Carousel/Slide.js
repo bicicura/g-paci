@@ -10,6 +10,8 @@ export default function Splide(props) {
   const [item, setItem] = useState({})
   const pathname = usePathname()
 
+  console.log(props.operatingSystem)
+
   useEffect(() => {
     if (!loading) {
       setItem(data)
@@ -19,7 +21,6 @@ export default function Splide(props) {
   const handleImageLoad = () => {
     if (!firstImageLoaded && props.index === 0) {
       setFirstImageLoaded(true)
-      console.log('se loadea la 1era!')
     }
     setImagesLoaded(true)
   }
@@ -27,6 +28,7 @@ export default function Splide(props) {
   return (
     <SplideSlide>
       <div
+        style={props.operatingSystem === 'Mac' ? { width: props.elementWidth } : {}}
         className={`transition-opacity duration-500 ${
           props.index === 0 ? (firstImageLoaded ? 'opacity-100' : 'opacity-0') : ''
         }`}
@@ -37,7 +39,7 @@ export default function Splide(props) {
             alt="hero image"
             priority
             width="0"
-            onLoad={handleImageLoad}
+            onLoad={() => handleImageLoad()}
             height="0"
             sizes="100vw"
             className="w-full h-auto"
