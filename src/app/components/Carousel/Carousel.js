@@ -49,7 +49,7 @@ export default function Carousel() {
         } flex justify-center items-center w-full relative p-3 lg:p-0`}
       >
         {!isMobile && <CursorWithoutEffect />}
-        <div className="relative overflow-hidden carousel-container">
+        <div className="relative overflow-hidden carousel-container bg-white">
           <SplideCarousel
             isMobile={isMobile}
             splideRef={splideRef}

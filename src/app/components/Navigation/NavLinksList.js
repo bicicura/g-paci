@@ -30,11 +30,11 @@ const NavLinksList = props => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <ul className="w-full space-y-2">
+        <ul className="w-full">
           {links.map(link => (
             <li
               key={link.id}
-              className={`hover:font-bold cursor-pointer ${
+              className={`hover:font-bold py-1 cursor-pointer ${
                 isActiveLink(link.slug) ? 'font-bold' : ''
               }`}
               onClick={() => props.toggleNavigation()}

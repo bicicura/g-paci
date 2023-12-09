@@ -7,7 +7,6 @@ export const NavigationContext = createContext()
 const NavigationProvider = ({ children }) => {
   const [links, setLinks] = useState([])
   const [loading, setLoading] = useState(true)
-  const { signal } = new AbortController()
 
   async function getTableData() {
     try {
@@ -28,9 +27,6 @@ const NavigationProvider = ({ children }) => {
         .limit(1, { foreignTable: 'works_images' })
 
       const workWithImages = data.filter(item => item.works_images.length > 0)
-
-      console.log(data, 'data original')
-      console.log(workWithImages, 'data filtrada')
 
       // Find the overview item
       const overview = workWithImages.find(item => item.slug === 'overview')

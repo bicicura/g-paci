@@ -41,6 +41,8 @@ export default function Splide(props) {
             height="0"
             sizes="100vw"
             className="w-full h-auto"
+            // antes esta línea no estaba, lo agregue para que no rompa todo si se suben imgs que no respeten el aspect ratio que necesitamos
+            style={{ aspectRatio: '16 / 10', objectFit: 'contain' }}
           />
         )}
       </div>
