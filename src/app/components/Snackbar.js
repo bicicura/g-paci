@@ -22,7 +22,7 @@ const Snackbar = () => {
 
   return (
     <div
-      className={`fixed flex gap-12 text-md font-bold bottom-0 right-0 p-4 m-4 rounded shadow-xl border-2 ${
+      className={`fixed z-50 flex gap-12 text-md font-bold bottom-0 right-0 p-4 m-4 rounded shadow-xl border-2 ${
         snackbar.type === 'success'
           ? 'bg-green-300 border-green-500 text-green-900'
           : 'bg-red-300 border-red-500 text-red-900'

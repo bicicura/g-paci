@@ -1,4 +1,5 @@
 import supabase from '../../../../utils/supabaseClient'
+import { WORK_STATUS_ACTIVE } from '../../../../constants'
 
 export async function GET(request) {
   try {
@@ -13,7 +14,7 @@ export async function GET(request) {
     )
   `
       )
-      .eq('status', 'active')
+      .eq('status', WORK_STATUS_ACTIVE)
       .order('id', { foreignTable: 'works_images' }) // Assuming 'id' is your primary key in 'works_images'
       .limit(1, { foreignTable: 'works_images' })
 

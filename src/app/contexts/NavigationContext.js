@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
 import supabase from '../../../utils/supabaseClient'
+import { WORK_STATUS_ACTIVE } from '../../../constants'
 
 export const NavigationContext = createContext()
 
@@ -11,16 +12,6 @@ const NavigationProvider = ({ children }) => {
   async function getTableData() {
     try {
       setLoading(true)
-      // const response = await fetch(
-      //   `/api/navigation-data?timestamp=${new Date().getTime()}`,
-      //   {
-      //     method: 'GET',
-      //     cache: 'no-store',
-      //     next: { revalidate: 10 },
-      //   }
-      // )
-      // const data = await response.json()
-
       const { data, error } = await supabase
         .from('works')
         .select(
@@ -32,20 +23,28 @@ const NavigationProvider = ({ children }) => {
     )
   `
         )
-        .eq('status', 'active')
+        .eq('status', WORK_STATUS_ACTIVE)
         .order('order', { ascending: true, foreignTable: 'works_images' })
         .limit(1, { foreignTable: 'works_images' })
 
+      const workWithImages = data.filter(item => item.works_images.length > 0)
+
+      console.log(data, 'data original')
+      console.log(workWithImages, 'data filtrada')
+
       // Find the overview item
-      const overview = data.find(item => item.slug === 'overview')
+      const overview = workWithImages.find(item => item.slug === 'overview')
 
       // Move the overview item to the beginning of the array if it exists
       if (overview) {
-        const reorderedData = [overview, ...data.filter(item => item.slug !== 'overview')]
+        const reorderedData = [
+          overview,
+          ...workWithImages.filter(item => item.slug !== 'overview'),
+        ]
         return setLinks(reorderedData)
       }
 
-      setLinks(data)
+      setLinks(workWithImages)
     } catch (error) {
       console.error(error)
     } finally {

@@ -4,6 +4,7 @@ import supabase from '../../../utils/supabaseClient'
 import Sortable from 'sortablejs'
 import { useRouter } from 'next/navigation'
 import { useSnackbar } from '../contexts/SnackbarContext'
+import { WORK_STATUS_ACTIVE, WORK_STATUS_INACTIVE } from '../../../constants'
 
 const useEditWork = () => {
   const pathname = usePathname()
@@ -17,9 +18,9 @@ const useEditWork = () => {
   const { showSnackbar } = useSnackbar()
 
   const statusColorMap = {
-    active: 'success',
+    [WORK_STATUS_ACTIVE]: 'success',
     paused: 'danger',
-    inactive: 'warning',
+    [WORK_STATUS_INACTIVE]: 'warning',
   }
 
   useEffect(() => {
@@ -55,7 +56,7 @@ const useEditWork = () => {
         .limit(1)
         .single()
       setWork(data)
-      setIsActive(data.status === 'active' ? true : false)
+      setIsActive(data.status === WORK_STATUS_ACTIVE ? true : false)
     } catch (error) {
       console.log(error)
     }
@@ -66,33 +67,80 @@ const useEditWork = () => {
       let { data, error } = await supabase
         .from('works_images')
         .select('*')
-        .eq('work_id', work.id) // Suponiendo que 'work_id' es la columna de la tabla 'work_images' que referencia 'id' de la tabla 'works'
+        .eq('work_id', work.id)
         .order('order', { ascending: true })
 
       if (error) throw error
 
-      // Procesar data, que contiene las imágenes relacionadas con el trabajo
-      console.log(data)
       setWorkImages(data)
     } catch (error) {
       console.error('Error fetching work images: ', error)
     }
   }
 
+  const toggleWorkStatus = async newStatus => {
+    return await fetch('/api/work/set-status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        workId: work.id,
+        newStatus: newStatus,
+      }),
+    })
+  }
+
   const handleDeleteImg = async ({ id, img }) => {
-    try {
-      await fetch('/api/work-images', {
-        method: 'DELETE',
-        body: JSON.stringify({
-          'img-id': id,
-          slug: work.slug,
-          'file-name': img,
-        }),
-      })
-      await getWorkImages()
-    } catch (error) {
-      console.error(error)
+    if (workImages.length === 1) {
+      // Establecer el trabajo como inactivo
+      try {
+        const response = await toggleWorkStatus(WORK_STATUS_INACTIVE)
+        const result = await response.json()
+
+        if (response.ok) {
+          setIsActive(false)
+          setWork({ ...work, status: WORK_STATUS_INACTIVE })
+          try {
+            await deleteImg({ id, img })
+            showSnackbar('Se ha eliminado la imagen con éxito.', 'success')
+            await getWorkImages()
+          } catch (error) {
+            showSnackbar(
+              'Ocurrió un error al eliminar la imagen, intente más tarde.',
+              'error'
+            )
+          }
+        } else {
+          // Manejar la respuesta de error de la API
+          console.error('Error al actualizar el estado:', result.error)
+          showSnackbar('Error al actualizar el estado del trabajo.', 'error')
+        }
+      } catch (error) {
+        // Manejar errores de la solicitud fetch
+        console.error('Error en la solicitud:', error)
+        showSnackbar('Error al comunicarse con el servidor.', 'error')
+      }
+    } else {
+      try {
+        await deleteImg({ id, img })
+        showSnackbar('Se ha eliminado la imagen con éxito.', 'success')
+        await getWorkImages()
+      } catch (error) {
+        console.error(error)
+      }
     }
+  }
+
+  const deleteImg = async ({ id, img }) => {
+    return await fetch('/api/work-images', {
+      method: 'DELETE',
+      body: JSON.stringify({
+        'img-id': id,
+        slug: work.slug,
+        'file-name': img,
+      }),
+    })
   }
 
   useEffect(() => {
@@ -106,6 +154,13 @@ const useEditWork = () => {
   }, [work.id])
 
   const handleSubmit = async () => {
+    if (work.status === WORK_STATUS_ACTIVE && workImages.length === 0) {
+      return showSnackbar(
+        'Si el estado es activo, debes subir al menos 1 imagen.',
+        'error'
+      )
+    }
+
     try {
       setIsLoading(true)
       const res = await fetch('/api/work/edit', {

@@ -10,9 +10,6 @@ export default function Splide(props) {
   const [item, setItem] = useState({})
   const pathname = usePathname()
 
-  console.log(props.operatingSystem)
-  console.log(props.elementWidth)
-
   useEffect(() => {
     if (!loading) {
       setItem(data)

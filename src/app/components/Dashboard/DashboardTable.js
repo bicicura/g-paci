@@ -25,14 +25,14 @@ import NextLink from 'next/link'
 
 export default function DashboardTable() {
   const {
-    filterValue,
-    tableData,
     isOpen,
+    tableData,
     isLoading,
-    onOpenChange,
-    handleDeleteWork,
-    onSearchChange,
     renderCell,
+    filterValue,
+    onOpenChange,
+    setFilterValue,
+    handleDeleteWork,
   } = useDashboardTable()
 
   return (
@@ -47,13 +47,12 @@ export default function DashboardTable() {
               inputWrapper: 'border-1',
             }}
             placeholder="Search by name..."
-            size="sm"
+            size="md"
             startContent={<SearchIcon className="text-gray-300" />}
             value={filterValue}
             variant="bordered"
             onClear={() => setFilterValue('')}
-            onValueChange={onSearchChange}
-            disabled
+            onValueChange={value => setFilterValue(value)}
           />
 
           <Link
@@ -67,7 +66,7 @@ export default function DashboardTable() {
         </div>
         <Table
           aria-label="Gastón Paci portfolio's table"
-          style={{ minHeight: '300px' }}
+          style={{ minHeight: isLoading ? '300px' : '' }}
         >
           <TableHeader columns={columns}>
             {column => (
@@ -80,6 +79,7 @@ export default function DashboardTable() {
             )}
           </TableHeader>
           <TableBody
+            className="w-full"
             items={tableData}
             isLoading={isLoading}
             loadingContent={
@@ -93,6 +93,7 @@ export default function DashboardTable() {
           >
             {item => (
               <TableRow
+                style={{ marginBottom: 'auto' }}
                 className="text-black"
                 key={item.id}
               >

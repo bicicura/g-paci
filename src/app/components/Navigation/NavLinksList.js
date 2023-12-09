@@ -5,9 +5,15 @@ import { useHover } from '@/app/contexts/HoverContext'
 import { NavigationContext } from '@/app/contexts/NavigationContext'
 
 const NavLinksList = props => {
-  const isActiveLink = slug =>
-    slug === 'overview' && pathname === '/' ? true : pathname.includes(`/work/${slug}`)
   const pathname = usePathname()
+  const isActiveLink = slug => {
+    if (slug === 'overview' && pathname === '/') {
+      return true
+    }
+    const urlLastFragment = pathname.split('/').pop()
+    return urlLastFragment === slug
+  }
+
   const { setHoverItem, setIsHovering } = useHover()
 
   const { links, loading } = useContext(NavigationContext)

@@ -80,8 +80,6 @@ export async function POST(Request) {
 }
 
 export async function DELETE(Request, context) {
-  // ... tus variables iniciales ...
-
   const url = Request.nextUrl
 
   // Acceder a los searchParams y extraer los parámetros necesarios
@@ -100,19 +98,19 @@ export async function DELETE(Request, context) {
     const listedObjects = await s3.listObjectsV2(listParams).promise()
 
     // Verificar si hay objetos para eliminar
-    if (listedObjects.Contents.length === 0) return
+    if (listedObjects.Contents.length > 0) {
+      // Preparar la eliminación de los objetos
+      const deleteParams = {
+        Bucket: bucketName,
+        Delete: { Objects: [] },
+      }
+      listedObjects.Contents.forEach(({ Key }) => {
+        deleteParams.Delete.Objects.push({ Key })
+      })
 
-    // Preparar la eliminación de los objetos
-    const deleteParams = {
-      Bucket: bucketName,
-      Delete: { Objects: [] },
+      // Eliminar los objetos
+      await s3.deleteObjects(deleteParams).promise()
     }
-    listedObjects.Contents.forEach(({ Key }) => {
-      deleteParams.Delete.Objects.push({ Key })
-    })
-
-    // Eliminar los objetos
-    await s3.deleteObjects(deleteParams).promise()
 
     // Manejar referencias en Supabase (ajustar según tu lógica)
     const { data, error } = await supabase.from('works').delete().match({ id: workId })

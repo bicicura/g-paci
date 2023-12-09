@@ -21,8 +21,7 @@ const HoverCarousel = () => {
             ${isHovering && item.id === hoverItem.id ? 'opacity-100' : ''}`}
           >
             <Image
-              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/${item.works_images[0].img}`}
-              // src={`/images/work/${item.slug}/slide-1.jpg`}
+              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item?.slug}/${item?.works_images[0]?.img}`}
               alt="hero image"
               className={'absolute inset-0 w-full '}
               priority

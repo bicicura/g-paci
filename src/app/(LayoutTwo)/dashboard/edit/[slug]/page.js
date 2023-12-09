@@ -10,6 +10,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Checkbox } from '@nextui-org/react'
 import useEditWork from '@/app/hooks/useEditWork'
+import { WORK_STATUS_INACTIVE, WORK_STATUS_ACTIVE } from '../../../../../../constants'
 
 registerPlugin(
   FilePondPluginImageExifOrientation,
@@ -84,7 +85,10 @@ const EditWork = () => {
               isSelected={isActive}
               onValueChange={value => {
                 setIsActive(value)
-                setWork({ ...work, status: value ? 'active' : 'inactive' })
+                setWork({
+                  ...work,
+                  status: value ? WORK_STATUS_ACTIVE : WORK_STATUS_INACTIVE,
+                })
               }}
             >
               Active

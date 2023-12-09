@@ -5,6 +5,7 @@ import { EditIcon } from '../components/Dashboard/EditIcon'
 import { DeleteIcon } from '../components/Dashboard/DeleteIcon'
 import NextLink from 'next/link'
 import { useSnackbar } from '../contexts/SnackbarContext'
+import { WORK_STATUS_ACTIVE, WORK_STATUS_INACTIVE } from '../../../constants'
 
 const useDashboardTable = () => {
   const [filterValue, setFilterValue] = useState('')
@@ -14,10 +15,12 @@ const useDashboardTable = () => {
   const [isLoading, setIsLoading] = useState(true)
   const { showSnackbar } = useSnackbar()
 
+  const [originalData, setOriginalData] = useState([])
+
   const statusColorMap = {
-    active: 'success',
+    [WORK_STATUS_ACTIVE]: 'success',
     paused: 'danger',
-    inactive: 'warning',
+    [WORK_STATUS_INACTIVE]: 'warning',
   }
 
   const onDeleteButton = work => {
@@ -52,15 +55,6 @@ const useDashboardTable = () => {
       setIsLoading(false)
     }
   }
-
-  const onSearchChange = useCallback(value => {
-    if (value) {
-      setFilterValue(value)
-      // setPage(1)
-    } else {
-      setFilterValue('')
-    }
-  }, [])
 
   const getImageCount = async workId => {
     let { data, error } = await supabase
@@ -114,19 +108,31 @@ const useDashboardTable = () => {
           name: item.name,
           status: item.status,
           slug: item.slug,
-          avatar: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/${item.works_images[0].img}`,
+          avatar: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item?.slug}/${item?.works_images[0]?.img}`,
           images_count: imagesCount, // use the dynamic count from getImageCount
         }
       })
 
       const newData = await Promise.all(promises)
       setTableData(newData)
+      setOriginalData(newData) // Guardar los datos originales
     } catch (error) {
       console.error('Error getting table data:', error)
     } finally {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (filterValue) {
+      const filteredData = originalData.filter(work =>
+        work.name.toLowerCase().includes(filterValue.toLowerCase())
+      )
+      setTableData(filteredData)
+    } else {
+      setTableData(originalData)
+    }
+  }, [filterValue, originalData])
 
   useEffect(() => {
     getTableData()
@@ -201,7 +207,7 @@ const useDashboardTable = () => {
   return {
     handleDeleteWork,
     setSelectedWork,
-    onSearchChange,
+    setFilterValue,
     selectedWork,
     onOpenChange,
     filterValue,
