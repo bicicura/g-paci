@@ -81,6 +81,8 @@ export async function POST(Request) {
 }
 
 export async function DELETE(Request, context) {
+  console.log(process.env.AWS_REGION, 'REGION DE AWS')
+
   const url = Request.nextUrl
   const slug = url.searchParams.get('slug')
   const workId = url.searchParams.get('workId')
