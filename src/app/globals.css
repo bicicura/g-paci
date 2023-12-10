@@ -24,3 +24,41 @@ body {
 .custom-cursor-effect {
   font-size: 12px;
 }
+
+/* SLIT-SCAN EFFECT */
+
+.slit-scan-canvas {
+  width: 100vw;
+  height: 100vh;
+}
+
+.slit-scan-container {
+  position: absolute;
+  width: 100%;
+  inset: 0;
+  overflow-y: scroll;
+  z-index: 3001;
+}
+.slit-scan-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* z-index: -1; */
+}
+.slit-scan-text {
+  width: 70%;
+  margin: 0 auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border: 2px solid red;
+  font-size: 3.2rem;
+  pointer-events: none;
+  z-index: 10;
+  color: white;
+  font-weight: 500;
+  font-family: sans-serif;
+  text-align: center;
+  line-height: 1.4;
+}
