@@ -7,6 +7,7 @@ export const NavigationContext = createContext()
 const NavigationProvider = ({ children }) => {
   const [links, setLinks] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isInfoActive, setIsInfoActive] = useState(false)
 
   async function getTableData() {
     try {
@@ -53,7 +54,9 @@ const NavigationProvider = ({ children }) => {
   }, [])
 
   return (
-    <NavigationContext.Provider value={{ links, setLinks, loading }}>
+    <NavigationContext.Provider
+      value={{ links, setLinks, loading, isInfoActive, setIsInfoActive }}
+    >
       {children}
     </NavigationContext.Provider>
   )
