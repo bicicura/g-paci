@@ -91,9 +91,7 @@ const useCreateWork = () => {
       const workId = workData[0].id
 
       // Insert records in 'work_images' for each image
-      const uploadResponse = await uploadFilesToS3({ slug: uniqueSlug, workId })
-
-      console.log(uploadResponse) // Log the response for debugging
+      await uploadFilesToS3({ slug: uniqueSlug, workId })
 
       router.push('/dashboard')
       showSnackbar('Work creado exitosamente.', 'success')

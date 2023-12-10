@@ -28,6 +28,7 @@ const EditWork = () => {
     handleNameChange,
     isActive,
     setWork,
+    setWorkImages,
     work,
     sortableContainerRef,
     workImages,
@@ -155,7 +156,7 @@ const EditWork = () => {
               maxFileSize={5000000}
               acceptedFileTypes={['image/*']}
               files={files}
-              onprocessfile={e => getWorkImages()}
+              onprocessfile={getWorkImages}
               onupdatefiles={setFiles}
               allowMultiple={true}
               server={{
@@ -164,8 +165,12 @@ const EditWork = () => {
                   headers: {
                     'work-id': work.id, // Puedes enviar datos adicionales a través de encabezados
                     'work-slug': work.slug,
+                    'work-order': workImages.length,
                   },
-                  onload: response => JSON.parse(response).data,
+                  // onload: response => {
+                  //   const newItem = JSON.parse(response).data
+                  //   setWorkImages(prevImages => [...prevImages, newItem[0]])
+                  // },
                   onerror: response => JSON.parse(response).error,
                 },
               }}

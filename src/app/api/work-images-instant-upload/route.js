@@ -14,6 +14,7 @@ export async function POST(Request) {
   const file = files[1] // Filepond sends 1st element with metadata and 2nd with File
   const slug = Request.headers.get('work-slug')
   const workId = Request.headers.get('work-id')
+  const workOrder = Request.headers.get('work-order')
 
   const uploadPromises = async () => {
     const randomGeneratedName = generateFileName(file)
@@ -27,8 +28,8 @@ export async function POST(Request) {
 
     try {
       await s3.send(new PutObjectCommand(params))
-      await insertWorkImage({ randomGeneratedName, workId })
-      return { fileName: randomGeneratedName }
+      const data = await insertWorkImage({ randomGeneratedName, workId, workOrder })
+      return { ...data }
     } catch (error) {
       console.error(error)
       throw new Error(error.message)
@@ -37,7 +38,7 @@ export async function POST(Request) {
 
   try {
     const uploadResult = await uploadPromises()
-    return new Response(JSON.stringify({ uploadResult }), {
+    return new Response(JSON.stringify({ data: uploadResult }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
@@ -56,16 +57,19 @@ function generateFileName(file) {
   return `${randomName}.${extension}`
 }
 
-const insertWorkImage = async ({ randomGeneratedName, workId }) => {
-  const { data, error } = await supabase.from('works_images').insert({
-    work_id: workId,
-    img: randomGeneratedName,
-    order: null, // Aquí deberías determinar el orden adecuado si es necesario
-  })
+const insertWorkImage = async ({ randomGeneratedName, workId, workOrder }) => {
+  const { data, error } = await supabase
+    .from('works_images')
+    .insert({
+      work_id: workId,
+      img: randomGeneratedName,
+      order: workOrder,
+    })
+    .select() // This will return the inserted row(s)
 
   if (error) {
     throw new Error(error.message)
   }
 
-  return data
+  return data // 'data' contains the inserted record
 }

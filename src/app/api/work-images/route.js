@@ -59,7 +59,7 @@ export async function POST(Request) {
     })
   }
 
-  let currentOrder = 1 // Initialize the order counter
+  let currentOrder = 0 // Initialize the order counter
   const uploadResults = []
 
   for (const file of files) {
@@ -107,9 +107,6 @@ function generateFileName(file) {
   return `${randomName}.${extension}`
 }
 
-// --------------------------------------------------------------
-// ESTOY POR ACA QUIERO DARLE EL ORDER CORRESPONDIENTE A CADA IMG
-// --------------------------------------------------------------
 const insertWorkImage = async ({ uploadResults, workId }) => {
   return await supabase
     .from('works_images')
@@ -118,7 +115,7 @@ const insertWorkImage = async ({ uploadResults, workId }) => {
         return {
           work_id: workId,
           img: image.file_name,
-          order: image.order, // This sets the order starting from 1 for the first image
+          order: image.order,
         }
       })
     )

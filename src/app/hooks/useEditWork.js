@@ -28,23 +28,27 @@ const useEditWork = () => {
       new Sortable(sortableContainerRef.current, {
         animation: 150,
         onEnd: function () {
-          // Obtener los hijos del contenedor ordenable
           const orderedNodes = sortableContainerRef.current.children
-          // Crear un array basado en esos hijos
           const orderedIds = Array.from(orderedNodes).map(node => node.dataset.id)
 
-          // Actualizar la propiedad 'order' de cada elemento en workImages
-          const updatedWorkImages = workImages.map(image => {
-            const newOrder = orderedIds.indexOf(image.id.toString())
-            return { ...image, order: newOrder }
-          })
+          // Create a map of id to new order
+          const orderMap = orderedIds.reduce((acc, id, index) => {
+            acc[id] = index
+            return acc
+          }, {})
 
-          // Actualizar el estado con las imágenes actualizadas
-          setWorkImages(updatedWorkImages)
+          setWorkImages(prevImages => {
+            const updatedWorkImages = prevImages.map(image => ({
+              ...image,
+              order: orderMap[image.id.toString()] ?? image.order,
+            }))
+
+            return updatedWorkImages
+          })
         },
       })
     }
-  }, [workImages]) // Asegúrate de incluir las dependencias necesarias aquí
+  }, [sortableContainerRef, workImages])
 
   async function getTableData() {
     try {
@@ -71,6 +75,8 @@ const useEditWork = () => {
         .order('order', { ascending: true })
 
       if (error) throw error
+
+      console.log(data, 'data')
 
       setWorkImages(data)
     } catch (error) {
@@ -196,6 +202,7 @@ const useEditWork = () => {
     setFiles,
     work,
     setWork,
+    setWorkImages,
     setIsActive,
     sortableContainerRef,
     workImages,
