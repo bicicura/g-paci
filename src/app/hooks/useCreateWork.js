@@ -52,32 +52,26 @@ const useCreateWork = () => {
   }
 
   const uploadFilesToS3 = async ({ slug, workId }) => {
-    // Asegúrate de que 'files' es un array
-    if (!Array.isArray(files)) {
-      throw new Error('files is not iterable')
-    }
+    const formData = new FormData()
 
-    // Mapea cada archivo a una promesa de carga
-    const uploadPromises = files.map(fileItem => {
-      const formData = new FormData()
-      formData.append('slug', slug)
-      formData.append('file', fileItem.file)
-      formData.append('workId', workId)
-
-      // Devuelve la promesa de fetch directamente
-      return fetch('/api/work-images', {
-        method: 'POST',
-        body: formData, // No establezcas el Content-Type aquí, fetch lo manejará.
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        return response.json()
-      })
+    files.forEach(fileItem => {
+      formData.append('files', fileItem.file)
     })
 
-    // Devuelve el array de promesas
-    return uploadPromises
+    formData.append('slug', slug)
+    formData.append('workId', workId)
+
+    // Make a single fetch request with all files
+    const response = await fetch('/api/work-images', {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+
+    return response.json() // This should be a promise
   }
 
   const handleSubmit = async () => {
@@ -89,18 +83,17 @@ const useCreateWork = () => {
       setIsLoading(true)
       const uniqueSlug = await createUniqueSlug(name, supabase)
 
-      // Crear una nueva entrada en la tabla 'works'
+      // Create a new entry in the 'works' table
       const res = await insertWork(uniqueSlug)
       const workData = await res.json()
 
-      // Obtener el id del trabajo insertado
+      // Get the id of the inserted work
       const workId = workData[0].id
 
-      // Insertar registros en 'work_images' para cada imagen
-      const uploadPromises = await uploadFilesToS3({ slug: uniqueSlug, workId })
+      // Insert records in 'work_images' for each image
+      const uploadResponse = await uploadFilesToS3({ slug: uniqueSlug, workId })
 
-      // Espera a que todas las cargas terminen
-      await Promise.all(uploadPromises)
+      console.log(uploadResponse) // Log the response for debugging
 
       router.push('/dashboard')
       showSnackbar('Work creado exitosamente.', 'success')

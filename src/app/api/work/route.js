@@ -94,7 +94,7 @@ export async function DELETE(Request, context) {
     }
     const listedObjects = await s3.send(new ListObjectsV2Command(listParams))
 
-    if (listedObjects.Contents.length > 0) {
+    if (listedObjects?.Contents?.length > 0) {
       const deleteParams = {
         Bucket: bucketName,
         Delete: {

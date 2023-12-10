@@ -48,7 +48,7 @@ export async function DELETE(Request) {
 
 export async function POST(Request) {
   const formData = await Request.formData()
-  const files = formData.getAll('file')
+  const files = formData.getAll('files') // Note: Changed to 'files' to match the client-side code
   const slug = formData.get('slug')
   const workId = formData.get('workId')
 
@@ -59,7 +59,10 @@ export async function POST(Request) {
     })
   }
 
-  const uploadPromises = files.map(async file => {
+  let currentOrder = 1 // Initialize the order counter
+  const uploadResults = []
+
+  for (const file of files) {
     const randomGeneratedName = generateFileName(file)
     const buffer = await file.arrayBuffer()
 
@@ -72,18 +75,18 @@ export async function POST(Request) {
 
     try {
       const { Location } = await s3.send(new PutObjectCommand(params))
-      return { file_name: randomGeneratedName, url: Location }
+      uploadResults.push({
+        file_name: randomGeneratedName,
+        url: Location,
+        order: currentOrder++,
+      })
     } catch (error) {
       throw new Error(error.message)
     }
-  })
+  }
 
   try {
-    const uploadResults = await Promise.all(uploadPromises)
-    console.log(uploadResults)
-
     const imageUploads = await insertWorkImage({ uploadResults, workId })
-
     return new Response(
       JSON.stringify({ ...uploadResults, ...imageUploads, status: 'ok' }),
       { headers: { 'Content-Type': 'application/json' } }
@@ -111,11 +114,11 @@ const insertWorkImage = async ({ uploadResults, workId }) => {
   return await supabase
     .from('works_images')
     .insert(
-      uploadResults.map((image, index) => {
+      uploadResults.map(image => {
         return {
           work_id: workId,
           img: image.file_name,
-          order: 0,
+          order: image.order, // This sets the order starting from 1 for the first image
         }
       })
     )
