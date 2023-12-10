@@ -9,10 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.470.0",
+    "@aws-sdk/credential-provider-env": "^3.468.0",
     "@nextui-org/react": "^2.1.13",
     "@splidejs/react-splide": "^0.7.12",
     "@supabase/supabase-js": "^2.38.4",
-    "aws-sdk": "^2.1488.0",
     "cookie": "^0.6.0",
     "filepond": "^4.30.4",
     "filepond-plugin-file-validate-size": "^2.2.8",

@@ -1,18 +1,17 @@
-import AWS from 'aws-sdk'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { fromEnv } from '@aws-sdk/credential-provider-env'
 import supabase from '../../../../utils/supabaseClient'
 
-// Configuración del SDK de AWS con credenciales
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+// Initialize the S3 client
+const s3 = new S3Client({
+  credentials: fromEnv(), // Automatically loads credentials from environment variables
+  region: process.env.AWS_REGION,
 })
 
 export async function POST(Request) {
-  const s3 = new AWS.S3()
   const formData = await Request.formData()
   const files = formData.getAll('files')
-  // filepond sends 1st element with metadata and 2nd with File
-  const file = files[1]
+  const file = files[1] // Filepond sends 1st element with metadata and 2nd with File
   const slug = Request.headers.get('work-slug')
   const workId = Request.headers.get('work-id')
 
@@ -27,16 +26,16 @@ export async function POST(Request) {
     }
 
     try {
-      const s3Response = await s3.upload(params).promise()
+      await s3.send(new PutObjectCommand(params))
       await insertWorkImage({ randomGeneratedName, workId })
-      return s3Response
+      return { fileName: randomGeneratedName }
     } catch (error) {
       console.error(error)
       throw new Error(error.message)
     }
   }
+
   try {
-    // Ejecutar la función uploadPromises y esperar su resolución
     const uploadResult = await uploadPromises()
     return new Response(JSON.stringify({ uploadResult }), {
       status: 200,

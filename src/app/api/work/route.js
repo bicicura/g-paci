@@ -1,10 +1,11 @@
 import supabase from '../../../../utils/supabaseClient'
-import AWS from 'aws-sdk'
+import { S3Client, DeleteObjectsCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
+import { fromEnv } from '@aws-sdk/credential-provider-env'
 
-// Configuración del SDK de AWS con credenciales
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+// Initialize the S3 client
+const s3 = new S3Client({
+  credentials: fromEnv(), // Automatically loads credentials from environment variables
+  region: process.env.AWS_REGION,
 })
 
 export async function GET(request) {
@@ -81,48 +82,41 @@ export async function POST(Request) {
 
 export async function DELETE(Request, context) {
   const url = Request.nextUrl
-
-  // Acceder a los searchParams y extraer los parámetros necesarios
   const slug = url.searchParams.get('slug')
   const workId = url.searchParams.get('workId')
-
-  const s3 = new AWS.S3()
   const bucketName = 'flm-g-paci'
 
   try {
-    // Listar todos los objetos en el "directorio"
+    // List all objects in the "directory"
     const listParams = {
       Bucket: bucketName,
       Prefix: `${slug}/`,
     }
-    const listedObjects = await s3.listObjectsV2(listParams).promise()
+    const listedObjects = await s3.send(new ListObjectsV2Command(listParams))
 
-    // Verificar si hay objetos para eliminar
     if (listedObjects.Contents.length > 0) {
-      // Preparar la eliminación de los objetos
       const deleteParams = {
         Bucket: bucketName,
-        Delete: { Objects: [] },
+        Delete: {
+          Objects: listedObjects.Contents.map(obj => ({ Key: obj.Key })),
+        },
       }
-      listedObjects.Contents.forEach(({ Key }) => {
-        deleteParams.Delete.Objects.push({ Key })
-      })
 
-      // Eliminar los objetos
-      await s3.deleteObjects(deleteParams).promise()
+      // Delete the objects
+      await s3.send(new DeleteObjectsCommand(deleteParams))
     }
 
-    // Manejar referencias en Supabase (ajustar según tu lógica)
+    // Handle references in Supabase (adjust according to your logic)
     const { data, error } = await supabase.from('works').delete().match({ id: workId })
 
     if (error) {
       throw error
     }
 
-    // Respuesta de éxito
+    // Success response
     return new Response(
       JSON.stringify({
-        message: `Work: ${workId + ' ' + slug} Deleted successfully`,
+        message: `Work: ${workId} - ${slug} Deleted successfully`,
       }),
       {
         headers: {
@@ -133,7 +127,6 @@ export async function DELETE(Request, context) {
     )
   } catch (error) {
     console.error('Deletion error:', error)
-    // Si hubo un error, envía una respuesta de error
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
