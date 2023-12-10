@@ -3,6 +3,7 @@ import slugify from 'slugify'
 import supabase from '../../../utils/supabaseClient'
 import { useRouter } from 'next/navigation'
 import { useSnackbar } from '../contexts/SnackbarContext'
+import { MAX_FILE_SIZE } from '../../../constants'
 
 const useCreateWork = () => {
   const [name, setName] = useState('')
@@ -13,6 +14,28 @@ const useCreateWork = () => {
 
   const handleNameChange = event => {
     setName(event.target.value) // Actualiza el estado `name` con el valor actual del input
+  }
+
+  const handleFileAdd = fileItems => {
+    const oversizedFiles = fileItems.filter(
+      fileItem => fileItem.file.size > MAX_FILE_SIZE
+    )
+
+    if (oversizedFiles.length > 0) {
+      // Remove oversized files
+      setFiles(files => files.filter(file => !oversizedFiles.includes(file)))
+
+      // Show notification for each oversized file
+      oversizedFiles.forEach(fileItem => {
+        showSnackbar(
+          `File "${fileItem.file.name}" is too large and has been removed.`,
+          'error'
+        )
+      })
+    } else {
+      // Update the files state if all files are within the size limit
+      setFiles(fileItems)
+    }
   }
 
   const generateSlug = text => {
@@ -76,6 +99,14 @@ const useCreateWork = () => {
 
   const handleSubmit = async () => {
     if (!validateForm()) {
+      // Show error for oversized file
+      if (!validateFileSize()) {
+        return showSnackbar(
+          'Uno o más archivos superan el tamaño máximo permitido.',
+          'error'
+        )
+      }
+      // Show error for other form validation failures
       return showSnackbar('Por favor, completa todos los campos.', 'error')
     }
 
@@ -110,13 +141,19 @@ const useCreateWork = () => {
     })
   }
 
-  const handleImageReorder = reorderedFiles => setFiles(reorderedFiles)
+  const validateFileSize = () => {
+    return files.every(fileItem => {
+      return fileItem.file.size <= MAX_FILE_SIZE
+    })
+  }
 
-  const validateForm = () => name.length > 0 && files.length > 0
+  const validateForm = () => {
+    return name.length > 0 && files.length > 0 && validateFileSize()
+  }
 
   return {
-    handleImageReorder,
     handleNameChange,
+    handleFileAdd,
     handleSubmit,
     validateForm,
     isLoading,

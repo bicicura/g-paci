@@ -8,6 +8,7 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import Link from 'next/link'
 import useCreateWork from '@/app/hooks/useCreateWork'
+import { MAX_FILE_SIZE } from '../../../../../constants'
 
 registerPlugin(
   FilePondPluginImageExifOrientation,
@@ -64,7 +65,7 @@ const CreateWork = () => {
         <FilePond
           allowFileSizeValidation
           allowFileTypeValidation
-          maxFileSize={5000000}
+          maxFileSize={MAX_FILE_SIZE}
           acceptedFileTypes={['image/*']}
           disabled={isLoading}
           instantUpload={false}

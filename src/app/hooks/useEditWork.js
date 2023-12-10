@@ -16,6 +16,7 @@ const useEditWork = () => {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { showSnackbar } = useSnackbar()
+  const [deleteImgLoading, setDeleteImgLoading] = useState(false)
 
   const statusColorMap = {
     [WORK_STATUS_ACTIVE]: 'success',
@@ -98,6 +99,7 @@ const useEditWork = () => {
   }
 
   const handleDeleteImg = async ({ id, img }) => {
+    setDeleteImgLoading(true)
     if (workImages.length === 1) {
       // Establecer el trabajo como inactivo
       try {
@@ -126,6 +128,8 @@ const useEditWork = () => {
         // Manejar errores de la solicitud fetch
         console.error('Error en la solicitud:', error)
         showSnackbar('Error al comunicarse con el servidor.', 'error')
+      } finally {
+        setDeleteImgLoading(false)
       }
     } else {
       try {
@@ -134,6 +138,8 @@ const useEditWork = () => {
         await getWorkImages()
       } catch (error) {
         console.error(error)
+      } finally {
+        setDeleteImgLoading(false)
       }
     }
   }
@@ -204,6 +210,8 @@ const useEditWork = () => {
     setWork,
     setWorkImages,
     setIsActive,
+    deleteImgLoading,
+    setDeleteImgLoading,
     sortableContainerRef,
     workImages,
     isLoading,

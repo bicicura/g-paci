@@ -37,12 +37,12 @@ export default function Splide(props) {
             alt="hero image"
             priority
             width="0"
-            onLoad={() => handleImageLoad()}
             height="0"
-            sizes="100vw"
+            sizes="50vw"
             className="w-full h-auto"
             // antes esta línea no estaba, lo agregue para que no rompa todo si se suben imgs que no respeten el aspect ratio que necesitamos
             style={{ aspectRatio: '16 / 10', objectFit: 'contain' }}
+            onLoad={() => handleImageLoad()}
           />
         )}
       </div>
