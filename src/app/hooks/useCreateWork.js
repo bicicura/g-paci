@@ -74,27 +74,79 @@ const useCreateWork = () => {
     return uniqueSlug
   }
 
+  const generateFileName = file => {
+    // Extrae la extensión del archivo del nombre original del archivo
+    const extension = file.name.split('.').pop()
+    const randomName = (Math.random() + 1).toString(36).substring(2)
+    return `${randomName}.${extension}`
+  }
+
   const uploadFilesToS3 = async ({ slug, workId }) => {
-    const formData = new FormData()
+    let fileDetailsArray = []
+    let order = 0 // Initialize order, assuming it's a simple counter
 
-    files.forEach(fileItem => {
-      formData.append('files', fileItem.file)
-    })
+    for (const fileItem of files) {
+      const originalFileName = fileItem.file.name
+      const randomFileName = generateFileName(fileItem.file)
+      const fileType = fileItem.file.type
 
-    formData.append('slug', slug)
-    formData.append('workId', workId)
+      // Request a pre-signed URL from your backend with the random file name
+      const response = await fetch('/api/s3-presigned-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileName: randomFileName, fileType, slug }),
+      })
 
-    // Make a single fetch request with all files
-    const response = await fetch('/api/work-images', {
-      method: 'POST',
-      body: formData,
-    })
+      const { signedUrl } = await response.json()
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
+      // Use the pre-signed URL to upload the file directly to S3
+      const uploadResponse = await fetch(signedUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': fileType,
+        },
+        body: fileItem.file,
+      })
+
+      if (uploadResponse.ok) {
+        // Add file details to the array
+        fileDetailsArray.push({
+          fileName: randomFileName,
+          fileUrl: signedUrl, // URL of the uploaded file
+          order: order++, // Increment order for each file
+        })
+      } else {
+        throw new Error('Failed to upload to S3')
+      }
     }
 
-    return response.json() // This should be a promise
+    // After all files are uploaded, update the database with file details
+    try {
+      const dbUpdateResponse = await fetch('/api/work-images', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workId: workId,
+          files: fileDetailsArray,
+        }),
+      })
+
+      // Handle the response from your database update API
+      if (!dbUpdateResponse.ok) {
+        throw new Error('Failed to update database with file information')
+      }
+
+      // Process the response or handle the successful update
+      const dbUpdateResult = await dbUpdateResponse.json()
+      console.log(dbUpdateResult, 'Database update result')
+    } catch (error) {
+      console.error('Error updating database:', error)
+      // Handle error appropriately
+    }
   }
 
   const handleSubmit = async () => {
