@@ -142,7 +142,6 @@ const useCreateWork = () => {
 
       // Process the response or handle the successful update
       const dbUpdateResult = await dbUpdateResponse.json()
-      console.log(dbUpdateResult, 'Database update result')
     } catch (error) {
       console.error('Error updating database:', error)
       // Handle error appropriately
