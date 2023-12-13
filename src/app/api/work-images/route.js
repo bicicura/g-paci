@@ -47,64 +47,43 @@ export async function DELETE(Request) {
 }
 
 export async function POST(Request) {
-  const formData = await Request.formData()
-  const files = formData.getAll('files') // Note: Changed to 'files' to match the client-side code
-  const slug = formData.get('slug')
-  const workId = formData.get('workId')
+  try {
+    const body = await Request.json()
+    const fileDetailsArray = body.files // Expecting an array of file details
+    const workId = body.workId
 
-  if (!files.length) {
-    return new Response(JSON.stringify({ error: 'No files found.' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  }
-
-  let currentOrder = 0 // Initialize the order counter
-  const uploadResults = []
-
-  for (const file of files) {
-    const randomGeneratedName = generateFileName(file)
-    const buffer = await file.arrayBuffer()
-
-    const params = {
-      Bucket: 'flm-g-paci',
-      Key: `${slug}/${randomGeneratedName}`,
-      Body: Buffer.from(buffer),
-      ContentType: file.type,
+    if (!fileDetailsArray || fileDetailsArray.length === 0) {
+      return new Response(JSON.stringify({ error: 'No file data provided.' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
-    try {
-      const { Location } = await s3.send(new PutObjectCommand(params))
-      uploadResults.push({
-        file_name: randomGeneratedName,
-        url: Location,
-        order: currentOrder++,
-      })
-    } catch (error) {
+    // Insert file metadata into 'works_images' table in Supabase
+    const { data, error } = await supabase.from('works_images').insert(
+      fileDetailsArray.map(file => ({
+        work_id: workId,
+        img: file.fileName, // Assuming this contains the random file name
+        // url: file.fileUrl, // The URL of the file in S3
+        order: file.order, // Order of the file
+      }))
+    )
+
+    if (error) {
       throw new Error(error.message)
     }
-  }
 
-  try {
-    const imageUploads = await insertWorkImage({ uploadResults, workId })
-    return new Response(
-      JSON.stringify({ ...uploadResults, ...imageUploads, status: 'ok' }),
-      { headers: { 'Content-Type': 'application/json' } }
-    )
+    return new Response(JSON.stringify({ data, status: 'ok' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
   } catch (error) {
-    console.error(error)
+    console.error('Error during database operation:', error)
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })
   }
-}
-
-function generateFileName(file) {
-  // Extrae la extensión del archivo del nombre original del archivo
-  const extension = file.name.split('.').pop()
-  const randomName = (Math.random() + 1).toString(36).substring(2)
-  return `${randomName}.${extension}`
 }
 
 const insertWorkImage = async ({ uploadResults, workId }) => {

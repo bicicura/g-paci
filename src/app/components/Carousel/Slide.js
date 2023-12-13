@@ -26,7 +26,7 @@ export default function Splide(props) {
   return (
     <SplideSlide>
       <div
-        style={props.operatingSystem === 'Mac' ? { width: props.elementWidth } : {}}
+        style={{ width: props.elementWidth }}
         className={`transition-opacity duration-500 ${
           props.index === 0 ? (firstImageLoaded ? 'opacity-100' : 'opacity-0') : ''
         }`}
