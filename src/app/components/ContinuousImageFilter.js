@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const containerRef = useRef(null) // Define the containerRef here
   const [mousePositions, setMousePositions] = useState([])
-  const [maskSize] = useState(24) // Size of the area that reveals the negative
+  const [maskSize] = useState(35) // Size of the area that reveals the negative
 
   const handleMouseMove = e => {
     const { left, top } = containerRef.current.getBoundingClientRect()
