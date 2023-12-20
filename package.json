@@ -24,6 +24,7 @@
     "framer-motion": "^10.16.4",
     "jsonwebtoken": "^9.0.2",
     "next": "latest",
+    "pixi.js": "^7.3.2",
     "react": "latest",
     "react-dom": "latest",
     "react-filepond": "^7.1.2",

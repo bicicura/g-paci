@@ -24,3 +24,9 @@ body {
 .custom-cursor-effect {
   font-size: 12px;
 }
+
+#slit-scan-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
