@@ -1,15 +1,17 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useContext } from 'react'
 import useMobileDetect from '@/app/hooks/useMobileDetect'
 import Navlist from './NavLinksList'
 import NavWorkBtn from './NavWorkBtn'
 import NavSocialBtns from './NavSocialBtns'
 import NavInfoSection from './NavInfoSection'
+import { NavigationContext } from '@/app/contexts/NavigationContext'
 
 const Navbar = () => {
   const [isWorkActive, setIsWorkActive] = useState(false)
-  const [isInfoActive, setIsInfoActive] = useState(false)
+  // const [isInfoActive, setIsInfoActive] = useState(false)
+  const { isInfoActive, setIsInfoActive } = useContext(NavigationContext)
   const isMobile = useMobileDetect()
 
   const toggleNavigation = () => {
@@ -39,9 +41,11 @@ const Navbar = () => {
 
   return (
     <header
-      className="fixed top-0 left-0 flex justify-between w-full p-3 lg:p-0 lg:bg-white"
+      className={`fixed top-0 ${
+        isInfoActive ? 'lg:backdrop-blur-lg' : 'lg:bg-white'
+      } left-0 flex justify-between w-full p-3 lg:p-0`}
       style={{
-        zIndex: 2000,
+        zIndex: 4010,
       }}
     >
       <NavWorkBtn
@@ -54,7 +58,8 @@ const Navbar = () => {
         isInfoActive={isInfoActive}
         isWorkActive={isWorkActive}
       />
-      <NavInfoSection isInfoActive={isInfoActive} />
+      {/* <NavInfoSection isInfoActive={isInfoActive} /> */}
+
       <Navlist
         toggleNavigation={toggleNavigation}
         isWorkActive={isWorkActive}
