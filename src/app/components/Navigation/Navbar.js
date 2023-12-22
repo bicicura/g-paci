@@ -5,7 +5,6 @@ import useMobileDetect from '@/app/hooks/useMobileDetect'
 import Navlist from './NavLinksList'
 import NavWorkBtn from './NavWorkBtn'
 import NavSocialBtns from './NavSocialBtns'
-import NavInfoSection from './NavInfoSection'
 import { NavigationContext } from '@/app/contexts/NavigationContext'
 
 const Navbar = () => {
@@ -57,7 +56,6 @@ const Navbar = () => {
         isInfoActive={isInfoActive}
         isWorkActive={isWorkActive}
       />
-      {/* <NavInfoSection isInfoActive={isInfoActive} /> */}
 
       <Navlist
         toggleNavigation={toggleNavigation}

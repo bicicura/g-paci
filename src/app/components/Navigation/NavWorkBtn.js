@@ -1,6 +1,6 @@
 const NavWorkBtn = props => {
   return (
-    <div className="flex justify-between w-full lg:w-[250px] lg:px-[40px] lg:py-[33px]">
+    <div className="flex justify-between w-full lg:w-[250px] lg:px-[40px]">
       <button
         type="button"
         className={`${

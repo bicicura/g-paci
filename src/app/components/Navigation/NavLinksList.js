@@ -24,8 +24,8 @@ const NavLinksList = props => {
           ? 'opacity-100 translate-x-none'
           : '-translate-x-8 opacity-0 pointer-events-none'
       }
-      fixed w-full lg:px-[40px] lg:py-[33px] lg:w-[250px] left-0 pl-12 top-20 min-h-screen flex flex-col justify-between transition duration-200 ease-in-out lg:backdrop-blur-lg`}
-      style={{ zIndex: 2000 }}
+      fixed w-full lg:px-[40px] bg-white lg:pb-6 lg:pt-24 lg:w-[250px] left-0 pl-12 min-h-screen flex flex-col justify-between transition duration-200 ease-in-out`}
+      style={{ zIndex: -1 }}
     >
       {loading ? (
         <p>Loading...</p>
@@ -51,7 +51,7 @@ const NavLinksList = props => {
           ))}
         </ul>
       )}
-      <h6 className="mb-16 text-xs text-gray-400">© 2023 Gastón Paci</h6>
+      <h6 className="text-xxs text-gray-400">© 2023 Gastón Paci</h6>
     </nav>
   )
 }
