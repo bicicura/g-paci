@@ -3,11 +3,13 @@ import { useContext } from 'react'
 import { usePathname } from 'next/navigation'
 import { useHover } from '@/app/contexts/HoverContext'
 import { NavigationContext } from '@/app/contexts/NavigationContext'
+import { NAV_SECTION_WORK } from '../../../../constants'
 
 const NavLinksList = props => {
   const pathname = usePathname()
   const { setHoverItem, setIsHovering } = useHover()
-  const { links, loading, isInfoActive } = useContext(NavigationContext)
+  const { links, loading, isInfoActive, isWorkActive, toggleNavigation } =
+    useContext(NavigationContext)
 
   const isActiveLink = slug => {
     if (slug === 'overview' && pathname === '/') {
@@ -20,12 +22,13 @@ const NavLinksList = props => {
   return (
     <nav
       className={`${
-        props.isWorkActive
+        isWorkActive
           ? 'opacity-100 translate-x-none'
           : '-translate-x-8 opacity-0 pointer-events-none'
       }
-      fixed w-full lg:px-[40px] bg-white lg:pb-6 lg:pt-24 lg:w-[250px] left-0 pl-12 min-h-screen flex flex-col justify-between transition duration-200 ease-in-out`}
-      style={{ zIndex: -1 }}
+      ${
+        isInfoActive ? '' : 'bg-white'
+      } fixed -z-10 w-full lg:px-[40px] lg:backdrop-blur-lg lg:pb-6 lg:pt-24 lg:w-[250px] left-0 pl-12 min-h-screen flex flex-col justify-between transition duration-200 ease-in-out`}
     >
       {loading ? (
         <p>Loading...</p>
@@ -37,7 +40,7 @@ const NavLinksList = props => {
               className={`hover:font-bold py-1 cursor-pointer ${
                 isActiveLink(link.slug) ? 'font-bold' : ''
               }`}
-              onClick={() => props.toggleNavigation()}
+              onClick={() => toggleNavigation(NAV_SECTION_WORK)}
               onMouseEnter={() => {
                 setHoverItem(link)
                 setIsHovering(true) // Setear isHovering a true

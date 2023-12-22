@@ -26,7 +26,7 @@ const SlitPixiVanilla = () => {
 
     // Default values that can be updated dynamically
     let uniforms = {
-      dimensions: new Float32Array([512, 512]),
+      dimensions: [window.innerWidth, window.innerHeight],
       imgDimensions: new Float32Array([512, 512]),
       horizontal: 1,
       scanSize: 90.2 / 99.99 - 0.01,

@@ -1,19 +1,23 @@
+import { useContext } from 'react'
+import { NavigationContext } from '@/app/contexts/NavigationContext'
+import { NAV_SECTION_WORK } from '../../../../constants'
+
 const NavWorkBtn = props => {
+  const { isWorkActive, toggleNavigation } = useContext(NavigationContext)
+
   return (
-    <div className="flex justify-between w-full lg:w-[250px] lg:px-[40px]">
+    <div className="flex justify-between items-center w-full lg:w-[250px] lg:px-[40px]">
       <button
         type="button"
-        className={`${
-          props.isWorkActive ? 'font-bold' : ''
-        } cursor-pointer hover:font-bold`}
-        onClick={() => props.toggleNavigation()}
+        className={`${isWorkActive ? 'font-bold' : ''} cursor-pointer hover:font-bold`}
+        onClick={() => toggleNavigation(NAV_SECTION_WORK)}
       >
         Work
       </button>
       <button
-        onClick={() => props.toggleNavigation()}
+        onClick={() => toggleNavigation(NAV_SECTION_WORK)}
         className={`${
-          props.isWorkActive ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          isWorkActive ? 'opacity-100' : 'opacity-0 pointer-events-none'
         } transition-opacity ease-in-out	duration-200`}
       >
         <svg

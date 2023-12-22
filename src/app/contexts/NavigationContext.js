@@ -1,6 +1,10 @@
 import { createContext, useState, useEffect } from 'react'
 import supabase from '../../../utils/supabaseClient'
-import { WORK_STATUS_ACTIVE } from '../../../constants'
+import {
+  WORK_STATUS_ACTIVE,
+  NAV_SECTION_WORK,
+  NAV_SECTION_INFO,
+} from '../../../constants'
 
 export const NavigationContext = createContext()
 
@@ -8,6 +12,15 @@ const NavigationProvider = ({ children }) => {
   const [links, setLinks] = useState([])
   const [loading, setLoading] = useState(true)
   const [isInfoActive, setIsInfoActive] = useState(false)
+  const [isWorkActive, setIsWorkActive] = useState(false)
+
+  const toggleNavigation = section => {
+    if (section === NAV_SECTION_WORK) {
+      return setIsWorkActive(!isWorkActive)
+    } else if (section === NAV_SECTION_INFO) {
+      setIsInfoActive(!isInfoActive)
+    }
+  }
 
   async function getTableData() {
     try {
@@ -55,7 +68,16 @@ const NavigationProvider = ({ children }) => {
 
   return (
     <NavigationContext.Provider
-      value={{ links, setLinks, loading, isInfoActive, setIsInfoActive }}
+      value={{
+        links,
+        loading,
+        setLinks,
+        isInfoActive,
+        isWorkActive,
+        setIsInfoActive,
+        setIsWorkActive,
+        toggleNavigation,
+      }}
     >
       {children}
     </NavigationContext.Provider>

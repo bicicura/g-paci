@@ -8,13 +8,14 @@ import NavSocialBtns from './NavSocialBtns'
 import { NavigationContext } from '@/app/contexts/NavigationContext'
 
 const Navbar = () => {
-  const [isWorkActive, setIsWorkActive] = useState(false)
-  const { isInfoActive, setIsInfoActive } = useContext(NavigationContext)
+  const {
+    isInfoActive,
+    setIsInfoActive,
+    isWorkActive,
+    setIsWorkActive,
+    toggleNavigation,
+  } = useContext(NavigationContext)
   const isMobile = useMobileDetect()
-
-  const toggleNavigation = () => {
-    setIsWorkActive(!isWorkActive)
-  }
 
   const handleEscapeKey = useCallback(
     event => {
@@ -46,21 +47,10 @@ const Navbar = () => {
         zIndex: 5003,
       }}
     >
-      <NavWorkBtn
-        isWorkActive={isWorkActive}
-        toggleNavigation={toggleNavigation}
-      />
-      <NavSocialBtns
-        isMobile={isMobile}
-        setIsInfoActive={setIsInfoActive}
-        isInfoActive={isInfoActive}
-        isWorkActive={isWorkActive}
-      />
+      <NavWorkBtn toggleNavigation={toggleNavigation} />
+      <NavSocialBtns isMobile={isMobile} />
 
-      <Navlist
-        toggleNavigation={toggleNavigation}
-        isWorkActive={isWorkActive}
-      />
+      <Navlist toggleNavigation={toggleNavigation} />
     </header>
   )
 }

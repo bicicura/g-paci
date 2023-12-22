@@ -1,8 +1,14 @@
+import { useContext } from 'react'
+import { NavigationContext } from '@/app/contexts/NavigationContext'
+import { NAV_SECTION_INFO } from '../../../../constants'
+
 const NavSocialBtns = props => {
+  const { isInfoActive, toggleNavigation, isWorkActive } = useContext(NavigationContext)
+
   return (
     <div
       className={`${
-        props.isWorkActive && props.isMobile ? 'hidden opacity-0' : 'opacity-100'
+        isWorkActive && props.isMobile ? 'hidden opacity-0' : 'opacity-100'
       } relative flex items-center gap-6 lg:px-[40px] lg:py-[33px]`}
     >
       <div className="cursor-pointer hover:font-bold hover:text-purple-500 hover:fill-black">
@@ -22,12 +28,12 @@ const NavSocialBtns = props => {
       </div>
       <button
         type="button"
-        onClick={() => props.setIsInfoActive(!props.isInfoActive)}
+        onClick={() => toggleNavigation(NAV_SECTION_INFO)}
         className={`${
-          props.isInfoActive ? 'font-bold ' : ''
+          isInfoActive ? 'font-bold ' : ''
         } cursor-pointer hover:font-bold w-[3rem] lg:w-12`}
       >
-        Info {props.isInfoActive ? '-' : '+'}
+        Info {isInfoActive ? '-' : '+'}
       </button>
     </div>
   )
