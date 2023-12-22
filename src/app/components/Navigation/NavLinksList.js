@@ -28,7 +28,7 @@ const NavLinksList = props => {
       }
       ${
         isInfoActive ? '' : 'bg-white'
-      } fixed -z-10 w-full lg:px-[40px] lg:backdrop-blur-lg lg:pb-6 lg:pt-24 lg:w-[250px] left-0 pl-12 min-h-screen flex flex-col justify-between transition duration-200 ease-in-out`}
+      } fixed -z-10 w-full lg:px-[40px] lg:backdrop-blur-lg lg:pb-6 pt-10 lg:pt-24 lg:w-[250px] lg:pl-[40px] pl-3 left-0 lg:pl-12 min-h-screen flex flex-col justify-between transition duration-200 ease-in-out`}
     >
       {loading ? (
         <p>Loading...</p>

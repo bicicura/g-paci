@@ -53,3 +53,15 @@ h1 {
   letter-spacing: 0.075rem;
   padding-bottom: 3rem;
 }
+
+@media (max-width: 800px) {
+  h1 {
+    width: 100%;
+    padding: 0.75rem;
+    line-height: 1.2;
+    font-size: 2rem;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+}

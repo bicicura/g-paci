@@ -16,8 +16,10 @@ const NavigationProvider = ({ children }) => {
 
   const toggleNavigation = section => {
     if (section === NAV_SECTION_WORK) {
+      setIsInfoActive(false)
       return setIsWorkActive(!isWorkActive)
     } else if (section === NAV_SECTION_INFO) {
+      setIsWorkActive(false)
       setIsInfoActive(!isInfoActive)
     }
   }
