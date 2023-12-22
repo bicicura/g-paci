@@ -121,7 +121,33 @@ const SlitPixiVanilla = () => {
     }
   }, [])
 
-  return <div id="slit-scan-container"></div>
+  return (
+    <>
+      <div className="text-container">
+        <h1>
+          Carlijn Jacobs is a photographer and director based in Paris. Born in the
+          Netherlands, she studied photography at Willem de Kooning Academy in Rotterdam
+          where she gained early recognition for her witty critiques of mass culture. She
+          is associated with a new generation of artists who have matured easy access to
+          unlimited reservoirs of historical and contemporaneous imagery. Jacobs has drawn
+          inspiration from Surrealism, Art Deco and Camp, which she employs as a sly
+          counter to modernism’s conservative definitions of art. Although she
+          methodically plans her projects, she creates environments with an eye toward
+          achieving surprising and unconventional results. Jacobs’ first monograph,
+          Mannequins, was published in 2021 by Art Paper Editions. Her editorial projects
+          have appeared in Vogue, Vogue France, Vogue Italia, Dazed, Pop, D Repubblica, M
+          le Monde and AnOther Magazine. Her commercial clients include Chanel, Gucci,
+          Louis Vuitton, Versace, Loewe and Mugler.
+          <br />
+          <br />
+          contact: artists@
+          <br /> artandcommerce.com <br />
+          <br /> 1 Main Streetbrooklyn NY 11222 <br /> tel +1 212 206 0737
+        </h1>
+      </div>
+      <div id="slit-scan-container"></div>
+    </>
+  )
 }
 
 export default SlitPixiVanilla
@@ -204,11 +230,4 @@ class SlitScanFilter extends PIXI.Filter {
       wiggle: 1,
     })
   }
-
-  // You can add methods to update uniforms if needed
-  // updateUniforms(newUniforms) {
-  //   for (const key in newUniforms) {
-  //     this.uniforms[key] = newUniforms[key];
-  //   }
-  // }
 }

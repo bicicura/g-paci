@@ -10,7 +10,6 @@ import { NavigationContext } from '@/app/contexts/NavigationContext'
 
 const Navbar = () => {
   const [isWorkActive, setIsWorkActive] = useState(false)
-  // const [isInfoActive, setIsInfoActive] = useState(false)
   const { isInfoActive, setIsInfoActive } = useContext(NavigationContext)
   const isMobile = useMobileDetect()
 
@@ -45,7 +44,7 @@ const Navbar = () => {
         isInfoActive ? 'lg:backdrop-blur-lg' : 'lg:bg-white'
       } left-0 flex justify-between w-full p-3 lg:p-0`}
       style={{
-        zIndex: 4010,
+        zIndex: 5003,
       }}
     >
       <NavWorkBtn

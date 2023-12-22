@@ -44,6 +44,8 @@ export default function Carousel() {
   return (
     <CarouselProvider>
       <div
+        // Z index es para que funcione bien el efecto slitscan
+        style={{ zIndex: 1000 }}
         className={`${
           styles.customCursor + ' ' + styles.customMinHScreen
         } flex justify-center items-center w-full relative p-3 lg:p-0`}

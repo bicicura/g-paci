@@ -6,6 +6,9 @@ import { NavigationContext } from '@/app/contexts/NavigationContext'
 
 const NavLinksList = props => {
   const pathname = usePathname()
+  const { setHoverItem, setIsHovering } = useHover()
+  const { links, loading, isInfoActive } = useContext(NavigationContext)
+
   const isActiveLink = slug => {
     if (slug === 'overview' && pathname === '/') {
       return true
@@ -14,17 +17,14 @@ const NavLinksList = props => {
     return urlLastFragment === slug
   }
 
-  const { setHoverItem, setIsHovering } = useHover()
-
-  const { links, loading } = useContext(NavigationContext)
-
   return (
     <nav
       className={`${
         props.isWorkActive
           ? 'opacity-100 translate-x-none'
           : '-translate-x-8 opacity-0 pointer-events-none'
-      } fixed w-full lg:px-[40px] lg:py-[33px] lg:w-[250px] left-0 pl-12 top-20 h-full bg-white flex flex-col justify-between transition duration-200 ease-in-out`}
+      }
+      fixed w-full lg:px-[40px] lg:py-[33px] lg:w-[250px] left-0 pl-12 top-20 min-h-screen flex flex-col justify-between transition duration-200 ease-in-out lg:backdrop-blur-lg`}
       style={{ zIndex: 2000 }}
     >
       {loading ? (

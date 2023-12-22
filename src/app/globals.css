@@ -28,5 +28,28 @@ body {
 #slit-scan-container {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 5000;
+}
+
+.text-container {
+  position: absolute;
+  top: 200px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5002;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+h1 {
+  width: 40ch;
+  font-size: 3.8rem;
+  font-family: sans-serif;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.075rem;
+  padding-bottom: 3rem;
 }
