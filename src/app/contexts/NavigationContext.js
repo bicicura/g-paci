@@ -5,6 +5,7 @@ import {
   NAV_SECTION_WORK,
   NAV_SECTION_INFO,
 } from '../../../constants'
+import { usePathname, useRouter } from 'next/navigation'
 
 export const NavigationContext = createContext()
 
@@ -13,6 +14,8 @@ const NavigationProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [isInfoActive, setIsInfoActive] = useState(false)
   const [isWorkActive, setIsWorkActive] = useState(false)
+  const router = useRouter()
+  const pathname = usePathname()
 
   const toggleNavigation = section => {
     if (section === NAV_SECTION_WORK) {
@@ -54,6 +57,13 @@ const NavigationProvider = ({ children }) => {
       }
 
       setLinks(workWithImages)
+
+      // if there are works available and there is no overview and user is in index... redirect
+      if (workWithImages.length && overview === undefined && pathname === '/') {
+        const slug = workWithImages[0].slug
+        console.log(slug)
+        router.push('/work/' + slug)
+      }
     } catch (error) {
       console.error(error)
     } finally {
