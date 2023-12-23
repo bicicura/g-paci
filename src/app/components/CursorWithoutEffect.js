@@ -45,7 +45,7 @@ const CursorWithoutEffect = () => {
         zIndex: -1,
       }}
     >
-      {title} {currentSlide}/{data?.works_images.length}
+      {title} {currentSlide}/{data?.works_images?.length}
     </span>
   )
 }

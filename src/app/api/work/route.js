@@ -1,6 +1,7 @@
 import supabase from '../../../../utils/supabaseClient'
 import { S3Client, DeleteObjectsCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
+import { WORK_STATUS_ACTIVE } from '../../../../constants'
 
 // Initialize the S3 client
 const s3 = new S3Client({
@@ -27,6 +28,7 @@ export async function GET(request) {
       `
       )
       .eq('slug', slug)
+      .eq('status', WORK_STATUS_ACTIVE)
       .single()
 
     if (error) {
@@ -44,6 +46,12 @@ export async function GET(request) {
       },
     })
   } catch (error) {
+    // More than 1 or no items where returned when requesting a singular response
+    if (error.code === 'PGRST116') {
+      return new Response(JSON.stringify({ error: 'No data found' }), {
+        status: 404,
+      })
+    }
     // Devuelve una respuesta con un código de estado 500 y el mensaje de error
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,

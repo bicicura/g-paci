@@ -94,7 +94,7 @@ const CursorWithEffect = () => {
         fontSize: '12px',
       }}
     >
-      {title} {currentSlide}/{data?.works_images.length}
+      {title} {currentSlide}/{data?.works_images?.length}
     </span>
   )
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 export const CarouselContext = createContext()
 
@@ -19,6 +19,7 @@ export const CarouselProvider = ({ children }) => {
   const [error, setError] = useState(null)
   const [imagesLoaded, setImagesLoaded] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
   const [firstImageLoaded, setFirstImageLoaded] = useState(false)
 
@@ -54,9 +55,16 @@ export const CarouselProvider = ({ children }) => {
           : url.searchParams.append('slug', slug)
 
         const response = await fetch(url.toString())
+
+        if (response.status === 404) {
+          router.push('/404')
+        }
+
         const result = await response.json()
+
         setData(result)
       } catch (error) {
+        console.log(error)
         setError(error)
       } finally {
         setLoading(false)
