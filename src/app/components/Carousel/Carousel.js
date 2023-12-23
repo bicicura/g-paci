@@ -1,4 +1,4 @@
-import { useRef, useEffect, useContext } from 'react'
+import { useRef, useEffect } from 'react'
 import CursorWithEffect from '../CursorWithEffect.js'
 import CursorWithoutEffect from '../CursorWithoutEffect'
 import styles from './Carousel.module.css' // Importa el archivo de estilos
@@ -6,7 +6,6 @@ import SplideCarousel from './SplideCarousel.js'
 import HoverCarousel from './HoverCarousel'
 import useMobileDetect from '@/app/hooks/useMobileDetect.js'
 import CarouselBtns from './CarouselBtns.js'
-import { CarouselProvider } from '@/app/contexts/CarouselContext'
 import MobileIndex from './MobileIndex.js'
 import '@splidejs/react-splide/css/core'
 
@@ -42,29 +41,27 @@ export default function Carousel() {
   }, [])
 
   return (
-    <CarouselProvider>
-      <div
-        // Z index es para que funcione bien el efecto slitscan
-        style={{ zIndex: 1000 }}
-        className={`${
-          styles.customCursor + ' ' + styles.customMinHScreen
-        } flex justify-center items-center w-full relative p-3 lg:p-0`}
-      >
-        {!isMobile && <CursorWithoutEffect />}
-        <div className="relative overflow-hidden carousel-container bg-white">
-          <SplideCarousel
-            isMobile={isMobile}
-            splideRef={splideRef}
-          />
-          <CarouselBtns
-            goBack={() => goBack()}
-            goNext={() => goNext()}
-          />
-          {!isMobile && <CursorWithEffect />}
-          {!isMobile && <HoverCarousel />}
-        </div>
-        {isMobile && <MobileIndex />}
+    <div
+      // Z index es para que funcione bien el efecto slitscan
+      style={{ zIndex: 1000 }}
+      className={`${
+        styles.customCursor + ' ' + styles.customMinHScreen
+      } flex justify-center items-center w-full relative p-3 lg:p-0`}
+    >
+      {!isMobile && <CursorWithoutEffect />}
+      <div className="relative overflow-hidden carousel-container bg-white">
+        <SplideCarousel
+          isMobile={isMobile}
+          splideRef={splideRef}
+        />
+        <CarouselBtns
+          goBack={() => goBack()}
+          goNext={() => goNext()}
+        />
+        {!isMobile && <CursorWithEffect />}
+        {!isMobile && <HoverCarousel />}
       </div>
-    </CarouselProvider>
+      {isMobile && <MobileIndex />}
+    </div>
   )
 }

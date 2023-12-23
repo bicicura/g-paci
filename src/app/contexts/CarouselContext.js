@@ -56,7 +56,7 @@ export const CarouselProvider = ({ children }) => {
 
         const response = await fetch(url.toString())
 
-        if (response.status === 404) {
+        if (response.status === 404 && pathname !== '/') {
           router.push('/404')
         }
 
@@ -77,16 +77,16 @@ export const CarouselProvider = ({ children }) => {
   return (
     <CarouselContext.Provider
       value={{
-        currentSlide,
-        opacity,
-        changeSlide,
-        data,
-        loading,
-        firstImageLoaded,
         setFirstImageLoaded,
-        error,
-        imagesLoaded,
+        firstImageLoaded,
         setImagesLoaded,
+        currentSlide,
+        imagesLoaded,
+        changeSlide,
+        loading,
+        opacity,
+        error,
+        data,
       }}
     >
       {children}
