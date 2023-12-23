@@ -44,7 +44,7 @@ body {
   text-align: center;
 }
 
-h1 {
+.text-container h1 {
   width: 40ch;
   font-size: 3.8rem;
   font-family: sans-serif;
@@ -55,7 +55,7 @@ h1 {
 }
 
 @media (max-width: 800px) {
-  h1 {
+  .text-container h1 {
     width: 100%;
     padding: 0.75rem;
     line-height: 1.2;

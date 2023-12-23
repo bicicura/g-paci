@@ -24,25 +24,21 @@ const NavigationProvider = ({ children }) => {
     }
   }
 
-  async function getTableData() {
+  const getNavigationData = async () => {
     try {
       setLoading(true)
       const { data, error } = await supabase
         .from('works')
-        .select(
-          `
-    *,
-    works_images (
-      img,
-      order
-    )
-  `
-        )
+        .select(`*, works_images (img, order)`)
         .eq('status', WORK_STATUS_ACTIVE)
         .order('order', { ascending: true, foreignTable: 'works_images' })
         .limit(1, { foreignTable: 'works_images' })
 
+      // filter out if a work does not has any imgs
       const workWithImages = data.filter(item => item.works_images.length > 0)
+
+      // sort works by most recent ones
+      workWithImages.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
 
       // Find the overview item
       const overview = workWithImages.find(item => item.slug === 'overview')
@@ -53,6 +49,7 @@ const NavigationProvider = ({ children }) => {
           overview,
           ...workWithImages.filter(item => item.slug !== 'overview'),
         ]
+
         return setLinks(reorderedData)
       }
 
@@ -65,7 +62,7 @@ const NavigationProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    getTableData()
+    getNavigationData()
   }, [])
 
   return (
