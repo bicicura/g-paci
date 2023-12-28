@@ -10,35 +10,36 @@ const SplideCarousel = props => {
   const [vh, setVh] = useState(null)
   const pathname = usePathname()
   const [currentBreakpoint, setCurrentBreakpoint] = useState(null)
+  const [operatingSystem, setOperatingSystem] = useState('')
 
-  // async function getOperatingSystem() {
-  //   // Try using navigator.platform
-  //   if (navigator.platform) {
-  //     const platform = navigator.platform.toLowerCase()
-  //     if (platform.includes('win')) {
-  //       return 'Windows'
-  //     } else if (platform.includes('mac')) {
-  //       return 'Mac'
-  //     }
-  //   }
+  async function getOperatingSystem() {
+    // Try using navigator.platform
+    if (navigator.platform) {
+      const platform = navigator.platform.toLowerCase()
+      if (platform.includes('win')) {
+        return 'Windows'
+      } else if (platform.includes('mac')) {
+        return 'Mac'
+      }
+    }
 
-  //   // If navigator.platform is not available, use navigator.userAgentData
-  //   if (navigator.userAgentData) {
-  //     try {
-  //       const uaData = await navigator.userAgentData.getHighEntropyValues(['platform'])
-  //       const platform = uaData.platform.toLowerCase()
-  //       if (platform.includes('windows')) {
-  //         return 'Windows'
-  //       } else if (platform.includes('macos')) {
-  //         return 'Mac'
-  //       }
-  //     } catch (error) {
-  //       console.error('Error getting user agent data:', error)
-  //     }
-  //   }
+    // If navigator.platform is not available, use navigator.userAgentData
+    if (navigator.userAgentData) {
+      try {
+        const uaData = await navigator.userAgentData.getHighEntropyValues(['platform'])
+        const platform = uaData.platform.toLowerCase()
+        if (platform.includes('windows')) {
+          return 'Windows'
+        } else if (platform.includes('macos')) {
+          return 'Mac'
+        }
+      } catch (error) {
+        console.error('Error getting user agent data:', error)
+      }
+    }
 
-  //   return 'Other'
-  // }
+    return 'Other'
+  }
 
   useEffect(() => {
     setCurrentBreakpoint(getCurrentBreakpoint(breakpoints).width)
@@ -67,12 +68,10 @@ const SplideCarousel = props => {
     return nextBreakpoint ? breakpoints[nextBreakpoint] : null
   }
 
-  // const [operatingSystem, setOperatingSystem] = useState('')
-
   useEffect(() => {
-    // ;(async () => {
-    //   setOperatingSystem(await getOperatingSystem())
-    // })()
+    ;(async () => {
+      setOperatingSystem(await getOperatingSystem())
+    })()
 
     const calculateVH = () => {
       setVh(window.innerHeight * 0.01)
@@ -189,7 +188,7 @@ const SplideCarousel = props => {
       {item.works_images &&
         item.works_images.map((image, index) => (
           <Slide
-            // operatingSystem={operatingSystem}
+            operatingSystem={operatingSystem}
             elementWidth={currentBreakpoint}
             key={image.img}
             slug={item.slug}
