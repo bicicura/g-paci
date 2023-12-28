@@ -26,8 +26,8 @@ export default function Splide(props) {
   return (
     <SplideSlide>
       <div
-        style={{ width: props.elementWidth }}
-        className={`transition-opacity duration-500 ${
+        style={{ maxHeight: '76vh', width: '100%' }}
+        className={`transition-opacity w-full h-full mx-auto duration-500 ${
           props.index === 0 ? (firstImageLoaded ? 'opacity-100' : 'opacity-0') : ''
         }`}
       >
@@ -36,12 +36,10 @@ export default function Splide(props) {
             src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/${props.img}`}
             alt="hero image"
             priority
-            width="0"
-            height="0"
-            sizes="50vw"
-            className="w-full h-auto"
+            width="1080"
+            height="1000"
+            className="w-full h-full object-contain"
             // antes esta línea no estaba, lo agregue para que no rompa todo si se suben imgs que no respeten el aspect ratio que necesitamos
-            style={{ aspectRatio: '16 / 10', objectFit: 'contain' }}
             onLoad={() => handleImageLoad()}
           />
         )}

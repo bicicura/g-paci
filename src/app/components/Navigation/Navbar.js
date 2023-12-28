@@ -41,7 +41,7 @@ const Navbar = () => {
   return (
     <header
       className={`fixed top-0 ${
-        isInfoActive ? 'backdrop-blur-lg' : 'lg:bg-white'
+        isInfoActive ? 'backdrop-blur-lg' : ''
       } left-0 flex justify-between w-full p-3 lg:p-0`}
       style={{
         zIndex: 5003,

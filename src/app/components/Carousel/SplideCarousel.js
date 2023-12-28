@@ -174,15 +174,13 @@ const SplideCarousel = props => {
   ) : (
     <Splide
       ref={props.splideRef}
-      className={`absolute inset-0 xl:mx-auto`}
+      className={`absolute w-[80rem] inset-0 xl:mx-auto`}
       options={{
         rewind: true,
         gap: '1rem',
         arrows: false,
         perPage: 1,
         type: 'fade',
-        width: '57.7rem',
-        breakpoints,
       }}
       aria-label="My Favorite Images"
     >
@@ -197,6 +195,7 @@ const SplideCarousel = props => {
             index={index}
           />
         ))}
+      {/* <div className="border-2 w-full border-black">hola!</div> */}
     </Splide>
   )
 }
