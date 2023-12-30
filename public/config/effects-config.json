@@ -1,0 +1,14 @@
+{
+  "effects": {
+    "ContinuousImageFilter": {
+      "active": true,
+      "primaryImage": null,
+      "secondaryImage": null
+    },
+    "SlitScan": {
+      "active": false,
+      "img": null,
+      "body": ""
+    }
+  }
+}

@@ -52,7 +52,7 @@ const CreateWork = () => {
         isRequired
         disabled={isLoading}
         type="text"
-        label="Title"
+        label="Nombre"
         value={name}
         onChange={handleNameChange}
         description="Ingrese el nombre del proyecto."
@@ -70,6 +70,7 @@ const CreateWork = () => {
           disabled={isLoading}
           instantUpload={false}
           files={files}
+          allowProcess={false}
           onupdatefiles={setFiles}
           onreorderfiles={handleImageReorder}
           allowMultiple={true}
@@ -103,7 +104,7 @@ const CreateWork = () => {
               />
             </svg>
           )}
-          Save
+          Guardar
         </Button>
       </div>
     </section>

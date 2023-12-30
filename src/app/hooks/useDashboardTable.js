@@ -176,7 +176,7 @@ const useDashboardTable = () => {
           <div className="relative flex items-center gap-4 text-black">
             <Tooltip
               className="text-black"
-              content="Edit"
+              content="Editar"
             >
               <Link
                 href={`/dashboard/edit/${user.slug}`}
@@ -190,7 +190,7 @@ const useDashboardTable = () => {
 
             <Tooltip
               color="danger"
-              content="Delete"
+              content="Eliminar"
             >
               <button onClick={() => onDeleteButton(user)}>
                 <span className="text-lg cursor-pointer text-danger active:opacity-50">

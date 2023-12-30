@@ -65,3 +65,7 @@ body {
     hyphens: auto;
   }
 }
+
+.dashboard-nav header {
+  padding: 0;
+}

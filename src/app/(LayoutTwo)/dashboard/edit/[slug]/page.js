@@ -80,7 +80,7 @@ const EditWork = () => {
               disabled={isLoading}
               isRequired
               type="text"
-              label="Title"
+              label="Nombre"
               description="Ingrese el nombre del proyecto."
               value={work.name}
               onChange={handleNameChange}
@@ -96,7 +96,7 @@ const EditWork = () => {
                 })
               }}
             >
-              Active
+              Activo
             </Checkbox>
           </div>
 
@@ -176,6 +176,7 @@ const EditWork = () => {
           <div>
             <h3 className="mb-4 text-lg text-black">Cargar nuevas imagenes</h3>
             <FilePond
+              allowProcess={false}
               disabled={isLoading}
               allowFileSizeValidation
               allowFileTypeValidation
@@ -225,7 +226,7 @@ const EditWork = () => {
                   />
                 </svg>
               )}
-              Save
+              Guardar
             </Button>
           </div>
         </section>
