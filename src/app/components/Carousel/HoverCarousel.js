@@ -17,7 +17,7 @@ const HoverCarousel = () => {
         data.map(item => (
           <div
             key={item.id}
-            style={{ maxHeight: '76vh' }}
+            style={{ maxHeight: '80vh' }}
             className={`transition-opacity h-full absolute inset-0 duration-500 ease-in-out opacity-0
             ${isHovering && item.id === hoverItem.id ? 'opacity-100' : ''}`}
           >

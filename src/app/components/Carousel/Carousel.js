@@ -27,19 +27,6 @@ export default function Carousel() {
     }
   }
 
-  const setVH = () => {
-    let vh = window.innerHeight * 0.01
-    document.documentElement.style.setProperty('--vh', `${vh}px`)
-  }
-
-  useEffect(() => {
-    setVH()
-    window.addEventListener('resize', setVH)
-    return () => {
-      window.removeEventListener('resize', setVH)
-    }
-  }, [])
-
   return (
     <div
       // Z index es para que funcione bien el efecto slitscan
