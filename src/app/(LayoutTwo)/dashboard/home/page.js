@@ -7,9 +7,10 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import Link from 'next/link'
-import useCreateWork from '@/app/hooks/useCreateWork'
+import useEditHome from '@/app/hooks/useEditHome'
 import { MAX_FILE_SIZE } from '../../../../../constants'
 import { Checkbox } from '@nextui-org/react'
+import { useState } from 'react'
 
 registerPlugin(
   FilePondPluginImageExifOrientation,
@@ -17,16 +18,16 @@ registerPlugin(
   FilePondPluginFileValidateSize
 )
 
-const CreateWork = () => {
+const EditHome = () => {
   const {
-    handleImageReorder,
-    handleNameChange,
     handleSubmit,
+    setPrimaryImage,
+    setSecondaryImage,
     isLoading,
-    setFiles,
-    files,
-    name,
-  } = useCreateWork()
+    isActive,
+    setIsActive,
+  } = useEditHome()
+
   return (
     <section>
       <div className="mb-12">
@@ -67,10 +68,9 @@ const CreateWork = () => {
         </span>
       </div>
       <Checkbox
-        // isSelected={isActive}
-        isSelected={true}
+        isSelected={isActive}
         onValueChange={value => {
-          // setIsActive(value)
+          setIsActive(value)
           // setWork({
           //   ...work,
           //   status: value ? WORK_STATUS_ACTIVE : WORK_STATUS_INACTIVE,
@@ -93,10 +93,13 @@ const CreateWork = () => {
               acceptedFileTypes={['image/*']}
               disabled={isLoading}
               instantUpload={false}
-              files={files}
+              onupdatefiles={fileItems => {
+                // Suponiendo que es el FilePond para la imagen primaria
+                setPrimaryImage(fileItems.length ? fileItems[0].file : null)
+              }}
               allowMultiple={false}
               server="/api/work"
-              name="files" /* sets the file input name, it's filepond by default */
+              name="primaryImage" /* sets the file input name, it's filepond by default */
               labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
             />
           </div>
@@ -108,14 +111,18 @@ const CreateWork = () => {
               className="w-full"
               allowFileSizeValidation
               allowFileTypeValidation
+              allowProcess={false}
               maxFileSize={MAX_FILE_SIZE}
               acceptedFileTypes={['image/*']}
               disabled={isLoading}
               instantUpload={false}
-              files={files}
+              onupdatefiles={fileItems => {
+                // Suponiendo que es el FilePond para la imagen primaria
+                setSecondaryImage(fileItems.length ? fileItems[0].file : null)
+              }}
               allowMultiple={false}
               server="/api/work"
-              name="files" /* sets the file input name, it's filepond by default */
+              name="secondaryImage" /* sets the file input name, it's filepond by default */
               labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
             />
           </div>
@@ -146,11 +153,11 @@ const CreateWork = () => {
               />
             </svg>
           )}
-          Save
+          Guardar
         </Button>
       </div>
     </section>
   )
 }
 
-export default CreateWork
+export default EditHome

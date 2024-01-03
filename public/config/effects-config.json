@@ -1,7 +1,7 @@
 {
   "effects": {
     "ContinuousImageFilter": {
-      "active": true,
+      "active": false,
       "primaryImage": null,
       "secondaryImage": null
     },

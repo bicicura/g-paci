@@ -62,7 +62,6 @@ const DashboardNav = () => {
               isActive={activeNavItem === 'home' ? true : false}
             >
               <Link
-                classNames
                 onClick={() => handleActiveNavItem('home')}
                 className={`${
                   activeNavItem === 'home' ? 'text-slate-800' : 'text-slate-400'
