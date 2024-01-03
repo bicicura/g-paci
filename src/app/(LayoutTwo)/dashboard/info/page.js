@@ -21,7 +21,7 @@ registerPlugin(
   FilePondPluginImagePreview
 )
 
-const EditHome = () => {
+const EditInfo = () => {
   const {
     handleSubmit,
     setPrimaryImage,
@@ -57,7 +57,7 @@ const EditHome = () => {
 
           <div>
             <div className="flex items-center gap-4">
-              <h1 className="text-3xl font-bold text-default-700">Home</h1>
+              <h1 className="text-3xl font-bold text-default-700">Info</h1>
               <Chip
                 className="capitalize"
                 color={isActive ? 'success' : 'warning'}
@@ -70,7 +70,7 @@ const EditHome = () => {
           </div>
         </div>
         <span className="text-black block ml-12 pl-0.5 mt-2 text-sm text-slate-500">
-          Editando el efecto al ingresar al sitio.
+          Editando el efecto al apretar +Info.
         </span>
       </div>
       <div className="flex gap-6">
@@ -207,4 +207,4 @@ const EditHome = () => {
   )
 }
 
-export default EditHome
+export default EditInfo
