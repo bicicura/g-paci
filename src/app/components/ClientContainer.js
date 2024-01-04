@@ -8,6 +8,7 @@ import ContinuousImageFilter from './ContinuousImageFilter.js'
 import NavigationProvider from '../contexts/NavigationContext.js'
 import { usePathname } from 'next/navigation.js'
 import useMobileDetect from '@/app/hooks/useMobileDetect.js'
+import EffectsProvider from '../contexts/EffectsContext.js'
 
 const ClientContainer = ({ children }) => {
   const [showIntro, setShowIntro] = useState(true)
@@ -26,7 +27,7 @@ const ClientContainer = ({ children }) => {
   }, [])
 
   return (
-    <>
+    <EffectsProvider>
       {showIntro && pathname === '/' && !isMobile ? (
         <div className="hidden lg:flex items-center justify-center w-full min-h-screen">
           <div className="w-2/6">
@@ -50,7 +51,7 @@ const ClientContainer = ({ children }) => {
           </NavigationProvider>
         </div>
       )}
-    </>
+    </EffectsProvider>
   )
 }
 

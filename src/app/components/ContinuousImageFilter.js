@@ -1,10 +1,13 @@
-import { useRef, useState, useCallback, useEffect } from 'react'
+import { useRef, useState, useCallback, useEffect, useContext } from 'react'
+import { EffectsContext } from '../contexts/EffectsContext'
+import Image from 'next/image'
 
 const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const containerRef = useRef(null)
   const canvasRef = useRef(null)
   const maskImageRef = useRef(null)
   const [maskSize] = useState(20)
+  const { isLoading, homeEffectConfig } = useContext(EffectsContext)
 
   const draw = useCallback(
     (x, y, isNewStroke) => {
@@ -21,7 +24,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
         maskImageRef.current.style.webkitMask = `url(${canvasRef.current.toDataURL()})`
       }
     },
-    [maskSize]
+    [maskSize, homeEffectConfig]
   )
 
   const throttle = (callback, delay) => {
@@ -41,7 +44,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       const y = e.pageY - top
       draw(x, y, true)
     }, 25), // Throttle interval in milliseconds
-    [draw]
+    [draw, homeEffectConfig]
   )
 
   const handleMouseLeave = useCallback(() => {
@@ -58,9 +61,11 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       ctx.fillStyle = 'white'
       ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height)
     }
-  }, [])
+  }, [homeEffectConfig])
 
-  return (
+  return isLoading ? (
+    <span>Loading...</span>
+  ) : (
     <div
       onClick={onDismiss}
       tabIndex={0}
@@ -73,10 +78,13 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
         opacity === 1 ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      <img
+      <Image
         ref={maskImageRef}
-        src="/images/overlap-effect/negative.jpg"
+        src={homeEffectConfig.primaryImage}
         alt="Positive"
+        priority
+        width={500}
+        height={500}
         style={{
           width: '100%',
           height: 'auto',
@@ -85,8 +93,11 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
           left: 0,
         }}
       />
-      <img
-        src="/images/overlap-effect/positive.jpg"
+      <Image
+        priority
+        width={500}
+        height={500}
+        src={homeEffectConfig.secondaryImage}
         alt="Negative"
         style={{ width: '100%', height: 'auto' }}
       />

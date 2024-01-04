@@ -91,6 +91,12 @@ const useEditHome = () => {
     return publicUrl.href // Devolver la URL pública del archivo
   }
 
+  const generateFileName = file => {
+    const extension = file.name.split('.').pop()
+    const randomName = (Math.random() + 1).toString(36).substring(2)
+    return `${randomName}.${extension}`
+  }
+
   const handleSubmit = async () => {
     if (!validateFileSize()) {
       return showSnackbar(
@@ -114,16 +120,16 @@ const useEditHome = () => {
 
       // Verifica si primaryImage y secondaryImage existen y tienen un archivo
       if (primaryImage) {
-        const extension = primaryImage.name.split('.').pop()
-        const newName = 'primary-image.' + extension // Asegúrate de incluir el punto antes de la extensión
+        const newName = generateFileName(primaryImage)
         const newFile = new File([primaryImage], newName, { type: primaryImage.type })
         primaryImageUrl = await uploadImageToS3(newFile)
+        // @TODO borrar imagen previa
       }
       if (secondaryImage) {
-        const extension = secondaryImage.name.split('.').pop()
-        const newName = 'secondary-image.' + extension // Asegúrate de incluir el punto antes de la extensión
+        const newName = generateFileName(secondaryImage)
         const newFile = new File([secondaryImage], newName, { type: secondaryImage.type })
         secondaryImageUrl = await uploadImageToS3(newFile)
+        // @TODO borrar imagen previa
       }
 
       // Enviar información al backend

@@ -21,6 +21,12 @@ const useEditInfo = () => {
   const [body, setBody] = useState(effectConfig.body)
   const [isActive, setIsActive] = useState(effectConfig.active)
 
+  const generateFileName = file => {
+    const extension = file.name.split('.').pop()
+    const randomName = (Math.random() + 1).toString(36).substring(2)
+    return `${randomName}.${extension}`
+  }
+
   const validateFileSize = () => {
     // Retorna 'true' si el archivo es menor o igual al tamaño máximo permitido
     return (
@@ -104,8 +110,7 @@ const useEditInfo = () => {
 
       // Verifica si primaryImage existe y tienen un archivo
       if (primaryImage) {
-        const extension = primaryImage.name.split('.').pop()
-        const newName = 'slitscan-image.' + extension // Asegúrate de incluir el punto antes de la extensión
+        const newName = generateFileName(primaryImage)
         const newFile = new File([primaryImage], newName, { type: primaryImage.type })
         imageUrl = await uploadImageToS3(newFile)
       }
