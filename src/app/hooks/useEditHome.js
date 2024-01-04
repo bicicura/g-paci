@@ -5,12 +5,14 @@ import {
   WORK_STATUS_ACTIVE,
   WORK_STATUS_INACTIVE,
 } from '../../../constants'
+import { useRouter } from 'next/navigation'
 
 const useEditHome = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [primaryImage, setPrimaryImage] = useState(null)
   const [secondaryImage, setSecondaryImage] = useState(null)
   const { showSnackbar } = useSnackbar()
+  const router = useRouter()
   const [effectConfig, setEffectConfig] = useState({
     active: false,
     primaryImage: null,
@@ -47,7 +49,7 @@ const useEditHome = () => {
 
   useEffect(() => {
     ;(async () => {
-      const res = await fetch('/api/home-effect')
+      const res = await fetch('/api/effects-config')
       const data = await res.json()
       setEffectConfig(data?.effects?.ContinuousImageFilter)
     })()
@@ -144,7 +146,7 @@ const useEditHome = () => {
       const result = await response.json()
       console.log('Respuesta del servidor:', result)
 
-      // Aquí puedes incluir acciones adicionales tras una actualización exitosa,
+      router.push('/dashboard')
       // como mostrar un mensaje de éxito al usuario o redirigir a otra página.
       showSnackbar('Efecto actualizado con éxito', 'success') // Ejemplo de notificación de éxito
     } catch (error) {

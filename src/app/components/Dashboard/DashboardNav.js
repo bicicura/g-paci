@@ -10,12 +10,28 @@ import {
 } from '@nextui-org/react'
 import NextLink from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const DashboardNav = () => {
   const pathname = usePathname()
   const { push } = useRouter()
-  const [activeNavItem, setActiveNavItem] = useState('works')
+
+  // Determina el elemento de navegación activo basado en la ruta
+  const getActiveNavItem = () => {
+    const lastFragment = pathname.split('/').pop()
+    switch (lastFragment) {
+      case 'home':
+        return 'home'
+      case 'works':
+        return 'works'
+      case 'info':
+        return 'info'
+      default:
+        return 'works' // Valor predeterminado
+    }
+  }
+
+  const [activeNavItem, setActiveNavItem] = useState(getActiveNavItem())
 
   const handleActiveNavItem = navItem => {
     setActiveNavItem(navItem)
@@ -44,6 +60,11 @@ const DashboardNav = () => {
       console.error('Error de conexión al cerrar sesión:', error)
     }
   }
+
+  // Actualiza el estado activo cuando cambia la ruta
+  useEffect(() => {
+    setActiveNavItem(getActiveNavItem())
+  }, [pathname])
 
   return (
     <>

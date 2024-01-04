@@ -5,26 +5,27 @@ import {
   WORK_STATUS_ACTIVE,
   WORK_STATUS_INACTIVE,
 } from '../../../constants'
+import { useRouter } from 'next/navigation'
 
-const useEditHome = () => {
+const useEditInfo = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [primaryImage, setPrimaryImage] = useState(null)
   const [secondaryImage, setSecondaryImage] = useState(null)
   const { showSnackbar } = useSnackbar()
+  const router = useRouter()
   const [effectConfig, setEffectConfig] = useState({
     active: false,
-    primaryImage: null,
-    secondaryImage: null,
+    image: null,
+    body: '',
   })
+  const [body, setBody] = useState(effectConfig.body)
   const [isActive, setIsActive] = useState(effectConfig.active)
 
   const validateFileSize = () => {
-    // Retorna 'true' si ambos archivos son menores o iguales al tamaño máximo permitido
+    // Retorna 'true' si el archivo es menor o igual al tamaño máximo permitido
     return (
-      (!primaryImage ||
-        (primaryImage instanceof File && primaryImage.size <= MAX_FILE_SIZE)) &&
-      (!secondaryImage ||
-        (secondaryImage instanceof File && secondaryImage.size <= MAX_FILE_SIZE))
+      !primaryImage ||
+      (primaryImage instanceof File && primaryImage.size <= MAX_FILE_SIZE)
     )
   }
 
@@ -33,10 +34,7 @@ const useEditHome = () => {
 
     const isValidType = file => file instanceof File && imageTypes.includes(file.type)
 
-    return (
-      (!primaryImage || isValidType(primaryImage)) &&
-      (!secondaryImage || isValidType(secondaryImage))
-    )
+    return !primaryImage || isValidType(primaryImage)
   }
 
   const statusColorMap = {
@@ -47,14 +45,15 @@ const useEditHome = () => {
 
   useEffect(() => {
     ;(async () => {
-      const res = await fetch('/api/home-effect')
+      const res = await fetch('/api/effects-config')
       const data = await res.json()
-      setEffectConfig(data?.effects?.ContinuousImageFilter)
+      setEffectConfig(data?.effects?.SlitScan)
     })()
   }, [])
 
   useEffect(() => {
     setIsActive(effectConfig.active)
+    setBody(effectConfig.body)
   }, [effectConfig])
 
   const uploadImageToS3 = async file => {
@@ -67,7 +66,7 @@ const useEditHome = () => {
       body: JSON.stringify({
         fileName: file.name,
         fileType: file.type,
-        slug: 'home-effect',
+        slug: 'slitscan-effect',
       }),
     })
 
@@ -91,48 +90,35 @@ const useEditHome = () => {
 
   const handleSubmit = async () => {
     if (!validateFileSize()) {
-      return showSnackbar(
-        'Uno o más archivos superan el tamaño máximo permitido.',
-        'error'
-      )
+      return showSnackbar('El archivo supera el tamaño máximo permitido.', 'error')
     }
 
     if (!validateFileType()) {
-      return showSnackbar(
-        'Uno o más archivos no son del tipo de imagen permitido.',
-        'error'
-      )
+      return showSnackbar('El archivo no es del tipo de imagen permitido.', 'error')
     }
 
-    setIsLoading(true) // Suponiendo que tienes un estado para controlar la carga
+    setIsLoading(true)
 
     try {
-      let primaryImageUrl = null
-      let secondaryImageUrl = null
+      let imageUrl = null
 
-      // Verifica si primaryImage y secondaryImage existen y tienen un archivo
+      // Verifica si primaryImage existe y tienen un archivo
       if (primaryImage) {
         const extension = primaryImage.name.split('.').pop()
-        const newName = 'primary-image.' + extension // Asegúrate de incluir el punto antes de la extensión
+        const newName = 'slitscan-image.' + extension // Asegúrate de incluir el punto antes de la extensión
         const newFile = new File([primaryImage], newName, { type: primaryImage.type })
-        primaryImageUrl = await uploadImageToS3(newFile)
-      }
-      if (secondaryImage) {
-        const extension = secondaryImage.name.split('.').pop()
-        const newName = 'secondary-image.' + extension // Asegúrate de incluir el punto antes de la extensión
-        const newFile = new File([secondaryImage], newName, { type: secondaryImage.type })
-        secondaryImageUrl = await uploadImageToS3(newFile)
+        imageUrl = await uploadImageToS3(newFile)
       }
 
       // Enviar información al backend
-      const response = await fetch('/api/home-effect', {
+      const response = await fetch('/api/info-effect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          effectName: 'ContinuousImageFilter',
+          effectName: 'SlitScan',
           newEffectState: isActive,
-          primaryImageUrl,
-          secondaryImageUrl,
+          primaryImageUrl: imageUrl,
+          body,
         }),
       })
 
@@ -144,7 +130,7 @@ const useEditHome = () => {
       const result = await response.json()
       console.log('Respuesta del servidor:', result)
 
-      // Aquí puedes incluir acciones adicionales tras una actualización exitosa,
+      router.push('/dashboard')
       // como mostrar un mensaje de éxito al usuario o redirigir a otra página.
       showSnackbar('Efecto actualizado con éxito', 'success') // Ejemplo de notificación de éxito
     } catch (error) {
@@ -161,6 +147,8 @@ const useEditHome = () => {
     statusColorMap,
     setPrimaryImage,
     secondaryImage,
+    body,
+    setBody,
     WORK_STATUS_ACTIVE,
     WORK_STATUS_INACTIVE,
     effectConfig,
@@ -171,4 +159,4 @@ const useEditHome = () => {
   }
 }
 
-export default useEditHome
+export default useEditInfo

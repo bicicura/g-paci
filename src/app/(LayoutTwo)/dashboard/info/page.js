@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Chip, Divider, Tooltip } from '@nextui-org/react'
+import { Button, Chip, Divider, Textarea, Tooltip } from '@nextui-org/react'
 import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
@@ -9,7 +9,7 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import Link from 'next/link'
-import useEditHome from '@/app/hooks/useEditHome'
+import useEditInfo from '@/app/hooks/useEditInfo'
 import { MAX_FILE_SIZE } from '../../../../../constants'
 import { Checkbox } from '@nextui-org/react'
 import Image from 'next/image'
@@ -25,14 +25,15 @@ const EditInfo = () => {
   const {
     handleSubmit,
     setPrimaryImage,
-    setSecondaryImage,
+    body,
+    setBody,
     WORK_STATUS_ACTIVE,
     WORK_STATUS_INACTIVE,
     isLoading,
     isActive,
     setIsActive,
     effectConfig,
-  } = useEditHome()
+  } = useEditInfo()
 
   return (
     <section>
@@ -89,33 +90,18 @@ const EditInfo = () => {
         </Checkbox>
 
         <div className="flex gap-6">
-          {effectConfig.primaryImage && (
+          {effectConfig.img && (
             <Tooltip
               className="text-black"
-              content="Imagen primaria"
+              content="Imagen de fondo"
             >
               <Image
                 priority
                 className="aspect-video object-contain border rounded-lg bg-slate-100"
                 width={150}
                 height={150}
-                src={effectConfig.primaryImage}
-                alt="Home effect primary image"
-              />
-            </Tooltip>
-          )}
-          {effectConfig.secondaryImage && (
-            <Tooltip
-              className="text-black"
-              content="Imagen secundaria"
-            >
-              <Image
-                priority
-                className="aspect-video object-contain border rounded-lg bg-slate-100"
-                width={150}
-                height={150}
-                src={effectConfig.secondaryImage}
-                alt="Home effect primary image"
+                src={effectConfig.img}
+                alt="Info effect background image"
               />
             </Tooltip>
           )}
@@ -124,9 +110,21 @@ const EditInfo = () => {
 
       <Divider className="my-12" />
 
+      <div className="grid grid-cols-3">
+        <span className="text-lg text-black">Cuerpo</span>
+        <Textarea
+          value={body}
+          onValueChange={setBody}
+          className="text-black col-span-2"
+          placeholder="Enter your description"
+        />
+      </div>
+
+      <Divider className="my-12" />
+
       <div className="text-black space-y-12">
         <div className="grid grid-cols-3">
-          <span className="text-lg">Nueva imagen primaria</span>
+          <span className="text-lg">Nueva imagen</span>
           <div className="col-span-2">
             <FilePond
               allowImagePreview
@@ -146,30 +144,6 @@ const EditInfo = () => {
               allowMultiple={false}
               server="/api/work"
               name="primaryImage" /* sets the file input name, it's filepond by default */
-              labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-3">
-          <span className="text-lg">Nueva imagen secundaria</span>
-          <div className="col-span-2">
-            <FilePond
-              allowImagePreview
-              className="w-full"
-              allowFileSizeValidation
-              allowFileTypeValidation
-              allowProcess={false}
-              maxFileSize={MAX_FILE_SIZE}
-              acceptedFileTypes={['image/*']}
-              disabled={isLoading}
-              instantUpload={false}
-              onupdatefiles={fileItems => {
-                // Suponiendo que es el FilePond para la imagen primaria
-                setSecondaryImage(fileItems.length ? fileItems[0].file : null)
-              }}
-              allowMultiple={false}
-              server="/api/work"
-              name="secondaryImage" /* sets the file input name, it's filepond by default */
               labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
             />
           </div>

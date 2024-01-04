@@ -22,8 +22,7 @@ const jsonKey = 'effects-config.json'
 
 export async function POST(request) {
   try {
-    const { effectName, newEffectState, primaryImageUrl, secondaryImageUrl } =
-      await request.json()
+    const { effectName, newEffectState, primaryImageUrl, body } = await request.json()
 
     // Obtener el archivo JSON actual de S3
     const getObjectParams = { Bucket: bucketName, Key: jsonKey }
@@ -35,8 +34,8 @@ export async function POST(request) {
     const effectConfig = json.effects[effectName]
     if (effectConfig) {
       effectConfig.active = newEffectState
-      if (primaryImageUrl) effectConfig.primaryImage = primaryImageUrl
-      if (secondaryImageUrl) effectConfig.secondaryImage = secondaryImageUrl
+      if (primaryImageUrl) effectConfig.img = primaryImageUrl
+      if (body) effectConfig.body = body
     }
 
     // Sobrescribir el archivo JSON en S3
