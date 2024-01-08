@@ -74,10 +74,20 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ position: 'relative' }}
-      className={`cursor-pointer transition-opacity duration-300 ${
+      className={`cursor-pointer transition-opacity topContinousImage duration-300 ${
         opacity === 1 ? 'opacity-100' : 'opacity-0'
       }`}
     >
+      <span
+        style={{
+          writingMode: 'vertical-rl',
+          transform: 'rotate(180deg)',
+          textOrientation: '',
+        }}
+        className="absolute -right-6   bottom-0"
+      >
+        draw de image
+      </span>
       <Image
         ref={maskImageRef}
         src={homeEffectConfig.primaryImage}
