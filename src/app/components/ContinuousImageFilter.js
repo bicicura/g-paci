@@ -6,8 +6,15 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const containerRef = useRef(null)
   const canvasRef = useRef(null)
   const maskImageRef = useRef(null)
-  const [maskSize] = useState(23)
+  const [maskSize] = useState(21)
   const { isLoading, homeEffectConfig } = useContext(EffectsContext)
+
+  const [drawPoints, setDrawPoints] = useState([])
+
+  const addDrawPoint = (x, y) => {
+    // Añadir un nuevo punto y posiblemente eliminar los más antiguos
+    setDrawPoints(currentPoints => [...currentPoints, { x, y, time: Date.now() }])
+  }
 
   const throttle = (callback, delay) => {
     let lastCall = 0
@@ -29,18 +36,36 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
     }
   }, [])
 
-  const draw = useCallback(
-    (x, y) => {
-      const ctx = bufferCtxRef.current || canvasRef.current.getContext('2d')
-      ctx.globalCompositeOperation = 'destination-out'
-      ctx.filter = 'blur(7px)'
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Elimina los puntos más antiguos
+      setDrawPoints(currentPoints =>
+        currentPoints.filter(point => Date.now() - point.time < 3000)
+      ) // 3000 ms = 3 segundos
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const draw = useCallback(() => {
+    // Verifica si los contextos de canvas están disponibles
+    if (!bufferCtxRef.current || !canvasRef.current) {
+      return
+    }
+
+    const ctx = bufferCtxRef.current
+    ctx.globalCompositeOperation = 'destination-out'
+    ctx.filter = 'blur(9px)'
+
+    // Dibuja los puntos actuales
+    drawPoints.forEach(point => {
       ctx.beginPath()
-      ctx.arc(x, y, maskSize, 0, Math.PI * 2)
+      ctx.arc(point.x, point.y, maskSize, 0, Math.PI * 2)
       ctx.fill()
-      ctx.filter = 'none'
-    },
-    [maskSize]
-  )
+    })
+
+    ctx.filter = 'blur(3px)'
+  }, [drawPoints, maskSize])
 
   const updateMask = useCallback(() => {
     if (canvasRef.current && bufferCanvasRef.current) {
@@ -57,11 +82,19 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       const { left, top } = containerRef.current.getBoundingClientRect()
       const x = e.pageX - left
       const y = e.pageY - top
-      draw(x, y)
+      addDrawPoint(x, y) // Añade el punto a drawPoints
       requestAnimationFrame(updateMask)
     }, 25),
-    [draw, updateMask]
-  ) // 25 milisegundos como ejemplo
+    [addDrawPoint, updateMask]
+  )
+
+  useEffect(() => {
+    // Llama a draw y updateMask solo si los contextos de canvas están disponibles
+    if (bufferCtxRef.current && canvasRef.current) {
+      draw()
+      requestAnimationFrame(updateMask)
+    }
+  }, [drawPoints, draw, updateMask])
 
   useEffect(() => {
     // Crear el contexto del buffer canvas si aún no existe
