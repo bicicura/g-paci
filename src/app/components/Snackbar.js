@@ -22,7 +22,7 @@ const Snackbar = () => {
 
   return (
     <div
-      className={`fixed items-center z-50 flex gap-12 text-md font-bold bottom-0 right-0 p-4 m-4 rounded shadow-xl border-2 ${
+      className={`fixed items-center z-50 flex gap-12 text-md font-bold bottom-0 right-0 p-3.5 m-4 rounded shadow-xl border-2 ${
         snackbar.type === 'success'
           ? 'bg-green-300 border-green-500 text-green-900'
           : 'bg-red-300 border-red-500 text-red-900'
@@ -30,7 +30,7 @@ const Snackbar = () => {
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         {snackbar.type === 'error' ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
