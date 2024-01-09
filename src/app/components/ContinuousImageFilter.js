@@ -6,26 +6,8 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const containerRef = useRef(null)
   const canvasRef = useRef(null)
   const maskImageRef = useRef(null)
-  const [maskSize] = useState(20)
+  const [maskSize] = useState(23)
   const { isLoading, homeEffectConfig } = useContext(EffectsContext)
-
-  const draw = useCallback(
-    (x, y, isNewStroke) => {
-      const ctx = canvasRef.current.getContext('2d')
-      if (isNewStroke) {
-        ctx.globalCompositeOperation = 'destination-out'
-        ctx.filter = 'blur(10px)'
-        ctx.beginPath()
-        ctx.arc(x, y, maskSize, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.filter = 'none'
-        // Update the mask image style with the canvas
-        maskImageRef.current.style.mask = `url(${canvasRef.current.toDataURL()})`
-        maskImageRef.current.style.webkitMask = `url(${canvasRef.current.toDataURL()})`
-      }
-    },
-    [maskSize, homeEffectConfig]
-  )
 
   const throttle = (callback, delay) => {
     let lastCall = 0
@@ -37,29 +19,68 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
     }
   }
 
-  const handleMouseMove = useCallback(
+  // Crear un buffer canvas para mejorar el rendimiento
+  const bufferCanvasRef = useRef(null)
+  const bufferCtxRef = useRef(null)
+
+  useEffect(() => {
+    if (bufferCanvasRef.current) {
+      bufferCtxRef.current = bufferCanvasRef.current.getContext('2d')
+    }
+  }, [])
+
+  const draw = useCallback(
+    (x, y) => {
+      const ctx = bufferCtxRef.current || canvasRef.current.getContext('2d')
+      ctx.globalCompositeOperation = 'destination-out'
+      ctx.filter = 'blur(7px)'
+      ctx.beginPath()
+      ctx.arc(x, y, maskSize, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.filter = 'none'
+    },
+    [maskSize]
+  )
+
+  const updateMask = useCallback(() => {
+    if (canvasRef.current && bufferCanvasRef.current) {
+      const ctx = canvasRef.current.getContext('2d')
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+      ctx.drawImage(bufferCanvasRef.current, 0, 0)
+      maskImageRef.current.style.mask = `url(${canvasRef.current.toDataURL()})`
+      maskImageRef.current.style.webkitMask = `url(${canvasRef.current.toDataURL()})`
+    }
+  }, [])
+
+  const throttledMouseMove = useCallback(
     throttle(e => {
       const { left, top } = containerRef.current.getBoundingClientRect()
       const x = e.pageX - left
       const y = e.pageY - top
-      draw(x, y, true)
-    }, 25), // Throttle interval in milliseconds
-    [draw, homeEffectConfig]
-  )
-
-  const handleMouseLeave = useCallback(() => {
-    // Update the mask image when the mouse leaves the container
-    maskImageRef.current.style.mask = `url(${canvasRef.current.toDataURL()})`
-    maskImageRef.current.style.webkitMask = `url(${canvasRef.current.toDataURL()})`
-  }, [])
+      draw(x, y)
+      requestAnimationFrame(updateMask)
+    }, 25),
+    [draw, updateMask]
+  ) // 25 milisegundos como ejemplo
 
   useEffect(() => {
-    if (canvasRef.current && containerRef.current) {
-      const ctx = canvasRef.current.getContext('2d')
+    // Crear el contexto del buffer canvas si aún no existe
+    if (bufferCanvasRef.current && !bufferCtxRef.current) {
+      bufferCtxRef.current = bufferCanvasRef.current.getContext('2d')
+    }
+
+    // Continuar solo si tanto el canvas como el contexto están disponibles
+    if (canvasRef.current && bufferCtxRef.current) {
+      // Configurar las dimensiones del canvas
       canvasRef.current.width = containerRef.current.offsetWidth
       canvasRef.current.height = containerRef.current.offsetHeight
+      bufferCanvasRef.current.width = canvasRef.current.width
+      bufferCanvasRef.current.height = canvasRef.current.height
+
+      // Ahora puedes usar el contexto del buffer canvas de forma segura
+      const ctx = bufferCtxRef.current
       ctx.fillStyle = 'white'
-      ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+      ctx.fillRect(0, 0, bufferCanvasRef.current.width, bufferCanvasRef.current.height)
     }
   }, [homeEffectConfig])
 
@@ -71,8 +92,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       tabIndex={0}
       onKeyDown={e => e.key === 'Tab' && onDismiss()}
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={throttledMouseMove}
       style={{ position: 'relative' }}
       className={`cursor-pointer transition-opacity topContinousImage duration-300 ${
         opacity === 1 ? 'opacity-100' : 'opacity-0'
@@ -119,7 +139,18 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
           left: 0,
           width: '100%',
           height: '100%',
-          display: 'none', // Keep the canvas hidden
+          display: 'none',
+        }}
+      />
+      <canvas
+        ref={bufferCanvasRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          display: 'none', // Este canvas también permanece oculto
         }}
       />
     </div>
