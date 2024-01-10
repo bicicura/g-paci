@@ -49,7 +49,11 @@ const useEditHome = () => {
 
   useEffect(() => {
     ;(async () => {
+      const controller = new AbortController()
+      const { signal } = controller
+
       const res = await fetch('/api/effects-config', {
+        signal,
         cache: 'no-store',
         next: { revalidate: 1 },
       })
