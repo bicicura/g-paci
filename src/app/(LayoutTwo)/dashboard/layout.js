@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 export const revalidate = 0 // or low number
 export const dynamic = 'force-dynamic' // or low number
+export const fetchCache = 'force-no-store'
 
 export default function DashboardLayout({ children }) {
   const { push } = useRouter()
