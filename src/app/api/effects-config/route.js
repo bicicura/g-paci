@@ -30,7 +30,12 @@ export async function GET(request) {
     // Devolver una respuesta con el JSON
     return new Response(jsonString, {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
     })
   } catch (error) {
     console.error('Error fetching JSON from S3:', error)
