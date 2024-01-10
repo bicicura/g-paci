@@ -1,4 +1,4 @@
-import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
 
 // Función auxiliar para convertir stream a string
@@ -42,3 +42,5 @@ export async function GET(request) {
     })
   }
 }
+
+export const dynamic = 'force-dynamic'
