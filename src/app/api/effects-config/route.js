@@ -20,6 +20,8 @@ const s3 = new S3Client({
 const bucketName = 'flm-g-paci'
 const jsonKey = 'effects-config.json'
 
+export const fetchCache = 'force-no-store'
+
 export async function GET(request) {
   try {
     // Obtener el archivo JSON de S3
