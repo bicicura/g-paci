@@ -49,7 +49,10 @@ const useEditHome = () => {
 
   useEffect(() => {
     ;(async () => {
-      const res = await fetch('/api/effects-config', { cache: 'no-store' })
+      const res = await fetch('/api/effects-config', {
+        cache: 'no-store',
+        next: { revalidate: 1 },
+      })
       const data = await res.json()
       setEffectConfig(data?.effects?.ContinuousImageFilter)
     })()
