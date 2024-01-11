@@ -176,6 +176,7 @@ const EditWork = () => {
           <div>
             <h3 className="mb-4 text-lg text-black">Cargar nuevas imagenes</h3>
             <FilePond
+              allowImagePreview={false}
               allowProcess={false}
               disabled={isLoading}
               allowFileSizeValidation

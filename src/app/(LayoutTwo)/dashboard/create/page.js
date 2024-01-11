@@ -63,6 +63,7 @@ const CreateWork = () => {
       <div className="mt-8">
         <h3 className="mb-4 text-lg text-black">Imagenes</h3>
         <FilePond
+          allowImagePreview={false}
           allowFileSizeValidation
           allowFileTypeValidation
           maxFileSize={MAX_FILE_SIZE}
