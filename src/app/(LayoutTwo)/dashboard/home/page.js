@@ -73,7 +73,8 @@ const EditHome = () => {
           </div>
         </div>
         <span className="text-black block ml-12 pl-0.5 mt-2 text-sm text-slate-500">
-          Editando el efecto al ingresar al sitio.
+          Se recomienda imagenes con orientación vertical y que <br /> compartan las
+          mismas dimensiones.
         </span>
       </div>
       <div className="flex gap-6">

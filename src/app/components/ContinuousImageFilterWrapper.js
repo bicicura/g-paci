@@ -15,7 +15,7 @@ const ContinuousImageFilterWrapper = ({ onDismiss, opacity }) => {
 
   return shouldShowFilter ? (
     <div className="hidden lg:flex items-center justify-center w-full min-h-screen">
-      <div className="w-2/6">
+      <div>
         <ContinuousImageFilter
           opacity={opacity}
           onDismiss={onDismiss}

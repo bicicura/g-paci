@@ -22,7 +22,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
     if (loadedImagesCount === totalImages) {
       setImagesLoaded(true)
     }
-  }, [loadedImagesCount])
+  }, [loadedImagesCount, imagesLoaded])
 
   const [drawPoints, setDrawPoints] = useState([])
 
@@ -137,76 +137,94 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       <Spinner />
     </div>
   ) : (
-    <div
-      onClick={onDismiss}
-      tabIndex={0}
-      onKeyDown={e => e.key === 'Tab' && onDismiss()}
-      ref={containerRef}
-      onMouseMove={throttledMouseMove}
-      style={{ position: 'relative' }}
-      className={`cursor-pointer transition-opacity mx-auto topContinousImage duration-300 ${
-        opacity === 1 && imagesLoaded ? 'opacity-100' : 'opacity-0'
-      }`}
-    >
-      <span
-        style={{
-          writingMode: 'vertical-rl',
-          transform: 'rotate(180deg)',
-          textOrientation: '',
-        }}
-        className="absolute -right-6   bottom-0"
+    <>
+      <div
+        className={`justify-center items-center min-h-screen w-full ${
+          imagesLoaded ? 'hidden' : 'flex'
+        }`}
       >
-        draw de image
-      </span>
-      <Image
-        ref={maskImageRef}
-        src={homeEffectConfig.primaryImage}
-        alt="Positive"
-        priority
-        width={500}
-        height={500}
-        onLoad={handleImageLoaded}
-        style={{
-          width: '100%',
-          height: 'auto',
-          position: 'absolute',
-          objectFit: 'contain',
-          top: 0,
-          left: 0,
-        }}
-      />
-      <Image
-        priority
-        width={500}
-        onLoad={handleImageLoaded}
-        height={500}
-        src={homeEffectConfig.secondaryImage}
-        alt="Negative"
-        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-      />
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          display: 'none',
-        }}
-      />
-      <canvas
-        ref={bufferCanvasRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          display: 'none', // Este canvas también permanece oculto
-        }}
-      />
-    </div>
+        <Spinner />
+      </div>
+      <div
+        onClick={onDismiss}
+        tabIndex={0}
+        onKeyDown={e => e.key === 'Tab' && onDismiss()}
+        ref={containerRef}
+        onMouseMove={throttledMouseMove}
+        style={{ position: 'relative', height: 'fit-content', maxHeight: '85vh' }}
+        className={`cursor-pointer transition-opacity mx-auto topContinousImage duration-300 ${
+          opacity === 1 && imagesLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <span
+          style={{
+            writingMode: 'vertical-rl',
+            transform: 'rotate(180deg)',
+            textOrientation: '',
+          }}
+          className="absolute -right-6   bottom-0"
+        >
+          draw de image
+        </span>
+        <Image
+          ref={maskImageRef}
+          src={homeEffectConfig.primaryImage}
+          alt="Positive"
+          priority
+          width={500}
+          height={500}
+          onLoad={handleImageLoaded}
+          style={{
+            width: '100%',
+            height: 'auto',
+            maxHeight: '85vh',
+            position: 'absolute',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            top: 0,
+            left: 0,
+          }}
+        />
+        <Image
+          priority
+          width={500}
+          onLoad={handleImageLoaded}
+          height={500}
+          src={homeEffectConfig.secondaryImage}
+          alt="Negative"
+          style={{
+            width: '100%',
+            height: 'auto',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            maxHeight: '85vh',
+          }}
+        />
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            maxHeight: '80vh',
+            display: 'none',
+          }}
+        />
+        <canvas
+          ref={bufferCanvasRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            display: 'none', // Este canvas también permanece oculto
+          }}
+        />
+      </div>
+    </>
   )
 }
 
