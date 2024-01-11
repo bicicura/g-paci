@@ -9,7 +9,9 @@ const NavSocialBtns = props => {
     <div
       className={`${
         isWorkActive && props.isMobile ? 'hidden opacity-0' : 'opacity-100'
-      } relative flex items-center gap-6 lg:px-[40px] lg:py-[33px]`}
+      } relative flex items-center gap-6 lg:px-[40px] lg:py-[33px] ${
+        !isInfoActive ? 'lg:bg-white' : ''
+      }`}
     >
       <div className="cursor-pointer hover:font-bold hover:text-purple-500 hover:fill-black">
         <a

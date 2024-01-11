@@ -3,10 +3,14 @@ import { NavigationContext } from '@/app/contexts/NavigationContext'
 import { NAV_SECTION_WORK } from '../../../../constants'
 
 const NavWorkBtn = props => {
-  const { isWorkActive, toggleNavigation } = useContext(NavigationContext)
+  const { isWorkActive, toggleNavigation, isInfoActive } = useContext(NavigationContext)
 
   return (
-    <div className="flex justify-between items-center w-full lg:w-[250px] lg:px-[40px]">
+    <div
+      className={`${
+        !isInfoActive ? 'lg:bg-white' : ''
+      } flex justify-between items-center w-full lg:w-[250px] lg:px-[40px]`}
+    >
       <button
         type="button"
         className={`${isWorkActive ? 'font-bold' : ''} cursor-pointer hover:font-bold`}

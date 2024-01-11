@@ -64,7 +64,10 @@ const Navbar = () => {
           : { zIndex: 5003 }
       }
     >
-      <NavWorkBtn toggleNavigation={toggleNavigation} />
+      <NavWorkBtn
+        shouldShowInfoSection={shouldShowInfoSection}
+        toggleNavigation={toggleNavigation}
+      />
       <NavSocialBtns isMobile={isMobile} />
       {shouldShowInfoSection && <NavInfoSection isInfoActive={isInfoActive} />}
       <Navlist toggleNavigation={toggleNavigation} />

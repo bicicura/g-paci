@@ -18,7 +18,7 @@ const EffectsProvider = ({ children }) => {
   const getEffectsConfig = async () => {
     try {
       setIsLoading(true)
-      const res = await fetch('api/effects-config')
+      const res = await fetch('/api/effects-config')
       const data = await res.json()
       const homeEffect = data.effects['ContinuousImageFilter']
       const infoEffect = data.effects['SlitScan']
