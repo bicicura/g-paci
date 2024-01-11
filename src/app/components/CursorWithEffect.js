@@ -10,7 +10,7 @@ const CursorWithEffect = () => {
   const cursorRef = useRef(null)
   const { currentSlide, data, loading, imagesLoaded, setImagesLoaded } =
     useContext(CarouselContext)
-  const [title, setTitle] = useState('Overview')
+  const [title, setTitle] = useState('Loading')
   const resizeObserver = useRef(null)
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const CursorWithEffect = () => {
 
   useEffect(() => {
     if (!loading) {
-      setTitle(data ? data.name : 'Overview')
+      setTitle(data ? data.name : 'Loading')
     }
   }, [pathname, data, loading])
 

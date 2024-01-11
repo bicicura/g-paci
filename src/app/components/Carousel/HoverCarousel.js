@@ -17,7 +17,7 @@ const HoverCarousel = () => {
         data.map(item => (
           <div
             key={item.id}
-            style={{ maxHeight: '80vh' }}
+            style={{ maxHeight: '80vh', width: '100%', height: '80vh' }}
             className={`transition-opacity h-full absolute inset-0 duration-500 ease-in-out opacity-0
             ${isHovering && item.id === hoverItem.id ? 'opacity-100' : ''}`}
           >
@@ -25,9 +25,8 @@ const HoverCarousel = () => {
               src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item?.slug}/${item?.works_images[0]?.img}`}
               alt="hero image"
               className={'bg-white w-full h-full object-contain'}
-              priority
-              width="1080"
-              height="1000"
+              fill
+              sizes="70vw"
             />
           </div>
         ))}

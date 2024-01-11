@@ -6,11 +6,11 @@ const CursorWithoutEffect = () => {
   const pathname = usePathname()
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const { currentSlide, data, loading } = useContext(CarouselContext)
-  const [title, setTitle] = useState('Overview')
+  const [title, setTitle] = useState('Loading')
 
   useEffect(() => {
     if (!loading) {
-      setTitle(data ? data.name : 'Overview')
+      setTitle(data ? data.name : 'Loading')
     }
   }, [pathname, data, loading])
 
