@@ -50,6 +50,7 @@ const Navbar = () => {
     }
   }, [handleEscapeKey])
 
+  // @TODO remove if not necessary isInfoActive && !shouldShowInfoSection ?
   return (
     <header
       className={`fixed top-0 ${
