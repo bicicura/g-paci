@@ -129,13 +129,13 @@ const SlitPixiVanilla = () => {
           Xxxxxxxxxx, xxe xzxsxxn xxzwxwvqreuy xx Xxxxxm xx Xxxxxxx Xxrxrxxv xx Xvxvxdxq
           xqzpq xxe xvxznx xxxzz xixxxxxxzxv zvx xzq xxzzzx xvxqqxqx xx xnxx xqzqzpq. Xxe
           xx xxxxzxxxxxn xvxq x xzx vxxxxxxxvx xx zxsxzex xqe qxxv xzxqxn xxxy zxxxxx xo
-          qxzxzxxxn xzxzxvqzxx xx qxsxqzsxxnz xxzqxvqzxxxxn’x xzxzxvqzxxvn xvxzxqxxxxxx xx
+          qxzxzxxxn xzxzxvqzxx xx qxsxqzsxxnz xxzqxvqzxxxxnâx xzxzxvqzxxvn xvxzxqxxxxxx xx
           zxt. Xxqxxzx xxe xzxqxzxxnxx xxzx xx xqxqxxxxx, xxe xzxzxxx xxzxxxxxxx xvx x xyx
-          xxqxxxx xo xvxqznxmx’x xzxzxvqzxxvn xvxzxqxxxxxx xx zxt. Xxqxxzx xxe xzxqxzxxnxx
-          xxzx xqxqxxxxx, xxe xzxzxxx xxzxxxxxxx xvx x xyx xxqxxxx xo xvxqznxmx’x
+          xxqxxxx xo xvxqznxmxâx xzxzxvqzxxvn xvxzxqxxxxxx xx zxt. Xxqxxzx xxe xzxqxzxxnxx
+          xxzx xqxqxxxxx, xxe xzxzxxx xxzxxxxxxx xvx x xyx xxqxxxx xo xvxqznxmxâx
           xzxzxvqzxxvn xvxzxqxxxxxx xx zxt. Xxqxxzx xxe xzxqxzxxnxx xxzx xqxqxxxxx, xxe
-          xzxzxxx xxzxxxxxxx xvx x xyx xxqxxxx xo xvxqznxmx’x xzxzxvqzxxvn xvxzxqxxxxxx xx
-          zxt. Xxxxxx’x xvxox xxzxxxxqxx, Xxxxxxxxx, xvx xqxixxxxx xx 2021 xx Xxt Xxxxx
+          xzxzxxx xxzxxxxxxx xvx x xyx xxqxxxx xo xvxqznxmxâx xzxzxvqzxxvn xvxzxqxxxxxx xx
+          zxt. Xxxxxxâx xvxox xxzxxxxqxx, Xxxxxxxxx, xvx xqxixxxxx xx 2021 xx Xxt Xxxxx
           Xxxxxxxxs. Xxe xxzxvxzx xxxxxxxx qxzx xxxxxxxx xx Xxxxx, Xxxxx Xxxxxx, Xxxxxx
           Xxxxxx, Xxxxx, Xxxx, X Xxxxxxxxca, X xx Xxxxxx xxx Xxxxxxx Xxxxxzxx. Xxe
           xxxxxxxxxx xzxxxxx xxqxzxx Xxxxxx, Xxxxx, Xxxxxx Xxxxxxx, Xxxxxxx, Xxxxx, Xxxxxx
