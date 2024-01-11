@@ -13,7 +13,7 @@ const SlitPixiVanilla = () => {
     let app = new PIXI.Application({
       width: window.innerWidth,
       height: window.innerHeight,
-      backgroundColor: 0x000000,
+      backgroundColor: 0xffffff,
     })
 
     // Reference to the container where the Pixi.js app will mount
@@ -130,7 +130,10 @@ const SlitPixiVanilla = () => {
 
   return (
     <>
-      <div className="text-container">
+      <div
+        className="text-container"
+        style={{ mixBlendMode: 'difference', color: '#FFF' }}
+      >
         <h1>
           {!isLoading && infoEffectConfig.body}
           <br />

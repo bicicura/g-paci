@@ -53,12 +53,16 @@ const Navbar = () => {
   // @TODO remove if not necessary isInfoActive && !shouldShowInfoSection ?
   return (
     <header
-      className={`fixed top-0 ${
-        isInfoActive && !shouldShowInfoSection ? '' : ''
-      } left-0 flex justify-between w-full p-3 lg:p-0`}
-      style={{
-        zIndex: 5003,
-      }}
+      className={`fixed top-0 left-0 flex justify-between w-full p-3 lg:p-0`}
+      style={
+        isInfoActive && !shouldShowInfoSection
+          ? {
+              zIndex: 5003,
+              mixBlendMode: 'difference',
+              color: '#FFF',
+            }
+          : { zIndex: 5003 }
+      }
     >
       <NavWorkBtn toggleNavigation={toggleNavigation} />
       <NavSocialBtns isMobile={isMobile} />
