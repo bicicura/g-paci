@@ -9,7 +9,7 @@ const SlitPixiVanilla = () => {
     let app = new PIXI.Application({
       width: window.innerWidth,
       height: window.innerHeight,
-      backgroundColor: 0x000000,
+      backgroundColor: 0xffffff,
     })
 
     console.log(infoEffectConfig)
