@@ -31,7 +31,7 @@ const MainContent = () => {
       ) : (
         <Carousel />
       )}
-      {isInfoActive && <PixiComponent />}
+      {isInfoActive && shouldShowFilter && <PixiComponent />}
     </main>
   )
 }
