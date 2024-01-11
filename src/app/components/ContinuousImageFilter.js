@@ -161,10 +161,11 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
             writingMode: 'vertical-rl',
             transform: 'rotate(180deg)',
             textOrientation: '',
+            fontSize: '15px',
           }}
-          className="absolute -right-6   bottom-0"
+          className="absolute -right-7 bottom-0"
         >
-          draw de image
+          draw the image
         </span>
         <Image
           ref={maskImageRef}
