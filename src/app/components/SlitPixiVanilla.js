@@ -6,15 +6,13 @@ const SlitPixiVanilla = () => {
   const { isLoading, infoEffectConfig } = useContext(EffectsContext)
 
   useEffect(() => {
-    console.log(infoEffectConfig)
-  }, [isLoading, infoEffectConfig])
-
-  useEffect(() => {
     let app = new PIXI.Application({
       width: window.innerWidth,
       height: window.innerHeight,
       backgroundColor: 0x000000,
     })
+
+    console.log(infoEffectConfig)
 
     // Reference to the container where the Pixi.js app will mount
     const container = document.getElementById('slit-scan-container')
@@ -126,7 +124,7 @@ const SlitPixiVanilla = () => {
         container.removeChild(app.view) // Safely remove the canvas from the DOM
       }
     }
-  }, [])
+  }, [isLoading, infoEffectConfig])
 
   return (
     <>
