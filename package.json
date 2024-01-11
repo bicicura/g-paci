@@ -23,7 +23,7 @@
     "filepond-plugin-image-preview": "^4.6.11",
     "framer-motion": "^10.16.4",
     "jsonwebtoken": "^9.0.2",
-    "next": "13.4.12",
+    "next": "13.5.3",
     "pixi.js": "^7.3.2",
     "react": "latest",
     "react-dom": "latest",
