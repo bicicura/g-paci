@@ -19,7 +19,7 @@ const SlitPixiVanilla = () => {
     container.appendChild(app.view)
 
     // Load and display an image
-    let texture = PIXI.Texture.from('/images/jacbos.jpg')
+    let texture = PIXI.Texture.from('images/jacbos.jpg')
     let image = new PIXI.Sprite(texture)
 
     // image.texture.baseTexture.on('loaded', () => {
