@@ -31,7 +31,7 @@ export default function Carousel() {
     <div
       // Z index es para que funcione bien el efecto slitscan
       style={{ zIndex: 1000 }}
-      className={`${styles.customCursor} flex justify-center min-h-screen items-center w-full relative`}
+      className={`${styles.customCursor} flex justify-center min-h-dvh lg:min-h-screen items-center w-full relative`}
     >
       {!isMobile && <CursorWithoutEffect />}
       <div className="relative overflow-hidden carousel-container bg-white">
