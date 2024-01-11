@@ -46,7 +46,7 @@ export default function DashboardTable() {
               base: 'w-full sm:max-w-[44%] text-black',
               inputWrapper: 'border-1',
             }}
-            placeholder="Search by name..."
+            placeholder="Buscar por nombre"
             size="md"
             startContent={<SearchIcon className="text-gray-300" />}
             value={filterValue}
@@ -60,7 +60,7 @@ export default function DashboardTable() {
             as={NextLink}
             href="/dashboard/create"
           >
-            <span>Add new</span>
+            <span>Agregar</span>
             <PlusIcon />
           </Link>
         </div>

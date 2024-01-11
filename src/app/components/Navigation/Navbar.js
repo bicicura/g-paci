@@ -6,6 +6,8 @@ import Navlist from './NavLinksList'
 import NavWorkBtn from './NavWorkBtn'
 import NavSocialBtns from './NavSocialBtns'
 import { NavigationContext } from '@/app/contexts/NavigationContext'
+import NavInfoSection from './NavInfoSection'
+import { EffectsContext } from '@/app/contexts/EffectsContext'
 
 const Navbar = () => {
   const {
@@ -16,6 +18,16 @@ const Navbar = () => {
     toggleNavigation,
   } = useContext(NavigationContext)
   const isMobile = useMobileDetect()
+  const { infoEffectConfig, isLoading } = useContext(EffectsContext)
+  const [shouldShowInfoSection, setShouldShowInfoSection] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading && infoEffectConfig.active === false) {
+      setShouldShowInfoSection(true)
+    } else if (!isLoading && infoEffectConfig.active === true) {
+      setShouldShowInfoSection(false)
+    }
+  }, [infoEffectConfig, isLoading])
 
   const handleEscapeKey = useCallback(
     event => {
@@ -41,7 +53,7 @@ const Navbar = () => {
   return (
     <header
       className={`fixed top-0 ${
-        isInfoActive ? 'backdrop-blur-lg' : ''
+        isInfoActive && !shouldShowInfoSection ? '' : 'lg:bg-white'
       } left-0 flex justify-between w-full p-3 lg:p-0`}
       style={{
         zIndex: 5003,
@@ -49,7 +61,7 @@ const Navbar = () => {
     >
       <NavWorkBtn toggleNavigation={toggleNavigation} />
       <NavSocialBtns isMobile={isMobile} />
-
+      {shouldShowInfoSection && <NavInfoSection isInfoActive={isInfoActive} />}
       <Navlist toggleNavigation={toggleNavigation} />
     </header>
   )

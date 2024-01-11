@@ -1,7 +1,14 @@
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import * as PIXI from 'pixi.js'
+import { EffectsContext } from '../contexts/EffectsContext'
 
 const SlitPixiVanilla = () => {
+  const { isLoading, infoEffectConfig } = useContext(EffectsContext)
+
+  useEffect(() => {
+    // console.log(infoEffectConfig)
+  }, [isLoading, infoEffectConfig])
+
   useEffect(() => {
     let app = new PIXI.Application({
       width: window.innerWidth,
@@ -14,7 +21,7 @@ const SlitPixiVanilla = () => {
     container.appendChild(app.view)
 
     // Load and display an image
-    let texture = PIXI.Texture.from('/images/jacbos.jpg')
+    let texture = PIXI.Texture.from(infoEffectConfig.img)
     let image = new PIXI.Sprite(texture)
     image.width = app.renderer.width
     image.height = app.renderer.height
@@ -125,21 +132,7 @@ const SlitPixiVanilla = () => {
     <>
       <div className="text-container">
         <h1>
-          This is a test xxx x xxzwxwvqreu xix xnrgcnxr xwpxn xx Xxxxx. Xvzv xx qxe
-          Xxxxxxxxxx, xxe xzxsxxn xxzwxwvqreuy xx Xxxxxm xx Xxxxxxx Xxrxrxxv xx Xvxvxdxq
-          xqzpq xxe xvxznx xxxzz xixxxxxxzxv zvx xzq xxzzzx xvxqqxqx xx xnxx xqzqzpq. Xxe
-          xx xxxxzxxxxxn xvxq x xzx vxxxxxxxvx xx zxsxzex xqe qxxv xzxqxn xxxy zxxxxx xo
-          qxzxzxxxn xzxzxvqzxx xx qxsxqzsxxnz xxzqxvqzxxxxn’x xzxzxvqzxxvn xvxzxqxxxxxx xx
-          zxt. Xxqxxzx xxe xzxqxzxxnxx xxzx xx xqxqxxxxx, xxe xzxzxxx xxzxxxxxxx xvx x xyx
-          xxqxxxx xo xvxqznxmx’x xzxzxvqzxxvn xvxzxqxxxxxx xx zxt. Xxqxxzx xxe xzxqxzxxnxx
-          xxzx xqxqxxxxx, xxe xzxzxxx xxzxxxxxxx xvx x xyx xxqxxxx xo xvxqznxmx’x
-          xzxzxvqzxxvn xvxzxqxxxxxx xx zxt. Xxqxxzx xxe xzxqxzxxnxx xxzx xqxqxxxxx, xxe
-          xzxzxxx xxzxxxxxxx xvx x xyx xxqxxxx xo xvxqznxmx’x xzxzxvqzxxvn xvxzxqxxxxxx xx
-          zxt. Xxxxxx’x xvxox xxzxxxxqxx, Xxxxxxxxx, xvx xqxixxxxx xx 2021 xx Xxt Xxxxx
-          Xxxxxxxxs. Xxe xxzxvxzx xxxxxxxx qxzx xxxxxxxx xx Xxxxx, Xxxxx Xxxxxx, Xxxxxx
-          Xxxxxx, Xxxxx, Xxxx, X Xxxxxxxxca, X xx Xxxxxx xxx Xxxxxxx Xxxxxzxx. Xxe
-          xxxxxxxxxx xzxxxxx xxqxzxx Xxxxxx, Xxxxx, Xxxxxx Xxxxxxx, Xxxxxxx, Xxxxx, Xxxxxx
-          xxx Xxxxxx.
+          {!isLoading && infoEffectConfig.body}
           <br />
           <br />
           xxxxxxxx: xxxxxxx@

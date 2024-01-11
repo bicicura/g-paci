@@ -4,10 +4,11 @@
 import Navbar from './Navigation/Navbar.js'
 import { HoverProvider } from '../contexts/HoverContext.js'
 import { useState, useEffect } from 'react'
-import ContinuousImageFilter from './ContinuousImageFilter.js'
 import NavigationProvider from '../contexts/NavigationContext.js'
 import { usePathname } from 'next/navigation.js'
 import useMobileDetect from '@/app/hooks/useMobileDetect.js'
+import EffectsProvider from '../contexts/EffectsContext.js'
+import ContinuousImageFilterWrapper from './ContinuousImageFilterWrapper.js'
 
 const ClientContainer = ({ children }) => {
   const [showIntro, setShowIntro] = useState(true)
@@ -26,16 +27,12 @@ const ClientContainer = ({ children }) => {
   }, [])
 
   return (
-    <>
+    <EffectsProvider>
       {showIntro && pathname === '/' && !isMobile ? (
-        <div className="hidden lg:flex items-center justify-center w-full min-h-screen">
-          <div className="w-2/6">
-            <ContinuousImageFilter
-              opacity={introOpacity}
-              onDismiss={dismissIntro}
-            />
-          </div>
-        </div>
+        <ContinuousImageFilterWrapper
+          opacity={introOpacity}
+          onDismiss={dismissIntro}
+        />
       ) : (
         <div
           className={`transition-opacity duration-500 ${
@@ -50,7 +47,7 @@ const ClientContainer = ({ children }) => {
           </NavigationProvider>
         </div>
       )}
-    </>
+    </EffectsProvider>
   )
 }
 

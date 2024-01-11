@@ -4,11 +4,22 @@ import Carousel from '@/app/components/Carousel/Carousel'
 import PixiComponent from '@/app/components/SlitPixiVanilla'
 import { NavigationContext } from '@/app/contexts/NavigationContext'
 import { CarouselContext } from '@/app/contexts/CarouselContext'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { EffectsContext } from '../contexts/EffectsContext'
 
 const MainContent = () => {
   const { loading: carouselIsLoading } = useContext(CarouselContext)
   const { isInfoActive, loading, links } = useContext(NavigationContext)
+  const { infoEffectConfig, isLoading } = useContext(EffectsContext)
+
+  const [shouldShowFilter, setShouldShowFilter] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading && infoEffectConfig.active === false) {
+    } else if (!isLoading && infoEffectConfig.active === true) {
+      setShouldShowFilter(true)
+    }
+  }, [infoEffectConfig, isLoading])
 
   return (
     <main className="text-sm">
@@ -42,7 +53,7 @@ const MainContent = () => {
       ) : (
         <Carousel />
       )}
-      {isInfoActive && <PixiComponent />}
+      {isInfoActive && shouldShowFilter && <PixiComponent />}
     </main>
   )
 }

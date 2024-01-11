@@ -54,7 +54,7 @@ const NavLinksList = props => {
           ))}
         </ul>
       )}
-      <h6 className="text-xxs text-gray-400">© 2023 Gastón Paci</h6>
+      <h6 className="text-xxs text-gray-400">© 2024 Gastón Paci</h6>
     </nav>
   )
 }
