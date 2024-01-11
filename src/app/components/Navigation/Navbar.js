@@ -53,7 +53,7 @@ const Navbar = () => {
   return (
     <header
       className={`fixed top-0 ${
-        isInfoActive && !shouldShowInfoSection ? '' : 'lg:bg-white'
+        isInfoActive && !shouldShowInfoSection ? '' : ''
       } left-0 flex justify-between w-full p-3 lg:p-0`}
       style={{
         zIndex: 5003,
