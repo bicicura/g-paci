@@ -29,25 +29,24 @@ export default function Splide(props) {
   return (
     <SplideSlide>
       <div
-        style={{ maxHeight: '80vh', width: '100%' }}
-        className={`transition-opacity w-full h-full mx-auto duration-500 ${
-          props.index === 0 ? (firstImageLoaded ? 'opacity-100' : 'opacity-0') : ''
-        }`}
+        style={{ maxHeight: '80vh', width: '100%', height: '80vh' }}
+        className={`w-full relative h-full mx-auto`}
       >
         {imageLoading && (
-          <div className="inset-0 flex justify-center items-center w-full min-h-screen">
+          <div className="flex justify-center items-center w-full h-full">
             <Spinner />
           </div>
         )}
         {item.slug && props.img && (
           <Image
             src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.slug}/${props.img}`}
-            alt="hero image"
+            alt={`Picture from ${item.title} by Gastón Paci`}
             priority
-            width="1080"
-            height="1000"
-            className="w-full h-full object-contain"
-            // antes esta línea no estaba, lo agregue para que no rompa todo si se suben imgs que no respeten el aspect ratio que necesitamos
+            fill
+            sizes="70vw"
+            className={`w-full transition-opacity duration-500 h-full object-contain object-center ${
+              props.index === 0 ? (firstImageLoaded ? 'opacity-100' : 'opacity-0') : ''
+            }`}
             onLoad={() => handleImageLoad()}
           />
         )}

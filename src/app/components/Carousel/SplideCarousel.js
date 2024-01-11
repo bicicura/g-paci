@@ -41,11 +41,7 @@ const SplideCarousel = props => {
     }
   }, [props.isMobile, props.splideRef, changeSlide])
 
-  return loading ? (
-    <div>
-      <Spinner />
-    </div>
-  ) : (
+  return (
     <Splide
       ref={props.splideRef}
       className={`absolute w-[80rem] inset-0 xl:mx-auto`}
