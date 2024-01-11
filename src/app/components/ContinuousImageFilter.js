@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useContext } from 'react'
 import { EffectsContext } from '../contexts/EffectsContext'
 import Image from 'next/image'
+import Spinner from './Spinner'
 
 const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const containerRef = useRef(null)
@@ -8,6 +9,20 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const maskImageRef = useRef(null)
   const [maskSize] = useState(21)
   const { isLoading, homeEffectConfig } = useContext(EffectsContext)
+
+  const [imagesLoaded, setImagesLoaded] = useState(false)
+  const [loadedImagesCount, setLoadedImagesCount] = useState(0)
+  const totalImages = 2 // Ajusta este número según la cantidad de imágenes que necesitas cargar
+
+  const handleImageLoaded = () => {
+    setLoadedImagesCount(prevCount => prevCount + 1)
+  }
+
+  useEffect(() => {
+    if (loadedImagesCount === totalImages) {
+      setImagesLoaded(true)
+    }
+  }, [loadedImagesCount])
 
   const [drawPoints, setDrawPoints] = useState([])
 
@@ -31,10 +46,10 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const bufferCtxRef = useRef(null)
 
   useEffect(() => {
-    if (bufferCanvasRef.current) {
+    if (imagesLoaded && bufferCanvasRef.current) {
       bufferCtxRef.current = bufferCanvasRef.current.getContext('2d')
     }
-  }, [])
+  }, [imagesLoaded])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -98,12 +113,12 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
 
   useEffect(() => {
     // Crear el contexto del buffer canvas si aún no existe
-    if (bufferCanvasRef.current && !bufferCtxRef.current) {
+    if (imagesLoaded && bufferCanvasRef.current && !bufferCtxRef.current) {
       bufferCtxRef.current = bufferCanvasRef.current.getContext('2d')
     }
 
     // Continuar solo si tanto el canvas como el contexto están disponibles
-    if (canvasRef.current && bufferCtxRef.current) {
+    if (imagesLoaded && canvasRef.current && bufferCtxRef.current) {
       // Configurar las dimensiones del canvas
       canvasRef.current.width = containerRef.current.offsetWidth
       canvasRef.current.height = containerRef.current.offsetHeight
@@ -115,10 +130,12 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       ctx.fillStyle = 'white'
       ctx.fillRect(0, 0, bufferCanvasRef.current.width, bufferCanvasRef.current.height)
     }
-  }, [homeEffectConfig])
+  }, [imagesLoaded, homeEffectConfig])
 
   return isLoading ? (
-    <span>Loading...</span>
+    <div className="flex justify-center items-center min-h-screen w-full">
+      <Spinner />
+    </div>
   ) : (
     <div
       onClick={onDismiss}
@@ -127,8 +144,8 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       ref={containerRef}
       onMouseMove={throttledMouseMove}
       style={{ position: 'relative' }}
-      className={`cursor-pointer transition-opacity topContinousImage duration-300 ${
-        opacity === 1 ? 'opacity-100' : 'opacity-0'
+      className={`cursor-pointer transition-opacity mx-auto topContinousImage duration-300 ${
+        opacity === 1 && imagesLoaded ? 'opacity-100' : 'opacity-0'
       }`}
     >
       <span
@@ -148,10 +165,12 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
         priority
         width={500}
         height={500}
+        onLoad={handleImageLoaded}
         style={{
           width: '100%',
           height: 'auto',
           position: 'absolute',
+          objectFit: 'contain',
           top: 0,
           left: 0,
         }}
@@ -159,10 +178,11 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       <Image
         priority
         width={500}
+        onLoad={handleImageLoaded}
         height={500}
         src={homeEffectConfig.secondaryImage}
         alt="Negative"
-        style={{ width: '100%', height: 'auto' }}
+        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
       />
       <canvas
         ref={canvasRef}
