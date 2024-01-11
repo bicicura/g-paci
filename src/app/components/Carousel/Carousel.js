@@ -33,7 +33,7 @@ export default function Carousel() {
       style={{ zIndex: 1000 }}
       className={`${
         styles.customCursor + ' ' + styles.customMinHScreen
-      } flex justify-center items-center w-full relative p-3 lg:p-0`}
+      } flex justify-center items-center w-full relative`}
     >
       {!isMobile && <CursorWithoutEffect />}
       <div className="relative overflow-hidden carousel-container bg-white">

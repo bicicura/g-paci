@@ -44,7 +44,7 @@ const SplideCarousel = props => {
   return (
     <Splide
       ref={props.splideRef}
-      className={`absolute w-[80rem] inset-0 xl:mx-auto`}
+      className={`absolute w-screen p-3 lg:p-0 lg:w-[80rem] inset-0 xl:mx-auto`}
       options={{
         rewind: true,
         gap: '1rem',
