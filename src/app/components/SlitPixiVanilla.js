@@ -22,103 +22,103 @@ const SlitPixiVanilla = () => {
     let texture = PIXI.Texture.from(infoEffectConfig.img)
     let image = new PIXI.Sprite(texture)
 
-    image.texture.baseTexture.on('loaded', () => {
-      image.width = app.renderer.width
-      image.height = app.renderer.height
-      app.stage.addChild(image)
+    // image.texture.baseTexture.on('loaded', () => {
+    image.width = app.renderer.width
+    image.height = app.renderer.height
+    app.stage.addChild(image)
 
-      // Custom Slit-Scan Shader
-      let slitScanFilter = new SlitScanFilter()
-      image.filters = [slitScanFilter]
+    // Custom Slit-Scan Shader
+    let slitScanFilter = new SlitScanFilter()
+    image.filters = [slitScanFilter]
 
-      // Default values that can be updated dynamically
-      let uniforms = {
-        dimensions: [window.innerWidth, window.innerHeight],
-        imgDimensions: new Float32Array([512, 512]),
-        horizontal: 1,
-        scanSize: 90.2 / 99.99 - 0.01,
-        scanCycles: 1,
-        scanCyclesLarge: 1,
-        wiggle: (20 / 100) * 0.3,
-        mouseX: 0,
-        mouseY: 0,
-      }
+    // Default values that can be updated dynamically
+    let uniforms = {
+      dimensions: [window.innerWidth, window.innerHeight],
+      imgDimensions: new Float32Array([512, 512]),
+      horizontal: 1,
+      scanSize: 90.2 / 99.99 - 0.01,
+      scanCycles: 1,
+      scanCyclesLarge: 1,
+      wiggle: (20 / 100) * 0.3,
+      mouseX: 0,
+      mouseY: 0,
+    }
 
-      slitScanFilter.uniforms.dimensions = uniforms.dimensions
-      slitScanFilter.uniforms.imgDimensions = uniforms.imgDimensions
-      slitScanFilter.uniforms.horizontal = uniforms.horizontal
-      slitScanFilter.uniforms.scanSize = uniforms.scanSize
-      slitScanFilter.uniforms.scanCycles = uniforms.scanCycles
-      slitScanFilter.uniforms.scanCyclesLarge = uniforms.scanCyclesLarge
-      slitScanFilter.uniforms.wiggle = uniforms.wiggle
+    slitScanFilter.uniforms.dimensions = uniforms.dimensions
+    slitScanFilter.uniforms.imgDimensions = uniforms.imgDimensions
+    slitScanFilter.uniforms.horizontal = uniforms.horizontal
+    slitScanFilter.uniforms.scanSize = uniforms.scanSize
+    slitScanFilter.uniforms.scanCycles = uniforms.scanCycles
+    slitScanFilter.uniforms.scanCyclesLarge = uniforms.scanCyclesLarge
+    slitScanFilter.uniforms.wiggle = uniforms.wiggle
+    slitScanFilter.uniforms.mouseX = uniforms.mouseX
+    slitScanFilter.uniforms.mouseY = uniforms.mouseY
+
+    let scrollPosition = { x: 0, y: 0 }
+
+    function updateShaderScrollInteraction() {
+      window.addEventListener('scroll', function () {
+        // Calculate the change in scroll position
+        let deltaX = window.scrollX - scrollPosition.x
+        let deltaY = window.scrollY - scrollPosition.y
+
+        // Update the uniforms based on scroll movement
+        uniforms.mouseX += deltaX * 0.005 // Adjust the multiplier as needed
+        uniforms.mouseY += deltaY * 0.005 // Adjust the multiplier as needed
+
+        // Update the scroll position
+        scrollPosition.x = window.scrollX
+        scrollPosition.y = window.scrollY
+      })
+    }
+
+    updateShaderScrollInteraction()
+
+    let lastMousePosition = { x: 0, y: 0 }
+
+    function updateShaderInteraction() {
+      document.addEventListener('mousemove', function (event) {
+        // Calculate current mouse position
+        let currentMouseX = event.clientX / window.innerWidth
+        let currentMouseY = event.clientY / window.innerHeight
+
+        // Calculate incremental change based on mouse movement
+        let deltaX = currentMouseX - lastMousePosition.x
+        let deltaY = currentMouseY - lastMousePosition.y
+
+        // Apply incremental change
+        uniforms.mouseX += deltaX
+        uniforms.mouseY += deltaY
+
+        // Update last mouse position
+        lastMousePosition.x = currentMouseX
+        lastMousePosition.y = currentMouseY
+      })
+      document.addEventListener('mouseenter', function (event) {
+        // Update last mouse position when the mouse enters the viewport
+        lastMousePosition.x = event.clientX / window.innerWidth
+        lastMousePosition.y = event.clientY / window.innerHeight
+      })
+    }
+
+    updateShaderInteraction()
+
+    let defaultDelta = 0.005
+
+    // Render loop
+    app.ticker.add(() => {
+      // Update the increments to create a continuous movement effect
+      uniforms.mouseX += defaultDelta
+      uniforms.mouseY += defaultDelta
+
+      // Apply the increments to the shader uniforms
       slitScanFilter.uniforms.mouseX = uniforms.mouseX
       slitScanFilter.uniforms.mouseY = uniforms.mouseY
 
-      let scrollPosition = { x: 0, y: 0 }
-
-      function updateShaderScrollInteraction() {
-        window.addEventListener('scroll', function () {
-          // Calculate the change in scroll position
-          let deltaX = window.scrollX - scrollPosition.x
-          let deltaY = window.scrollY - scrollPosition.y
-
-          // Update the uniforms based on scroll movement
-          uniforms.mouseX += deltaX * 0.005 // Adjust the multiplier as needed
-          uniforms.mouseY += deltaY * 0.005 // Adjust the multiplier as needed
-
-          // Update the scroll position
-          scrollPosition.x = window.scrollX
-          scrollPosition.y = window.scrollY
-        })
-      }
-
-      updateShaderScrollInteraction()
-
-      let lastMousePosition = { x: 0, y: 0 }
-
-      function updateShaderInteraction() {
-        document.addEventListener('mousemove', function (event) {
-          // Calculate current mouse position
-          let currentMouseX = event.clientX / window.innerWidth
-          let currentMouseY = event.clientY / window.innerHeight
-
-          // Calculate incremental change based on mouse movement
-          let deltaX = currentMouseX - lastMousePosition.x
-          let deltaY = currentMouseY - lastMousePosition.y
-
-          // Apply incremental change
-          uniforms.mouseX += deltaX
-          uniforms.mouseY += deltaY
-
-          // Update last mouse position
-          lastMousePosition.x = currentMouseX
-          lastMousePosition.y = currentMouseY
-        })
-        document.addEventListener('mouseenter', function (event) {
-          // Update last mouse position when the mouse enters the viewport
-          lastMousePosition.x = event.clientX / window.innerWidth
-          lastMousePosition.y = event.clientY / window.innerHeight
-        })
-      }
-
-      updateShaderInteraction()
-
-      let defaultDelta = 0.005
-
-      // Render loop
-      app.ticker.add(() => {
-        // Update the increments to create a continuous movement effect
-        uniforms.mouseX += defaultDelta
-        uniforms.mouseY += defaultDelta
-
-        // Apply the increments to the shader uniforms
-        slitScanFilter.uniforms.mouseX = uniforms.mouseX
-        slitScanFilter.uniforms.mouseY = uniforms.mouseY
-
-        // Render the stage
-        app.renderer.render(app.stage)
-      })
+      // Render the stage
+      app.renderer.render(app.stage)
     })
+    // })
 
     // Cleanup logic when the component unmounts
     return () => {
