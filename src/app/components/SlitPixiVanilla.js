@@ -6,7 +6,7 @@ const SlitPixiVanilla = () => {
   const { isLoading, infoEffectConfig } = useContext(EffectsContext)
 
   useEffect(() => {
-    // console.log(infoEffectConfig)
+    console.log(infoEffectConfig)
   }, [isLoading, infoEffectConfig])
 
   useEffect(() => {
