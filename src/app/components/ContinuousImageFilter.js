@@ -223,7 +223,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
             left: 0,
             width: '100%',
             height: '100%',
-            maxHeight: '80vh',
+            maxHeight: '85vh',
             display: 'none',
           }}
         />
