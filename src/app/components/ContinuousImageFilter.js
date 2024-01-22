@@ -72,7 +72,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
     const ctx = bufferCtxRef.current
     ctx.globalCompositeOperation = 'destination-out'
 
-    ctx.filter = 'none'
+    ctx.filter = 'blur(9px)'
 
     // Dibuja los puntos actuales
     drawPoints.forEach(point => {
@@ -81,7 +81,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       ctx.fill()
     })
 
-    ctx.filter = 'none'
+    ctx.filter = 'blur(3px)'
   }, [drawPoints, maskSize])
 
   const updateMask = useCallback(() => {
