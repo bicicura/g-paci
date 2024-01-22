@@ -2,6 +2,7 @@ import { useRef, useState, useCallback, useEffect, useContext } from 'react'
 import { EffectsContext } from '../contexts/EffectsContext'
 import Image from 'next/image'
 import Spinner from './Spinner'
+import 'context-filter-polyfill'
 
 const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const containerRef = useRef(null)
@@ -70,7 +71,8 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
 
     const ctx = bufferCtxRef.current
     ctx.globalCompositeOperation = 'destination-out'
-    ctx.filter = 'blur(9px)'
+
+    ctx.filter = 'none'
 
     // Dibuja los puntos actuales
     drawPoints.forEach(point => {
@@ -79,7 +81,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       ctx.fill()
     })
 
-    ctx.filter = 'blur(3px)'
+    ctx.filter = 'none'
   }, [drawPoints, maskSize])
 
   const updateMask = useCallback(() => {
@@ -87,8 +89,18 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       const ctx = canvasRef.current.getContext('2d')
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
       ctx.drawImage(bufferCanvasRef.current, 0, 0)
-      maskImageRef.current.style.mask = `url(${canvasRef.current.toDataURL()})`
-      maskImageRef.current.style.webkitMask = `url(${canvasRef.current.toDataURL()})`
+
+      // maskImageRef.current.style.mask = `url(${canvasRef.current.toDataURL()})`
+      // maskImageRef.current.style.webkitMask = `url(${canvasRef.current.toDataURL()})`
+
+      canvasRef.current.toBlob(blob => {
+        const url = URL.createObjectURL(blob)
+        maskImageRef.current.style.mask = `url(${url})`
+        maskImageRef.current.style.webkitMask = `url(${url})`
+        // Limpia la URL de objeto una vez que no se necesita
+        // Esto se puede hacer después de un cierto retraso para evitar parpadeos
+        setTimeout(() => URL.revokeObjectURL(url), 500)
+      }, 'image/png')
     }
   }, [])
 
@@ -169,6 +181,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
         </span>
         <Image
           ref={maskImageRef}
+          // src="/images/overlap-effect/positive.jpg"
           src={homeEffectConfig.primaryImage}
           alt="Positive"
           priority
@@ -191,6 +204,7 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
           width={500}
           onLoad={handleImageLoaded}
           height={500}
+          // src="/images/overlap-effect/negative.jpg"
           src={homeEffectConfig.secondaryImage}
           alt="Negative"
           style={{

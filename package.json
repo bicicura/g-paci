@@ -15,6 +15,7 @@
     "@nextui-org/react": "^2.1.13",
     "@splidejs/react-splide": "^0.7.12",
     "@supabase/supabase-js": "^2.38.4",
+    "context-filter-polyfill": "^0.3.13",
     "cookie": "^0.6.0",
     "filepond": "^4.30.4",
     "filepond-plugin-file-validate-size": "^2.2.8",
