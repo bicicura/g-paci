@@ -2,7 +2,6 @@ import { useRef, useState, useCallback, useEffect, useContext } from 'react'
 import { EffectsContext } from '../contexts/EffectsContext'
 import Image from 'next/image'
 import Spinner from './Spinner'
-import 'context-filter-polyfill'
 
 const ContinuousImageFilter = ({ onDismiss, opacity }) => {
   const containerRef = useRef(null)
@@ -90,17 +89,9 @@ const ContinuousImageFilter = ({ onDismiss, opacity }) => {
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
       ctx.drawImage(bufferCanvasRef.current, 0, 0)
 
-      // maskImageRef.current.style.mask = `url(${canvasRef.current.toDataURL()})`
-      // maskImageRef.current.style.webkitMask = `url(${canvasRef.current.toDataURL()})`
-
-      canvasRef.current.toBlob(blob => {
-        const url = URL.createObjectURL(blob)
-        maskImageRef.current.style.mask = `url(${url})`
-        maskImageRef.current.style.webkitMask = `url(${url})`
-        // Limpia la URL de objeto una vez que no se necesita
-        // Esto se puede hacer después de un cierto retraso para evitar parpadeos
-        setTimeout(() => URL.revokeObjectURL(url), 500)
-      }, 'image/png')
+      maskImageRef.current.style.mask = `url(${canvasRef.current.toDataURL()})`
+      maskImageRef.current.style.webkitMask = `url(${canvasRef.current.toDataURL()})`
+      
     }
   }, [])
 
