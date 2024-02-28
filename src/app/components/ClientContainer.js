@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation.js'
 import useMobileDetect from '@/app/hooks/useMobileDetect.js'
 import EffectsProvider from '../contexts/EffectsContext.js'
 import ContinuousImageFilterWrapper from './ContinuousImageFilterWrapper.js'
+import ImgSlideEffect from './ImgSlideEffect.js'
 
 const ClientContainer = ({ children }) => {
   const [showIntro, setShowIntro] = useState(true)
@@ -29,10 +30,11 @@ const ClientContainer = ({ children }) => {
   return (
     <EffectsProvider>
       {showIntro && pathname === '/' && !isMobile ? (
-        <ContinuousImageFilterWrapper
-          opacity={introOpacity}
-          onDismiss={dismissIntro}
-        />
+        // <ContinuousImageFilterWrapper
+        //   opacity={introOpacity}
+        //   onDismiss={dismissIntro}
+        // />
+        <ImgSlideEffect />
       ) : (
         <div
           className={`transition-opacity duration-500 ${
