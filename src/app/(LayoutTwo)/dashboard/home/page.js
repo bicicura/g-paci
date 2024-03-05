@@ -28,8 +28,9 @@ registerPlugin(
 const EditHome = () => {
   const {
     handleSubmit,
-    setPrimaryImage,
+    setNewImage,
     client,
+    pondRef,
     setClient,
     isPrimary,
     setIsPrimary,
@@ -98,21 +99,21 @@ const EditHome = () => {
         </Checkbox>
 
         <div className="flex gap-6">
-          {effectConfig.images &&
-            effectConfig.images.map((img, index) => (
+          {effectConfig?.images &&
+            effectConfig?.images.map((img, index) => (
               <Tooltip
                 key={index}
-                className={`text-black ${img.isPrimary ? 'bg-yellow-100' : ''}`}
-                content={img.client}
+                className={`text-black ${img?.isPrimary ? 'bg-yellow-100' : ''}`}
+                content={img?.client}
               >
                 <Image
                   priority
                   className={`aspect-video object-contain border ${
-                    img.isPrimary ? 'border-yellow-300 bg-yellow-100' : 'bg-slate-100'
+                    img?.isPrimary ? 'border-yellow-300 bg-yellow-100' : 'bg-slate-100'
                   } rounded-lg`}
                   width={150}
                   height={150}
-                  src={img.url}
+                  src={img?.url}
                   alt="Home effect primary image"
                 />
               </Tooltip>
@@ -129,14 +130,19 @@ const EditHome = () => {
               <Input
                 type="text"
                 label="Cliente"
-                size="md"
+                size="lg"
                 value={client}
                 onChange={e => setClient(e.target.value)}
+                disabled={isLoading}
+                isRequired
               />
             </div>
             <Checkbox
-              className="ml-auto"
               isSelected={isPrimary}
+              isDisabled={
+                isLoading ||
+                effectConfig.images.filter(item => item.isPrimary).length >= 2
+              }
               onValueChange={value => {
                 setIsPrimary(value)
               }}
@@ -147,6 +153,7 @@ const EditHome = () => {
           <span className="text-lg">Cargar imagen</span>
           <div className="col-span-2">
             <FilePond
+              ref={pondRef}
               allowImagePreview
               imagePreviewMaxFileSize={MAX_FILE_SIZE / 1000000 + 'MB'}
               className="w-full"
@@ -159,11 +166,10 @@ const EditHome = () => {
               instantUpload={false}
               onupdatefiles={fileItems => {
                 // Suponiendo que es el FilePond para la imagen primaria
-                setPrimaryImage(fileItems.length ? fileItems[0].file : null)
+                setNewImage(fileItems.length ? fileItems[0].file : null)
               }}
               allowMultiple={false}
-              server="/api/work"
-              name="primaryImage" /* sets the file input name, it's filepond by default */
+              name="newImage"
               labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
             />
           </div>
@@ -194,7 +200,7 @@ const EditHome = () => {
               />
             </svg>
           )}
-          Enviar imagen
+          Enviar
         </Button>
       </div>
     </section>

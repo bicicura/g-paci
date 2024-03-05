@@ -1,21 +1,18 @@
-import { useState, useEffect } from 'react'
-import { useSnackbar } from '../contexts/SnackbarContext'
+import { useState, useEffect, useRef } from 'react'
 import {
   MAX_FILE_SIZE,
   WORK_STATUS_ACTIVE,
   WORK_STATUS_INACTIVE,
 } from '../../../constants'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 const useEditHome = () => {
+  const pondRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [primaryImage, setPrimaryImage] = useState(null)
-  const { showSnackbar } = useSnackbar()
-  const router = useRouter()
+  const [newImage, setNewImage] = useState(null)
   const [effectConfig, setEffectConfig] = useState({
     active: false,
-    primaryImage: null,
+    images: [],
   })
   const [isActive, setIsActive] = useState(effectConfig.active)
   const [isPrimary, setIsPrimary] = useState(false)
@@ -23,10 +20,7 @@ const useEditHome = () => {
 
   const validateFileSize = () => {
     // Retorna 'true' si ambos archivos son menores o iguales al tamaño máximo permitido
-    return (
-      !primaryImage ||
-      (primaryImage instanceof File && primaryImage.size <= MAX_FILE_SIZE)
-    )
+    return !newImage || (newImage instanceof File && newImage.size <= MAX_FILE_SIZE)
   }
 
   const validateFileType = () => {
@@ -34,7 +28,7 @@ const useEditHome = () => {
 
     const isValidType = file => file instanceof File && imageTypes.includes(file.type)
 
-    return !primaryImage || isValidType(primaryImage)
+    return !newImage || isValidType(newImage)
   }
 
   const statusColorMap = {
@@ -45,18 +39,23 @@ const useEditHome = () => {
 
   useEffect(() => {
     ;(async () => {
-      const controller = new AbortController()
-      const { signal } = controller
-
-      const res = await fetch('/api/effects-config', {
-        signal,
-        cache: 'no-store',
-        next: { revalidate: 1 },
-      })
-      const data = await res.json()
+      const data = await requestEffectConfig()
       setEffectConfig(data?.effects?.ImgSlideEffect)
     })()
   }, [])
+
+  const requestEffectConfig = async () => {
+    const controller = new AbortController()
+    const { signal } = controller
+
+    const res = await fetch('/api/effects-config', {
+      signal,
+      cache: 'no-store',
+      next: { revalidate: 1 },
+    })
+    const data = await res.json()
+    return data
+  }
 
   useEffect(() => {
     setIsActive(effectConfig.active)
@@ -102,17 +101,11 @@ const useEditHome = () => {
 
   const handleSubmit = async () => {
     if (!validateFileSize()) {
-      return showSnackbar(
-        'Uno o más archivos superan el tamaño máximo permitido.',
-        'error'
-      )
+      return toast.error('Uno o más archivos superan el tamaño máximo permitido.')
     }
 
     if (!validateFileType()) {
-      return showSnackbar(
-        'Uno o más archivos no son del tipo de imagen permitido.',
-        'error'
-      )
+      return toast.error('Uno o más archivos no son del tipo de imagen permitido.')
     }
 
     setIsLoading(true)
@@ -120,10 +113,10 @@ const useEditHome = () => {
     try {
       let imageUrl = null
 
-      // Verifica si primaryImage existe y tiene un archivo
-      if (primaryImage) {
-        const newName = generateFileName(primaryImage)
-        const newFile = new File([primaryImage], newName, { type: primaryImage.type })
+      // Verifica si newImage existe y tiene un archivo
+      if (newImage) {
+        const newName = generateFileName(newImage)
+        const newFile = new File([newImage], newName, { type: newImage.type })
         imageUrl = await uploadImageToS3(newFile)
         // @TODO borrar imagen previa
       }
@@ -147,14 +140,16 @@ const useEditHome = () => {
 
       // Procesar la respuesta (opcional, dependiendo de lo que devuelva tu backend)
       const result = await response.json()
-      console.log('Respuesta del servidor:', result)
+      // console.log('Respuesta del servidor:', result)
 
-      // resetear form.
-      // showSnackbar('Efecto actualizado con éxito', 'success')
+      resetForm()
       toast.success('Efecto actualizado con éxito')
+
+      const data = await requestEffectConfig()
+      setEffectConfig(data?.effects?.ImgSlideEffect)
     } catch (error) {
-      console.error('Error al enviar la solicitud:', error)
-      showSnackbar('Error al actualizar el efecto', 'error') // Ejemplo de notificación de error
+      // console.error('Error al enviar la solicitud:', error)
+      toast.error('Error al actualizar el efecto')
     } finally {
       setIsLoading(false) // Restablecer el estado de carga
     }
@@ -162,14 +157,17 @@ const useEditHome = () => {
 
   const resetForm = () => {
     setIsPrimary(false)
+    setNewImage(null)
     setClient('')
+    pondRef.current.removeFiles()
   }
 
   return {
+    pondRef,
     handleSubmit,
-    primaryImage,
+    newImage,
     statusColorMap,
-    setPrimaryImage,
+    setNewImage,
     WORK_STATUS_ACTIVE,
     WORK_STATUS_INACTIVE,
     client,
