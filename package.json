@@ -30,6 +30,7 @@
     "react-dom": "latest",
     "react-filepond": "^7.1.2",
     "slugify": "^1.6.6",
+    "sonner": "^1.4.3",
     "sortablejs": "^1.15.0"
   },
   "devDependencies": {

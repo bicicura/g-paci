@@ -11,6 +11,7 @@ const ImgSlideEffect = () => {
   const [mousePosition, setMousePosition] = useState(0)
   const [isLeaving, setIsLeaving] = useState(false)
   const [randomImg, setRandomImg] = useState({ img: '', client: 'KOSTUME', id: null })
+  // const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 })
 
   const imgs = [
     { img: 'h-1.jpg', client: 'LOfficiel', id: 0 },
@@ -73,6 +74,26 @@ const ImgSlideEffect = () => {
 
   const handleMouseMove = useCallback(
     throttle(e => {
+      // const currentPosition = { x: e.clientX, y: e.clientY }
+      // const deltaX = Math.abs(currentPosition.x - lastPosition.x)
+      // const deltaY = Math.abs(currentPosition.y - lastPosition.y)
+
+      // // Calcula la intensidad total del movimiento como antes
+      // const movementIntensity = deltaX + deltaY
+
+      // // Define un valor máximo esperado para la intensidad del movimiento
+      // // Este valor depende de tus observaciones sobre qué tan rápido esperas que el usuario mueva el mouse
+      // // Puede requerir ajustes según el uso específico
+      // const maxExpectedIntensity = 500 // Este es un valor hipotético, ajusta según necesites
+
+      // // Normaliza la intensidad del movimiento a un valor entre 0 y 1
+      // const normalizedIntensity =
+      //   Math.round(Math.min(movementIntensity / maxExpectedIntensity, 1) * 10) / 10
+
+      // console.log('Intensidad del movimiento normalizada:', normalizedIntensity)
+
+      // setLastPosition(currentPosition)
+
       calculateMaskWidth(e)
       calculateMousePosition(e)
       generateRandomNumber()

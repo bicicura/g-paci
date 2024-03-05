@@ -3,7 +3,7 @@ export const revalidate = 0
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 
-import { Button, Chip, Divider, Tooltip } from '@nextui-org/react'
+import { Button, Chip, Divider, Tooltip, Input } from '@nextui-org/react'
 import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
@@ -16,6 +16,7 @@ import useEditHome from '@/app/hooks/useEditHome'
 import { MAX_FILE_SIZE } from '../../../../../constants'
 import { Checkbox } from '@nextui-org/react'
 import Image from 'next/image'
+import { Toaster } from 'sonner'
 
 registerPlugin(
   FilePondPluginImageExifOrientation,
@@ -28,7 +29,10 @@ const EditHome = () => {
   const {
     handleSubmit,
     setPrimaryImage,
-    setSecondaryImage,
+    client,
+    setClient,
+    isPrimary,
+    setIsPrimary,
     WORK_STATUS_ACTIVE,
     WORK_STATUS_INACTIVE,
     isLoading,
@@ -39,6 +43,11 @@ const EditHome = () => {
 
   return (
     <section>
+      <Toaster
+        richColors
+        position="bottom-right"
+        closeButton
+      />
       <div className="mb-12">
         <div className="flex items-center gap-4">
           <Link href="/dashboard">
@@ -83,54 +92,59 @@ const EditHome = () => {
           isSelected={isActive}
           onValueChange={value => {
             setIsActive(value)
-            // setWork({
-            //   ...work,
-            //   status: value ? WORK_STATUS_ACTIVE : WORK_STATUS_INACTIVE,
-            // })
           }}
         >
           <span className="text-lg">Activo</span>
         </Checkbox>
 
         <div className="flex gap-6">
-          {effectConfig.primaryImage && (
-            <Tooltip
-              className="text-black"
-              content="Imagen primaria"
-            >
-              <Image
-                priority
-                className="aspect-video object-contain border rounded-lg bg-slate-100"
-                width={150}
-                height={150}
-                src={effectConfig.primaryImage}
-                alt="Home effect primary image"
-              />
-            </Tooltip>
-          )}
-          {effectConfig.secondaryImage && (
-            <Tooltip
-              className="text-black"
-              content="Imagen secundaria"
-            >
-              <Image
-                priority
-                className="aspect-video object-contain border rounded-lg bg-slate-100"
-                width={150}
-                height={150}
-                src={effectConfig.secondaryImage}
-                alt="Home effect primary image"
-              />
-            </Tooltip>
-          )}
+          {effectConfig.images &&
+            effectConfig.images.map((img, index) => (
+              <Tooltip
+                key={index}
+                className={`text-black ${img.isPrimary ? 'bg-yellow-100' : ''}`}
+                content={img.client}
+              >
+                <Image
+                  priority
+                  className={`aspect-video object-contain border ${
+                    img.isPrimary ? 'border-yellow-300 bg-yellow-100' : 'bg-slate-100'
+                  } rounded-lg`}
+                  width={150}
+                  height={150}
+                  src={img.url}
+                  alt="Home effect primary image"
+                />
+              </Tooltip>
+            ))}
         </div>
       </div>
 
       <Divider className="my-12" />
 
-      <div className="text-black space-y-12">
-        <div className="grid grid-cols-3">
-          <span className="text-lg">Nueva imagen primaria</span>
+      <div className="text-black">
+        <div className="grid grid-cols-3 gap-y-6">
+          <div className="col-span-3 flex gap-12">
+            <div>
+              <Input
+                type="text"
+                label="Cliente"
+                size="md"
+                value={client}
+                onChange={e => setClient(e.target.value)}
+              />
+            </div>
+            <Checkbox
+              className="ml-auto"
+              isSelected={isPrimary}
+              onValueChange={value => {
+                setIsPrimary(value)
+              }}
+            >
+              <span className="text-lg">Primaria</span>
+            </Checkbox>
+          </div>
+          <span className="text-lg">Cargar imagen</span>
           <div className="col-span-2">
             <FilePond
               allowImagePreview
@@ -150,30 +164,6 @@ const EditHome = () => {
               allowMultiple={false}
               server="/api/work"
               name="primaryImage" /* sets the file input name, it's filepond by default */
-              labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-3">
-          <span className="text-lg">Nueva imagen secundaria</span>
-          <div className="col-span-2">
-            <FilePond
-              allowImagePreview
-              className="w-full"
-              allowFileSizeValidation
-              allowFileTypeValidation
-              allowProcess={false}
-              maxFileSize={MAX_FILE_SIZE}
-              acceptedFileTypes={['image/*']}
-              disabled={isLoading}
-              instantUpload={false}
-              onupdatefiles={fileItems => {
-                // Suponiendo que es el FilePond para la imagen primaria
-                setSecondaryImage(fileItems.length ? fileItems[0].file : null)
-              }}
-              allowMultiple={false}
-              server="/api/work"
-              name="secondaryImage" /* sets the file input name, it's filepond by default */
               labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
             />
           </div>
@@ -204,7 +194,7 @@ const EditHome = () => {
               />
             </svg>
           )}
-          Guardar
+          Enviar imagen
         </Button>
       </div>
     </section>

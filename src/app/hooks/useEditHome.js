@@ -6,27 +6,26 @@ import {
   WORK_STATUS_INACTIVE,
 } from '../../../constants'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 const useEditHome = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [primaryImage, setPrimaryImage] = useState(null)
-  const [secondaryImage, setSecondaryImage] = useState(null)
   const { showSnackbar } = useSnackbar()
   const router = useRouter()
   const [effectConfig, setEffectConfig] = useState({
     active: false,
     primaryImage: null,
-    secondaryImage: null,
   })
   const [isActive, setIsActive] = useState(effectConfig.active)
+  const [isPrimary, setIsPrimary] = useState(false)
+  const [client, setClient] = useState('')
 
   const validateFileSize = () => {
     // Retorna 'true' si ambos archivos son menores o iguales al tamaño máximo permitido
     return (
-      (!primaryImage ||
-        (primaryImage instanceof File && primaryImage.size <= MAX_FILE_SIZE)) &&
-      (!secondaryImage ||
-        (secondaryImage instanceof File && secondaryImage.size <= MAX_FILE_SIZE))
+      !primaryImage ||
+      (primaryImage instanceof File && primaryImage.size <= MAX_FILE_SIZE)
     )
   }
 
@@ -35,10 +34,7 @@ const useEditHome = () => {
 
     const isValidType = file => file instanceof File && imageTypes.includes(file.type)
 
-    return (
-      (!primaryImage || isValidType(primaryImage)) &&
-      (!secondaryImage || isValidType(secondaryImage))
-    )
+    return !primaryImage || isValidType(primaryImage)
   }
 
   const statusColorMap = {
@@ -58,7 +54,7 @@ const useEditHome = () => {
         next: { revalidate: 1 },
       })
       const data = await res.json()
-      setEffectConfig(data?.effects?.ContinuousImageFilter)
+      setEffectConfig(data?.effects?.ImgSlideEffect)
     })()
   }, [])
 
@@ -119,23 +115,16 @@ const useEditHome = () => {
       )
     }
 
-    setIsLoading(true) // Suponiendo que tienes un estado para controlar la carga
+    setIsLoading(true)
 
     try {
-      let primaryImageUrl = null
-      let secondaryImageUrl = null
+      let imageUrl = null
 
-      // Verifica si primaryImage y secondaryImage existen y tienen un archivo
+      // Verifica si primaryImage existe y tiene un archivo
       if (primaryImage) {
         const newName = generateFileName(primaryImage)
         const newFile = new File([primaryImage], newName, { type: primaryImage.type })
-        primaryImageUrl = await uploadImageToS3(newFile)
-        // @TODO borrar imagen previa
-      }
-      if (secondaryImage) {
-        const newName = generateFileName(secondaryImage)
-        const newFile = new File([secondaryImage], newName, { type: secondaryImage.type })
-        secondaryImageUrl = await uploadImageToS3(newFile)
+        imageUrl = await uploadImageToS3(newFile)
         // @TODO borrar imagen previa
       }
 
@@ -144,10 +133,11 @@ const useEditHome = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          effectName: 'ContinuousImageFilter',
+          effectName: 'ImgSlideEffect',
           newEffectState: isActive,
-          primaryImageUrl,
-          secondaryImageUrl,
+          imageUrl,
+          client,
+          isPrimary,
         }),
       })
 
@@ -159,9 +149,9 @@ const useEditHome = () => {
       const result = await response.json()
       console.log('Respuesta del servidor:', result)
 
-      router.push('/dashboard')
-      // como mostrar un mensaje de éxito al usuario o redirigir a otra página.
-      showSnackbar('Efecto actualizado con éxito', 'success') // Ejemplo de notificación de éxito
+      // resetear form.
+      // showSnackbar('Efecto actualizado con éxito', 'success')
+      toast.success('Efecto actualizado con éxito')
     } catch (error) {
       console.error('Error al enviar la solicitud:', error)
       showSnackbar('Error al actualizar el efecto', 'error') // Ejemplo de notificación de error
@@ -170,17 +160,24 @@ const useEditHome = () => {
     }
   }
 
+  const resetForm = () => {
+    setIsPrimary(false)
+    setClient('')
+  }
+
   return {
     handleSubmit,
     primaryImage,
     statusColorMap,
     setPrimaryImage,
-    secondaryImage,
     WORK_STATUS_ACTIVE,
     WORK_STATUS_INACTIVE,
+    client,
+    isPrimary,
+    setIsPrimary,
+    setClient,
     effectConfig,
     isLoading,
-    setSecondaryImage,
     isActive,
     setIsActive,
   }
