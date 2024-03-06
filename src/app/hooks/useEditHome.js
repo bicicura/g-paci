@@ -17,10 +17,15 @@ const useEditHome = () => {
   const [isActive, setIsActive] = useState(effectConfig.active)
   const [isPrimary, setIsPrimary] = useState(false)
   const [client, setClient] = useState('')
+  const [isError, setIsError] = useState(false)
 
   const validateFileSize = () => {
     // Retorna 'true' si ambos archivos son menores o iguales al tamaño máximo permitido
     return !newImage || (newImage instanceof File && newImage.size <= MAX_FILE_SIZE)
+  }
+
+  const handleDelete = () => {
+    console.log('delete method!')
   }
 
   const validateFileType = () => {
@@ -53,7 +58,17 @@ const useEditHome = () => {
       cache: 'no-store',
       next: { revalidate: 1 },
     })
-    const data = await res.json()
+    let data = await res.json()
+
+    // Utilizando desestructuración para acceder a images de una manera más directa
+    const { effects: { ImgSlideEffect: { images } = {} } = {} } = data
+
+    // Verificar si images es un array y luego filtrar elementos no deseados
+    if (Array.isArray(images)) {
+      // Filtra imágenes donde la url no sea null ni undefined
+      data.effects.ImgSlideEffect.images = images.filter(({ url }) => url != null)
+    }
+
     return data
   }
 
@@ -99,7 +114,17 @@ const useEditHome = () => {
     return `${randomName}.${extension}`
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    if (client == null || client === '') {
+      return setIsError(true)
+    }
+
+    if (isError) {
+      setIsError(false)
+    }
+
     if (!validateFileSize()) {
       return toast.error('Uno o más archivos superan el tamaño máximo permitido.')
     }
@@ -178,6 +203,8 @@ const useEditHome = () => {
     isLoading,
     isActive,
     setIsActive,
+    isError,
+    handleDelete,
   }
 }
 
