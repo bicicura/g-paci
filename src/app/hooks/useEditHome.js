@@ -24,8 +24,27 @@ const useEditHome = () => {
     return !newImage || (newImage instanceof File && newImage.size <= MAX_FILE_SIZE)
   }
 
-  const handleDelete = () => {
-    console.log('delete method!')
+  const handleDelete = async imgID => {
+    try {
+      const response = await fetch('/api/home-effect', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imgID,
+        }),
+      })
+      toast.success('Imagen eliminada con éxito.')
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`)
+      }
+
+      const data = await requestEffectConfig()
+      setEffectConfig(data?.effects?.ImgSlideEffect)
+    } catch (error) {
+      // console.error('Error al enviar la solicitud:', error)
+      toast.error('Error al borrar la imagen.')
+    }
   }
 
   const validateFileType = () => {

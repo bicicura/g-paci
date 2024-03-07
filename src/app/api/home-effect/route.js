@@ -1,4 +1,9 @@
-import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
 
 // Función auxiliar para convertir stream a string
@@ -20,18 +25,20 @@ const s3 = new S3Client({
 const bucketName = 'flm-g-paci'
 const jsonKey = 'effects-config.json'
 
+const getEffectsConfigJSON = async () => {
+  // Obtener el archivo JSON actual de S3
+  const getObjectParams = { Bucket: bucketName, Key: jsonKey }
+  const { Body } = await s3.send(new GetObjectCommand(getObjectParams))
+  const jsonString = await streamToString(Body)
+  return JSON.parse(jsonString)
+}
+
 export async function POST(request) {
   try {
     const { effectName, newEffectState, imageUrl, client, isPrimary } =
       await request.json()
 
-    // Obtener el archivo JSON actual de S3
-    const getObjectParams = { Bucket: bucketName, Key: jsonKey }
-    const { Body } = await s3.send(new GetObjectCommand(getObjectParams))
-    const jsonString = await streamToString(Body)
-    const json = JSON.parse(jsonString)
-
-    console.log(client, effectName, isPrimary)
+    const json = await getEffectsConfigJSON()
 
     // Modificar el JSON
     const effectConfig = json.effects[effectName]
@@ -56,6 +63,62 @@ export async function POST(request) {
     })
   } catch (error) {
     console.error('Error updating effect:', error)
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const { imgID } = await request.json()
+    const json = await getEffectsConfigJSON()
+
+    // Encuentra el índice del elemento con el imgID en el arreglo de ImgSlideEffect
+    const index = json.effects.ImgSlideEffect.images.findIndex(
+      image => image.id === imgID
+    )
+
+    if (index === -1) {
+      throw new Error('Image with provided ID not found.')
+    }
+
+    // Extrae la URL y elimina el elemento del JSON
+    const imageUrl = json.effects.ImgSlideEffect.images[index].url
+    json.effects.ImgSlideEffect.images.splice(index, 1)
+
+    // Extrae el nombre del archivo de la URL
+    const urlParts = imageUrl.split('/')
+    const fileName = urlParts[urlParts.length - 1]
+
+    // Elimina el archivo de S3
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: bucketName,
+        Key: `home-effect/${fileName}`, // Asegúrate de que esta ruta sea correcta.
+      })
+    )
+
+    // Sobrescribe el JSON modificado en S3
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: bucketName,
+        Key: jsonKey,
+        Body: JSON.stringify(json, null, 2),
+        ContentType: 'application/json',
+      })
+    )
+
+    return new Response(
+      JSON.stringify({ message: 'Image and file deleted successfully' }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
+  } catch (error) {
+    console.error('Error deleting image:', error)
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },

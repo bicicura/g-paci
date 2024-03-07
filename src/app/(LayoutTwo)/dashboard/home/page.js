@@ -102,9 +102,9 @@ const EditHome = () => {
 
         <div className="flex gap-6">
           {effectConfig?.images &&
-            effectConfig?.images.map((img, index) => (
+            effectConfig?.images.map(img => (
               <div
-                key={index}
+                key={img.id}
                 className="relative group"
               >
                 <Tooltip
@@ -124,7 +124,7 @@ const EditHome = () => {
                   />
                 </Tooltip>
                 <button
-                  onClick={handleDelete}
+                  onClick={() => handleDelete(img.id)}
                   className="opacity-0 group-hover:opacity-100 translate-y-1.5 group-hover:translate-y-0 duration-200 ease-in-out transition-all tran absolute z-10 flex items-center justify-center w-8 h-8 bg-red-500 rounded-full -top-4 -right-4"
                 >
                   <svg
