@@ -5,3 +5,4 @@ export const WORK_STATUS_INACTIVE = 'inactive'
 export const MAX_FILE_SIZE = 5000000
 export const NAV_SECTION_WORK = 'work'
 export const NAV_SECTION_INFO = 'info'
+export const BUCKET_NAME = 'flm-g-paci'

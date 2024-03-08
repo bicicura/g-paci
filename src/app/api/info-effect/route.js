@@ -1,5 +1,6 @@
 import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
+import { BUCKET_NAME } from '../../../../constants'
 
 // Función auxiliar para convertir stream a string
 function streamToString(stream) {
@@ -17,7 +18,6 @@ const s3 = new S3Client({
   region: process.env.AWS_REGION,
 })
 
-const bucketName = 'flm-g-paci'
 const jsonKey = 'effects-config.json'
 
 export async function POST(request) {
@@ -25,7 +25,7 @@ export async function POST(request) {
     const { effectName, newEffectState, primaryImageUrl, body } = await request.json()
 
     // Obtener el archivo JSON actual de S3
-    const getObjectParams = { Bucket: bucketName, Key: jsonKey }
+    const getObjectParams = { Bucket: BUCKET_NAME, Key: jsonKey }
     const { Body } = await s3.send(new GetObjectCommand(getObjectParams))
     const jsonString = await streamToString(Body)
     const json = JSON.parse(jsonString)
@@ -40,7 +40,7 @@ export async function POST(request) {
 
     // Sobrescribir el archivo JSON en S3
     const putObjectParams = {
-      Bucket: bucketName,
+      Bucket: BUCKET_NAME,
       Key: jsonKey,
       Body: JSON.stringify(json, null, 2), // Formatear para mejor legibilidad
       ContentType: 'application/json',

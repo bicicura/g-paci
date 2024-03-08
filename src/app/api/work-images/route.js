@@ -2,6 +2,7 @@
 import { S3Client, DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
 import supabase from '../../../../utils/supabaseClient'
+import { BUCKET_NAME } from '../../../../constants'
 
 // Configuración del SDK de AWS con credenciales
 const s3 = new S3Client({
@@ -16,7 +17,7 @@ export async function DELETE(Request) {
   const fileName = body['file-name']
 
   const params = {
-    Bucket: 'flm-g-paci',
+    Bucket: BUCKET_NAME,
     Key: `${slug}/${fileName}`,
   }
 

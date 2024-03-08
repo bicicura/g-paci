@@ -5,6 +5,7 @@ import {
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
+import { BUCKET_NAME } from '../../../../constants'
 
 // Función auxiliar para convertir stream a string
 function streamToString(stream) {
@@ -22,12 +23,11 @@ const s3 = new S3Client({
   region: process.env.AWS_REGION,
 })
 
-const bucketName = 'flm-g-paci'
 const jsonKey = 'effects-config.json'
 
 const getEffectsConfigJSON = async () => {
   // Obtener el archivo JSON actual de S3
-  const getObjectParams = { Bucket: bucketName, Key: jsonKey }
+  const getObjectParams = { Bucket: BUCKET_NAME, Key: jsonKey }
   const { Body } = await s3.send(new GetObjectCommand(getObjectParams))
   const jsonString = await streamToString(Body)
   return JSON.parse(jsonString)
@@ -44,12 +44,18 @@ export async function POST(request) {
     const effectConfig = json.effects[effectName]
     if (effectConfig) {
       effectConfig.active = newEffectState
-      effectConfig.images.push({ url: imageUrl, isPrimary, client })
+      if (imageUrl && client) {
+        effectConfig.images.push({ url: imageUrl, isPrimary, client })
+        // le asigno un ID a cada item en base a su index
+        effectConfig.images = effectConfig.images.map((item, index) => {
+          return { ...item, id: index }
+        })
+      }
     }
 
     // Sobrescribir el archivo JSON en S3
     const putObjectParams = {
-      Bucket: bucketName,
+      Bucket: BUCKET_NAME,
       Key: jsonKey,
       Body: JSON.stringify(json, null, 2), // Formatear para mejor legibilidad
       ContentType: 'application/json',
@@ -95,7 +101,7 @@ export async function DELETE(request) {
     // Elimina el archivo de S3
     await s3.send(
       new DeleteObjectCommand({
-        Bucket: bucketName,
+        Bucket: BUCKET_NAME,
         Key: `home-effect/${fileName}`, // Asegúrate de que esta ruta sea correcta.
       })
     )
@@ -103,7 +109,7 @@ export async function DELETE(request) {
     // Sobrescribe el JSON modificado en S3
     await s3.send(
       new PutObjectCommand({
-        Bucket: bucketName,
+        Bucket: BUCKET_NAME,
         Key: jsonKey,
         Body: JSON.stringify(json, null, 2),
         ContentType: 'application/json',

@@ -1,7 +1,7 @@
 import supabase from '../../../../utils/supabaseClient'
 import { S3Client, DeleteObjectsCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
-import { WORK_STATUS_ACTIVE } from '../../../../constants'
+import { WORK_STATUS_ACTIVE, BUCKET_NAME } from '../../../../constants'
 
 // Initialize the S3 client
 const s3 = new S3Client({
@@ -92,19 +92,18 @@ export async function DELETE(Request, context) {
   const url = Request.nextUrl
   const slug = url.searchParams.get('slug')
   const workId = url.searchParams.get('workId')
-  const bucketName = 'flm-g-paci'
 
   try {
     // List all objects in the "directory"
     const listParams = {
-      Bucket: bucketName,
+      Bucket: BUCKET_NAME,
       Prefix: `${slug}/`,
     }
     const listedObjects = await s3.send(new ListObjectsV2Command(listParams))
 
     if (listedObjects?.Contents?.length > 0) {
       const deleteParams = {
-        Bucket: bucketName,
+        Bucket: BUCKET_NAME,
         Delete: {
           Objects: listedObjects.Contents.map(obj => ({ Key: obj.Key })),
         },

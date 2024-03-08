@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 const useEditHome = () => {
   const pondRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [deleteImgLoading, setDeleteImgLoading] = useState(false)
   const [newImage, setNewImage] = useState(null)
   const [effectConfig, setEffectConfig] = useState({
     active: false,
@@ -25,6 +26,7 @@ const useEditHome = () => {
   }
 
   const handleDelete = async imgID => {
+    setDeleteImgLoading(true)
     try {
       const response = await fetch('/api/home-effect', {
         method: 'DELETE',
@@ -44,6 +46,8 @@ const useEditHome = () => {
     } catch (error) {
       // console.error('Error al enviar la solicitud:', error)
       toast.error('Error al borrar la imagen.')
+    } finally {
+      setDeleteImgLoading(false)
     }
   }
 
@@ -85,7 +89,17 @@ const useEditHome = () => {
     // Verificar si images es un array y luego filtrar elementos no deseados
     if (Array.isArray(images)) {
       // Filtra imágenes donde la url no sea null ni undefined
-      data.effects.ImgSlideEffect.images = images.filter(({ url }) => url != null)
+      data.effects.ImgSlideEffect.images = images
+        .filter(({ url }) => url != null)
+        .sort((a, b) => {
+          if (a.isPrimary && !b.isPrimary) {
+            return -1 // a viene antes que b
+          } else if (!a.isPrimary && b.isPrimary) {
+            return 1 // b viene antes que a
+          } else {
+            return 0 // a y b se mantienen sin cambios entre ellos
+          }
+        })
     }
 
     return data
@@ -135,26 +149,28 @@ const useEditHome = () => {
 
   const handleSubmit = async e => {
     e.preventDefault()
-
-    if (client == null || client === '') {
-      return setIsError(true)
-    }
-
-    if (isError) {
-      setIsError(false)
-    }
-
-    if (!validateFileSize()) {
-      return toast.error('Uno o más archivos superan el tamaño máximo permitido.')
-    }
-
-    if (!validateFileType()) {
-      return toast.error('Uno o más archivos no son del tipo de imagen permitido.')
-    }
-
-    setIsLoading(true)
-
     try {
+      setIsLoading(true)
+
+      if (newImage) {
+        if (client == null || client === '') {
+          toast.error('Ingrese un cliente válido.')
+          return setIsError(true)
+        }
+
+        if (!validateFileSize()) {
+          return toast.error('Uno o más archivos superan el tamaño máximo permitido.')
+        }
+
+        if (!validateFileType()) {
+          return toast.error('Uno o más archivos no son del tipo de imagen permitido.')
+        }
+      }
+
+      if (isError) {
+        setIsError(false)
+      }
+
       let imageUrl = null
 
       // Verifica si newImage existe y tiene un archivo
@@ -162,7 +178,6 @@ const useEditHome = () => {
         const newName = generateFileName(newImage)
         const newFile = new File([newImage], newName, { type: newImage.type })
         imageUrl = await uploadImageToS3(newFile)
-        // @TODO borrar imagen previa
       }
 
       // Enviar información al backend
@@ -172,8 +187,8 @@ const useEditHome = () => {
         body: JSON.stringify({
           effectName: 'ImgSlideEffect',
           newEffectState: isActive,
-          imageUrl,
-          client,
+          imageUrl: imageUrl ?? null,
+          client: client ?? null,
           isPrimary,
         }),
       })
@@ -182,20 +197,15 @@ const useEditHome = () => {
         throw new Error(`Error HTTP: ${response.status}`)
       }
 
-      // Procesar la respuesta (opcional, dependiendo de lo que devuelva tu backend)
-      const result = await response.json()
-      // console.log('Respuesta del servidor:', result)
-
       resetForm()
       toast.success('Efecto actualizado con éxito')
 
       const data = await requestEffectConfig()
       setEffectConfig(data?.effects?.ImgSlideEffect)
     } catch (error) {
-      // console.error('Error al enviar la solicitud:', error)
       toast.error('Error al actualizar el efecto')
     } finally {
-      setIsLoading(false) // Restablecer el estado de carga
+      setIsLoading(false)
     }
   }
 
@@ -224,6 +234,7 @@ const useEditHome = () => {
     setIsActive,
     isError,
     handleDelete,
+    deleteImgLoading,
   }
 }
 
