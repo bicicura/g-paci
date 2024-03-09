@@ -34,7 +34,11 @@ const ClientContainer = ({ children }) => {
         //   opacity={introOpacity}
         //   onDismiss={dismissIntro}
         // />
-        <ImgSlideEffect />
+
+        <ImgSlideEffect
+          onDismiss={dismissIntro}
+          opacity={introOpacity}
+        />
       ) : (
         <div
           className={`transition-opacity duration-500 ${

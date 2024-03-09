@@ -1,25 +1,64 @@
 import Image from 'next/image'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useContext } from 'react'
 import CursorWithEffect2 from './CursorWithEffect2'
 import styles from './Carousel/Carousel.module.css'
 import CursorWithoutEffect2 from './CursorWithoutEffect2'
+import { EffectsContext } from '../contexts/EffectsContext'
 
-const ImgSlideEffect = () => {
+const ImgSlideEffect = ({ onDismiss, opacity }) => {
   // porcentaje de en que posición esta el mouse en el eje X del contenedor padre
   const [maskWidth, setMaskWidth] = useState(0)
   const [cursorText, setCursorText] = useState('[hover the image]')
   const [mousePosition, setMousePosition] = useState(0)
   const [isLeaving, setIsLeaving] = useState(false)
   const [randomImg, setRandomImg] = useState({ img: '', client: 'KOSTUME', id: null })
-  // const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 })
+  const { isLoading, homeEffectConfig } = useContext(EffectsContext)
+  const [primaryImages, setPrimaryImages] = useState([])
+  const [speed, setSpeed] = useState(0) // Nuevo estado para la velocidad
 
-  const imgs = [
-    { img: 'h-1.jpg', client: 'LOfficiel', id: 0 },
-    { img: 'h-2.jpg', client: 'KOSTUME', id: 1 },
-    { img: 'h-3.jpg', client: 'IMAN', id: 2 },
-    { img: 'h-4.jpg', client: 'Lorem', id: 3 },
-    { img: 'h-5.jpg', client: 'asd', id: 4 },
-  ]
+  let prevEvent = null
+  let currentEvent = null
+  let intervalId = null
+
+  const shouldShowFilter = homeEffectConfig && homeEffectConfig.active
+
+  useEffect(() => {
+    setPrimaryImages(homeEffectConfig?.images?.filter(item => item.isPrimary))
+
+    if (!isLoading && homeEffectConfig.active === false) {
+      onDismiss()
+    }
+
+    // Iniciar el seguimiento de la velocidad del mouse
+    document.documentElement.addEventListener('mousemove', handleMouseMoveSpeed)
+
+    // Iniciar el intervalo para calcular la velocidad
+    intervalId = setInterval(calculateSpeed, 100)
+
+    // Limpieza al desmontar
+    return () => {
+      document.documentElement.removeEventListener('mousemove', handleMouseMoveSpeed)
+      clearInterval(intervalId)
+    }
+  }, [homeEffectConfig, isLoading])
+
+  const handleMouseMoveSpeed = event => {
+    currentEvent = event
+  }
+
+  const calculateSpeed = () => {
+    if (prevEvent && currentEvent) {
+      const movementX = Math.abs(currentEvent.screenX - prevEvent.screenX)
+      const movementY = Math.abs(currentEvent.screenY - prevEvent.screenY)
+      const movement = Math.sqrt(movementX * movementX + movementY * movementY)
+
+      // Calcular velocidad actual
+      const currentSpeed = 10 * movement // Velocidad = movimiento / 0.1s
+      setSpeed(Math.round(currentSpeed))
+    }
+
+    prevEvent = currentEvent
+  }
 
   const handleTextChange = text => setCursorText(text)
 
@@ -37,11 +76,14 @@ const ImgSlideEffect = () => {
   }
 
   const generateRandomNumber = () => {
-    const maxNumber = imgs.length
-    setRandomImg(prev => {
-      // Returns a random integer from 0 to maxNumber -1:
-      return imgs[Math.floor(Math.random() * maxNumber)]
-    })
+    if (homeEffectConfig?.images?.length) {
+      console.log(homeEffectConfig)
+      const maxNumber = homeEffectConfig?.images.length
+      setRandomImg(prev => {
+        // Returns a random integer from 0 to maxNumber -1:
+        return homeEffectConfig?.images[Math.floor(Math.random() * maxNumber)]
+      })
+    }
   }
 
   const calculateMaskWidth = e => {
@@ -74,31 +116,11 @@ const ImgSlideEffect = () => {
 
   const handleMouseMove = useCallback(
     throttle(e => {
-      // const currentPosition = { x: e.clientX, y: e.clientY }
-      // const deltaX = Math.abs(currentPosition.x - lastPosition.x)
-      // const deltaY = Math.abs(currentPosition.y - lastPosition.y)
-
-      // // Calcula la intensidad total del movimiento como antes
-      // const movementIntensity = deltaX + deltaY
-
-      // // Define un valor máximo esperado para la intensidad del movimiento
-      // // Este valor depende de tus observaciones sobre qué tan rápido esperas que el usuario mueva el mouse
-      // // Puede requerir ajustes según el uso específico
-      // const maxExpectedIntensity = 500 // Este es un valor hipotético, ajusta según necesites
-
-      // // Normaliza la intensidad del movimiento a un valor entre 0 y 1
-      // const normalizedIntensity =
-      //   Math.round(Math.min(movementIntensity / maxExpectedIntensity, 1) * 10) / 10
-
-      // console.log('Intensidad del movimiento normalizada:', normalizedIntensity)
-
-      // setLastPosition(currentPosition)
-
       calculateMaskWidth(e)
       calculateMousePosition(e)
       generateRandomNumber()
     }, 37),
-    []
+    [homeEffectConfig]
   )
 
   const handleMouseEnter = () => {
@@ -115,24 +137,25 @@ const ImgSlideEffect = () => {
     setRandomImg({ img: '', client: 'KOSTUME', id: null })
   }
 
-  return (
+  return shouldShowFilter ? (
     <div
-      className={`${styles.customCursor} min-h-screen flex justify-center items-center`}
+      className={`${
+        styles.customCursor
+      } flex justify-center min-h-dvh opacity-0 lg:min-h-screen items-center w-full transition-opacity relative duration-300 ${
+        opacity === 1 ? 'opacity-100' : ''
+      }`}
     >
       <CursorWithoutEffect2 cursorText={cursorText} />
       <div
-        className="w-[400px] h-[500px] relative"
+        className="flex relative"
+        style={{ maxHeight: '80vh', height: '80vh', width: '25%' }}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => handleMouseEnter()}
         onMouseLeave={() => {
           handleMouseLeave()
         }}
+        onClick={onDismiss}
       >
-        {/* <div className="absolute left-0 right-0 -top-12 w-max mx-auto flex gap-8">
-          <span>maskWidth: {Math.floor(maskWidth)}%</span>
-          <span>mousePosition: {Math.floor(mousePosition)}%</span>
-          <span>randomImg: {randomImg.img}</span>
-        </div> */}
         <div
           style={{ transform: 'translateX(100%)' }}
           className={
@@ -140,27 +163,31 @@ const ImgSlideEffect = () => {
           }
         >
           <span className="text-slate-400 text-sm leading-none">client</span>
-          <span className="font-bold text-lg leading-none">{randomImg.client}</span>
+          <span className="font-bold text-lg leading-none">{randomImg?.client}</span>
+          <span className="text-slate-400 text-sm leading-none">speed</span>
+          <span className="font-bold text-lg leading-none mt-12">{speed}</span>
         </div>
-        <div className="w-full absolute h-full overflow-hidden">
-          <CursorWithEffect2 cursorText={cursorText} />
-          <Image
-            style={{ opacity: mousePosition <= 50 ? 1 : 0 }}
-            src={`/images/img-slide-effect/h-1.jpg`}
-            fill
-            className="w-full h-full object-cover transition-opacity"
-            sizes="100vw"
-            alt="Slide img"
-          />
-          <Image
-            style={{ opacity: mousePosition > 50 ? 1 : 0 }}
-            src={`/images/img-slide-effect/h-2.jpg`}
-            fill
-            className="w-full h-full object-cover transition-opacity"
-            sizes="100vw"
-            alt="Slide img"
-          />
-        </div>
+        {primaryImages.length && (
+          <div className="w-full inset-0 absolute h-full overflow-hidden">
+            <CursorWithEffect2 cursorText={cursorText} />
+            <Image
+              style={{ opacity: mousePosition <= 50 ? 1 : 0 }}
+              src={primaryImages[0].url}
+              className="w-full h-full object-cover transition-opacity"
+              fill
+              sizes="70vw"
+              alt="Slide img"
+            />
+            <Image
+              style={{ opacity: mousePosition > 50 ? 1 : 0 }}
+              src={primaryImages[1].url}
+              fill
+              className="w-full h-full object-cover transition-opacity"
+              sizes="100vw"
+              alt="Slide img"
+            />
+          </div>
+        )}
         <div
           style={{
             width: `${maskWidth}%`,
@@ -170,10 +197,10 @@ const ImgSlideEffect = () => {
           }}
           className="w-full h-full absolute"
         >
-          {imgs.map(({ img, id }, index) => (
+          {homeEffectConfig?.images?.map((img, index) => (
             <Image
-              key={img}
-              src={`/images/img-slide-effect/${img}`}
+              key={img.id}
+              src={img.url}
               fill
               className="w-full h-full object-cover"
               sizes="100vw"
@@ -189,7 +216,7 @@ const ImgSlideEffect = () => {
         </div>
       </div>
     </div>
-  )
+  ) : null
 }
 
 export default ImgSlideEffect
