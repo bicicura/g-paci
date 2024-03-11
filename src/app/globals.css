@@ -23,6 +23,7 @@ body {
 
 .custom-cursor-effect {
   font-size: 12px;
+  will-change: transform;
 }
 
 #slit-scan-container {
