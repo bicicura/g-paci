@@ -30,7 +30,7 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
         opacity === 1 ? 'opacity-100' : ''
       }`}
     >
-      {primaryImages && <CursorWithoutEffect2 cursorText={cursorText} />}
+      {!isLoading && <CursorWithoutEffect2 cursorText={cursorText} />}
       <div
         className="flex justify-center items-center relative"
         style={{ maxHeight: '80vh', height: '80vh', aspectRatio: '4/5' }}
@@ -55,8 +55,6 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
 
         {primaryImages.length ? (
           <div className="w-full inset-0 absolute h-full overflow-hidden">
-            <CursorWithEffect2 cursorText={cursorText} />
-            {primaryImages && <CursorWithEffect2 cursorText={cursorText} />}
             <Image
               onLoad={() => handleImageLoad('primary')}
               style={{
@@ -81,10 +79,10 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
                 priority
               />
             )}
+            {!isLoading && <CursorWithEffect2 cursorText={cursorText} />}
           </div>
         ) : homeEffectConfig.images.length ? (
           <div className="w-full inset-0 absolute h-full overflow-hidden">
-            <CursorWithEffect2 cursorText={cursorText} />
             <Image
               onLoad={() => handleImageLoad('no-primary')}
               style={{
@@ -97,6 +95,7 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
               alt="Slide img"
               priority
             />
+            {!isLoading && <CursorWithEffect2 cursorText={cursorText} />}
           </div>
         ) : null}
         <div

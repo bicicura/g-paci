@@ -1,15 +1,10 @@
 import { useState, useEffect, useRef, useContext } from 'react'
-import { CarouselContext } from '../contexts/CarouselContext'
-import { usePathname } from 'next/navigation'
 
 const CursorWithEffect = props => {
-  const pathname = usePathname()
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [relativePosition, setRelativePosition] = useState({ x: 0, y: 0 })
   const [containerOffset, setContainerOffset] = useState({ left: 0, top: 0 })
   const cursorRef = useRef(null)
-  const [title, setTitle] = useState('Loading')
-  const resizeObserver = useRef(null)
 
   // Escuchador para obtener la posición actual del mouse
   useEffect(() => {

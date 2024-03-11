@@ -1,11 +1,7 @@
-import { useState, useEffect, useContext } from 'react'
-import { CarouselContext } from '../contexts/CarouselContext'
-import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
 const CursorWithoutEffect = props => {
-  const pathname = usePathname()
   const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [title, setTitle] = useState('Loading')
 
   const updatePosition = event => {
     setPosition({
