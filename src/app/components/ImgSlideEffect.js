@@ -82,7 +82,7 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
               />
             )}
           </div>
-        ) : (
+        ) : homeEffectConfig.images.length ? (
           <div className="w-full inset-0 absolute h-full overflow-hidden">
             <CursorWithEffect2 cursorText={cursorText} />
             <Image
@@ -98,7 +98,7 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
               priority
             />
           </div>
-        )}
+        ) : null}
         <div
           style={{
             width: `${maskWidth}%`,

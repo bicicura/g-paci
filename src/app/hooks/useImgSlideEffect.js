@@ -48,7 +48,6 @@ const useImgSlideEffect = ({ onDismiss, opacity }) => {
     setPrimaryImages(homeEffectConfig?.images?.filter(item => item.isPrimary))
 
     if (homeEffectConfig.images.length) {
-      console.log('se llama!')
       toggleBgImage()
     }
 
