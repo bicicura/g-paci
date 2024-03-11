@@ -184,7 +184,7 @@ const EditHome = () => {
             className="max-w-xs text-black"
             value={client}
             onChange={e => setClient(e.target.value)}
-            disabled={isLoading || effectConfig?.images.length >= 5}
+            disabled={isLoading || effectConfig?.images.length >= 6}
             errorMessage={isError ? 'Ingrese un cliente válido.' : null}
           />
           <Checkbox
@@ -192,7 +192,7 @@ const EditHome = () => {
             isDisabled={
               isLoading ||
               effectConfig.images.filter(item => item.isPrimary).length >= 2 ||
-              effectConfig?.images.length >= 5
+              effectConfig?.images.length >= 6
             }
             onValueChange={value => {
               setIsPrimary(value)
@@ -214,7 +214,7 @@ const EditHome = () => {
               allowProcess={false}
               maxFileSize={MAX_FILE_SIZE}
               acceptedFileTypes={['image/*']}
-              disabled={isLoading || effectConfig?.images.length >= 5}
+              disabled={isLoading || effectConfig?.images.length >= 6}
               instantUpload={false}
               required={client ? true : false}
               onupdatefiles={fileItems => {

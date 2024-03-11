@@ -1,141 +1,26 @@
 import Image from 'next/image'
-import { useState, useCallback, useEffect, useContext } from 'react'
+import useImgSlideEffect from '../hooks/useImgSlideEffect'
 import CursorWithEffect2 from './CursorWithEffect2'
 import styles from './Carousel/Carousel.module.css'
 import CursorWithoutEffect2 from './CursorWithoutEffect2'
-import { EffectsContext } from '../contexts/EffectsContext'
+import Spinner from './Spinner'
 
 const ImgSlideEffect = ({ onDismiss, opacity }) => {
-  // porcentaje de en que posición esta el mouse en el eje X del contenedor padre
-  const [maskWidth, setMaskWidth] = useState(0)
-  const [cursorText, setCursorText] = useState('[hover the image]')
-  const [mousePosition, setMousePosition] = useState(0)
-  const [isLeaving, setIsLeaving] = useState(false)
-  const [randomImg, setRandomImg] = useState({ img: '', client: 'KOSTUME', id: null })
-  const { isLoading, homeEffectConfig } = useContext(EffectsContext)
-  const [primaryImages, setPrimaryImages] = useState([])
-  const [speed, setSpeed] = useState(0) // Nuevo estado para la velocidad
-
-  let prevEvent = null
-  let currentEvent = null
-  let intervalId = null
-
-  const shouldShowFilter = homeEffectConfig && homeEffectConfig.active
-
-  useEffect(() => {
-    setPrimaryImages(homeEffectConfig?.images?.filter(item => item.isPrimary))
-
-    if (!isLoading && homeEffectConfig.active === false) {
-      onDismiss()
-    }
-
-    // Iniciar el seguimiento de la velocidad del mouse
-    document.documentElement.addEventListener('mousemove', handleMouseMoveSpeed)
-
-    // Iniciar el intervalo para calcular la velocidad
-    intervalId = setInterval(calculateSpeed, 100)
-
-    // Limpieza al desmontar
-    return () => {
-      document.documentElement.removeEventListener('mousemove', handleMouseMoveSpeed)
-      clearInterval(intervalId)
-    }
-  }, [homeEffectConfig, isLoading])
-
-  const handleMouseMoveSpeed = event => {
-    currentEvent = event
-  }
-
-  const calculateSpeed = () => {
-    if (prevEvent && currentEvent) {
-      const movementX = Math.abs(currentEvent.screenX - prevEvent.screenX)
-      const movementY = Math.abs(currentEvent.screenY - prevEvent.screenY)
-      const movement = Math.sqrt(movementX * movementX + movementY * movementY)
-
-      // Calcular velocidad actual
-      const currentSpeed = 10 * movement // Velocidad = movimiento / 0.1s
-      setSpeed(Math.round(currentSpeed))
-    }
-
-    prevEvent = currentEvent
-  }
-
-  const handleTextChange = text => setCursorText(text)
-
-  const throttle = (func, limit) => {
-    let inThrottle
-    return function () {
-      const args = arguments
-      const context = this
-      if (!inThrottle) {
-        func.apply(context, args)
-        inThrottle = true
-        setTimeout(() => (inThrottle = false), limit)
-      }
-    }
-  }
-
-  const generateRandomNumber = () => {
-    if (homeEffectConfig?.images?.length) {
-      console.log(homeEffectConfig)
-      const maxNumber = homeEffectConfig?.images.length
-      setRandomImg(prev => {
-        // Returns a random integer from 0 to maxNumber -1:
-        return homeEffectConfig?.images[Math.floor(Math.random() * maxNumber)]
-      })
-    }
-  }
-
-  const calculateMaskWidth = e => {
-    const divBounds = e.currentTarget.getBoundingClientRect()
-    const mouseXRelativeToDiv = e.clientX - divBounds.left
-    // Calcula la distancia del centro en términos absolutos
-    const distanceFromCenter = Math.abs(mouseXRelativeToDiv - divBounds.width / 2)
-    // Convierte esa distancia a un porcentaje del ancho del div
-    const distancePercentage = (distanceFromCenter / (divBounds.width / 2)) * 100
-    // Ajusta el porcentaje para el ancho de la máscara
-    const maskWidthPercentage = 100 - distancePercentage
-
-    // Asegura que el porcentaje esté entre 0 y 100
-    setMaskWidth(Math.max(maskWidthPercentage, 0))
-  }
-
-  const calculateMousePosition = e => {
-    // Obtener las dimensiones y la posición del div
-    const divBounds = e.currentTarget.getBoundingClientRect()
-
-    // Calcular la posición del mouse relativa al div
-    const mouseXRelativeToDiv = e.clientX - divBounds.left
-
-    // Convertir esa posición a un porcentaje del ancho total del div
-    const mousePercentage = (mouseXRelativeToDiv / divBounds.width) * 100
-
-    // Actualizar el estado con el nuevo porcentaje, asegurándose de que esté entre 0% y 100%
-    setMousePosition(Math.min(Math.max(mousePercentage, 0), 100))
-  }
-
-  const handleMouseMove = useCallback(
-    throttle(e => {
-      calculateMaskWidth(e)
-      calculateMousePosition(e)
-      generateRandomNumber()
-    }, 37),
-    [homeEffectConfig]
-  )
-
-  const handleMouseEnter = () => {
-    handleTextChange('[click the image]')
-    setIsLeaving(false)
-  }
-
-  const handleMouseLeave = () => {
-    setIsLeaving(true)
-
-    handleTextChange('[hover the image]')
-
-    // aquí necesito que
-    setRandomImg({ img: '', client: 'KOSTUME', id: null })
-  }
+  const {
+    shouldShowFilter,
+    cursorText,
+    handleMouseMove,
+    handleMouseEnter,
+    handleMouseLeave,
+    handleImageLoad,
+    randomImg,
+    homeEffectConfig,
+    primaryImages,
+    isLeaving,
+    maskWidth,
+    mousePosition,
+    primaryImagesLoaded,
+  } = useImgSlideEffect()
 
   return shouldShowFilter ? (
     <div
@@ -145,10 +30,10 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
         opacity === 1 ? 'opacity-100' : ''
       }`}
     >
-      <CursorWithoutEffect2 cursorText={cursorText} />
+      {primaryImages && <CursorWithoutEffect2 cursorText={cursorText} />}
       <div
-        className="flex relative"
-        style={{ maxHeight: '80vh', height: '80vh', width: '25%' }}
+        className="flex justify-center items-center relative"
+        style={{ maxHeight: '80vh', height: '80vh', aspectRatio: '4/5' }}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => handleMouseEnter()}
         onMouseLeave={() => {
@@ -156,6 +41,8 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
         }}
         onClick={onDismiss}
       >
+        {primaryImagesLoaded && <Spinner />}
+
         <div
           style={{ transform: 'translateX(100%)' }}
           className={
@@ -164,27 +51,51 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
         >
           <span className="text-slate-400 text-sm leading-none">client</span>
           <span className="font-bold text-lg leading-none">{randomImg?.client}</span>
-          <span className="text-slate-400 text-sm leading-none">speed</span>
-          <span className="font-bold text-lg leading-none mt-12">{speed}</span>
         </div>
-        {primaryImages.length && (
+
+        {primaryImages.length ? (
           <div className="w-full inset-0 absolute h-full overflow-hidden">
             <CursorWithEffect2 cursorText={cursorText} />
+            {primaryImages && <CursorWithEffect2 cursorText={cursorText} />}
             <Image
-              style={{ opacity: mousePosition <= 50 ? 1 : 0 }}
+              onLoad={() => handleImageLoad('primary')}
+              style={{
+                opacity: primaryImages.length > 1 ? (mousePosition <= 50 ? 1 : 0) : 1,
+              }}
               src={primaryImages[0].url}
               className="w-full h-full object-cover transition-opacity"
               fill
               sizes="70vw"
               alt="Slide img"
+              priority
             />
+            {primaryImages.length > 1 && (
+              <Image
+                onLoad={() => handleImageLoad('primary')}
+                style={{ opacity: mousePosition > 50 ? 1 : 0 }}
+                src={primaryImages[1].url}
+                fill
+                className="w-full h-full object-cover transition-opacity"
+                sizes="70vw"
+                alt="Slide img"
+                priority
+              />
+            )}
+          </div>
+        ) : (
+          <div className="w-full inset-0 absolute h-full overflow-hidden">
+            <CursorWithEffect2 cursorText={cursorText} />
             <Image
-              style={{ opacity: mousePosition > 50 ? 1 : 0 }}
-              src={primaryImages[1].url}
-              fill
+              onLoad={() => handleImageLoad('no-primary')}
+              style={{
+                opacity: 1,
+              }}
+              src={homeEffectConfig.images[0].url}
               className="w-full h-full object-cover transition-opacity"
-              sizes="100vw"
+              fill
+              sizes="70vw"
               alt="Slide img"
+              priority
             />
           </div>
         )}
@@ -203,10 +114,10 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
               src={img.url}
               fill
               className="w-full h-full object-cover"
-              sizes="100vw"
+              sizes="70vw"
               alt="Slide img"
               style={{
-                opacity: index === randomImg.id ? 1 : 0,
+                opacity: index === randomImg.id && !isLeaving ? 1 : 0,
                 transitionProperty: isLeaving ? 'all' : '',
                 transitionTimingFunction: isLeaving ? 'cubic-bezier(0.4, 0, 0.2, 1)' : '',
                 transitionDuration: isLeaving ? '250ms' : '',
