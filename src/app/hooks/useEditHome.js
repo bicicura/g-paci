@@ -1,33 +1,54 @@
-import { useState, useEffect } from 'react'
-import { useSnackbar } from '../contexts/SnackbarContext'
+import { useState, useEffect, useRef } from 'react'
 import {
   MAX_FILE_SIZE,
   WORK_STATUS_ACTIVE,
   WORK_STATUS_INACTIVE,
 } from '../../../constants'
-import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 const useEditHome = () => {
+  const pondRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [primaryImage, setPrimaryImage] = useState(null)
-  const [secondaryImage, setSecondaryImage] = useState(null)
-  const { showSnackbar } = useSnackbar()
-  const router = useRouter()
+  const [deleteImgLoading, setDeleteImgLoading] = useState(false)
+  const [newImage, setNewImage] = useState(null)
   const [effectConfig, setEffectConfig] = useState({
     active: false,
-    primaryImage: null,
-    secondaryImage: null,
+    images: [],
   })
   const [isActive, setIsActive] = useState(effectConfig.active)
+  const [isPrimary, setIsPrimary] = useState(false)
+  const [client, setClient] = useState('')
+  const [isError, setIsError] = useState(false)
 
   const validateFileSize = () => {
     // Retorna 'true' si ambos archivos son menores o iguales al tamaño máximo permitido
-    return (
-      (!primaryImage ||
-        (primaryImage instanceof File && primaryImage.size <= MAX_FILE_SIZE)) &&
-      (!secondaryImage ||
-        (secondaryImage instanceof File && secondaryImage.size <= MAX_FILE_SIZE))
-    )
+    return !newImage || (newImage instanceof File && newImage.size <= MAX_FILE_SIZE)
+  }
+
+  const handleDelete = async imgID => {
+    setDeleteImgLoading(true)
+    try {
+      const response = await fetch('/api/home-effect', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imgID,
+        }),
+      })
+      toast.success('Imagen eliminada con éxito.')
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`)
+      }
+
+      const data = await requestEffectConfig()
+      setEffectConfig(data?.effects?.ImgSlideEffect)
+    } catch (error) {
+      // console.error('Error al enviar la solicitud:', error)
+      toast.error('Error al borrar la imagen.')
+    } finally {
+      setDeleteImgLoading(false)
+    }
   }
 
   const validateFileType = () => {
@@ -35,10 +56,7 @@ const useEditHome = () => {
 
     const isValidType = file => file instanceof File && imageTypes.includes(file.type)
 
-    return (
-      (!primaryImage || isValidType(primaryImage)) &&
-      (!secondaryImage || isValidType(secondaryImage))
-    )
+    return !newImage || isValidType(newImage)
   }
 
   const statusColorMap = {
@@ -49,18 +67,43 @@ const useEditHome = () => {
 
   useEffect(() => {
     ;(async () => {
-      const controller = new AbortController()
-      const { signal } = controller
-
-      const res = await fetch('/api/effects-config', {
-        signal,
-        cache: 'no-store',
-        next: { revalidate: 1 },
-      })
-      const data = await res.json()
-      setEffectConfig(data?.effects?.ContinuousImageFilter)
+      const data = await requestEffectConfig()
+      setEffectConfig(data?.effects?.ImgSlideEffect)
     })()
   }, [])
+
+  const requestEffectConfig = async () => {
+    const controller = new AbortController()
+    const { signal } = controller
+
+    const res = await fetch('/api/effects-config', {
+      signal,
+      cache: 'no-store',
+      next: { revalidate: 1 },
+    })
+    let data = await res.json()
+
+    // Utilizando desestructuración para acceder a images de una manera más directa
+    const { effects: { ImgSlideEffect: { images } = {} } = {} } = data
+
+    // Verificar si images es un array y luego filtrar elementos no deseados
+    if (Array.isArray(images)) {
+      // Filtra imágenes donde la url no sea null ni undefined
+      data.effects.ImgSlideEffect.images = images
+        .filter(({ url }) => url != null)
+        .sort((a, b) => {
+          if (a.isPrimary && !b.isPrimary) {
+            return -1 // a viene antes que b
+          } else if (!a.isPrimary && b.isPrimary) {
+            return 1 // b viene antes que a
+          } else {
+            return 0 // a y b se mantienen sin cambios entre ellos
+          }
+        })
+    }
+
+    return data
+  }
 
   useEffect(() => {
     setIsActive(effectConfig.active)
@@ -104,39 +147,37 @@ const useEditHome = () => {
     return `${randomName}.${extension}`
   }
 
-  const handleSubmit = async () => {
-    if (!validateFileSize()) {
-      return showSnackbar(
-        'Uno o más archivos superan el tamaño máximo permitido.',
-        'error'
-      )
-    }
-
-    if (!validateFileType()) {
-      return showSnackbar(
-        'Uno o más archivos no son del tipo de imagen permitido.',
-        'error'
-      )
-    }
-
-    setIsLoading(true) // Suponiendo que tienes un estado para controlar la carga
-
+  const handleSubmit = async e => {
+    e.preventDefault()
     try {
-      let primaryImageUrl = null
-      let secondaryImageUrl = null
+      setIsLoading(true)
 
-      // Verifica si primaryImage y secondaryImage existen y tienen un archivo
-      if (primaryImage) {
-        const newName = generateFileName(primaryImage)
-        const newFile = new File([primaryImage], newName, { type: primaryImage.type })
-        primaryImageUrl = await uploadImageToS3(newFile)
-        // @TODO borrar imagen previa
+      if (newImage) {
+        if (client == null || client === '') {
+          toast.error('Ingrese un cliente válido.')
+          return setIsError(true)
+        }
+
+        if (!validateFileSize()) {
+          return toast.error('Uno o más archivos superan el tamaño máximo permitido.')
+        }
+
+        if (!validateFileType()) {
+          return toast.error('Uno o más archivos no son del tipo de imagen permitido.')
+        }
       }
-      if (secondaryImage) {
-        const newName = generateFileName(secondaryImage)
-        const newFile = new File([secondaryImage], newName, { type: secondaryImage.type })
-        secondaryImageUrl = await uploadImageToS3(newFile)
-        // @TODO borrar imagen previa
+
+      if (isError) {
+        setIsError(false)
+      }
+
+      let imageUrl = null
+
+      // Verifica si newImage existe y tiene un archivo
+      if (newImage) {
+        const newName = generateFileName(newImage)
+        const newFile = new File([newImage], newName, { type: newImage.type })
+        imageUrl = await uploadImageToS3(newFile)
       }
 
       // Enviar información al backend
@@ -144,10 +185,11 @@ const useEditHome = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          effectName: 'ContinuousImageFilter',
+          effectName: 'ImgSlideEffect',
           newEffectState: isActive,
-          primaryImageUrl,
-          secondaryImageUrl,
+          imageUrl: imageUrl ?? null,
+          client: client ?? null,
+          isPrimary,
         }),
       })
 
@@ -155,34 +197,44 @@ const useEditHome = () => {
         throw new Error(`Error HTTP: ${response.status}`)
       }
 
-      // Procesar la respuesta (opcional, dependiendo de lo que devuelva tu backend)
-      const result = await response.json()
-      console.log('Respuesta del servidor:', result)
+      resetForm()
+      toast.success('Efecto actualizado con éxito')
 
-      router.push('/dashboard')
-      // como mostrar un mensaje de éxito al usuario o redirigir a otra página.
-      showSnackbar('Efecto actualizado con éxito', 'success') // Ejemplo de notificación de éxito
+      const data = await requestEffectConfig()
+      setEffectConfig(data?.effects?.ImgSlideEffect)
     } catch (error) {
-      console.error('Error al enviar la solicitud:', error)
-      showSnackbar('Error al actualizar el efecto', 'error') // Ejemplo de notificación de error
+      toast.error('Error al actualizar el efecto')
     } finally {
-      setIsLoading(false) // Restablecer el estado de carga
+      setIsLoading(false)
     }
   }
 
+  const resetForm = () => {
+    setIsPrimary(false)
+    setNewImage(null)
+    setClient('')
+    pondRef.current.removeFiles()
+  }
+
   return {
+    pondRef,
     handleSubmit,
-    primaryImage,
+    newImage,
     statusColorMap,
-    setPrimaryImage,
-    secondaryImage,
+    setNewImage,
     WORK_STATUS_ACTIVE,
     WORK_STATUS_INACTIVE,
+    client,
+    isPrimary,
+    setIsPrimary,
+    setClient,
     effectConfig,
     isLoading,
-    setSecondaryImage,
     isActive,
     setIsActive,
+    isError,
+    handleDelete,
+    deleteImgLoading,
   }
 }
 

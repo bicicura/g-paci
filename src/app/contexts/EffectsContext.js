@@ -6,8 +6,7 @@ const EffectsProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [homeEffectConfig, setHomeEffectConfig] = useState({
     active: false,
-    primaryImage: null,
-    secondaryImage: null,
+    images: [],
   })
   const [infoEffectConfig, setInfoEffectConfig] = useState({
     active: false,
@@ -20,7 +19,8 @@ const EffectsProvider = ({ children }) => {
       setIsLoading(true)
       const res = await fetch('/api/effects-config')
       const data = await res.json()
-      const homeEffect = data.effects['ContinuousImageFilter']
+      // const homeEffect = data.effects['ContinuousImageFilter']
+      const homeEffect = data.effects['ImgSlideEffect']
       const infoEffect = data.effects['SlitScan']
       setHomeEffectConfig(homeEffect)
       setInfoEffectConfig(infoEffect)

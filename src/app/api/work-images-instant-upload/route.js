@@ -1,6 +1,7 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
 import supabase from '../../../../utils/supabaseClient'
+import { BUCKET_NAME } from '../../../../constants'
 
 // Initialize the S3 client
 const s3 = new S3Client({
@@ -20,7 +21,7 @@ export async function POST(Request) {
     const randomGeneratedName = generateFileName(file)
     const buffer = await file.arrayBuffer()
     const params = {
-      Bucket: 'flm-g-paci',
+      Bucket: BUCKET_NAME,
       Key: `${slug}/${randomGeneratedName}`,
       Body: Buffer.from(buffer),
       ContentType: file.type,

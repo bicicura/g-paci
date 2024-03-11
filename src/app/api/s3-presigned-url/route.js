@@ -2,12 +2,13 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { fromEnv } from '@aws-sdk/credential-provider-env'
+import { BUCKET_NAME } from '../../../../constants'
 
 export async function POST(request) {
   try {
     const { fileName, fileType, slug } = await request.json()
     const region = process.env.AWS_REGION
-    const bucket = 'flm-g-paci' // Replace with your actual bucket name
+
     const key = `${slug}/${fileName}`
 
     const s3Client = new S3Client({
@@ -16,7 +17,7 @@ export async function POST(request) {
     })
 
     const command = new PutObjectCommand({
-      Bucket: bucket,
+      Bucket: BUCKET_NAME,
       Key: key,
       ContentType: fileType,
     })
