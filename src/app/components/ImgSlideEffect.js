@@ -13,6 +13,7 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
     handleMouseEnter,
     handleMouseLeave,
     handleImageLoad,
+    isLoading,
     randomImg,
     homeEffectConfig,
     primaryImages,

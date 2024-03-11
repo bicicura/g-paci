@@ -198,6 +198,7 @@ const useImgSlideEffect = ({ onDismiss, opacity }) => {
     handleImageLoad,
     homeEffectConfig,
     isLeaving,
+    isLoading,
     maskWidth,
     mousePosition,
     primaryImagesLoaded,
