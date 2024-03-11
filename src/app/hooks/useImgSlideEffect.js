@@ -114,10 +114,13 @@ const useImgSlideEffect = ({ onDismiss, opacity }) => {
   const generateRandomNumber = () => {
     if (homeEffectConfig?.images?.length) {
       const maxNumber = homeEffectConfig?.images.length
-      setRandomImg(prev => {
-        // Returns a random integer from 0 to maxNumber -1:
-        return homeEffectConfig?.images[Math.floor(Math.random() * maxNumber)]
-      })
+      let newIndex, newImg
+      do {
+        // Genera un nuevo índice aleatorio
+        newIndex = Math.floor(Math.random() * maxNumber)
+        newImg = homeEffectConfig?.images[newIndex]
+      } while (newImg.id === randomImg.id && homeEffectConfig.images.length > 1) // Repite si el id es igual al último y hay más de una imagen para evitar bucle infinito
+      setRandomImg(newImg)
     }
   }
 
