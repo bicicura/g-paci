@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useContext } from 'react'
 import { EffectsContext } from '../contexts/EffectsContext'
 
-const useImgSlideEffect = () => {
+const useImgSlideEffect = ({ onDismiss, opacity }) => {
   const { isLoading, homeEffectConfig } = useContext(EffectsContext)
   // porcentaje de en que posición esta el mouse en el eje X del contenedor padre
   const [maskWidth, setMaskWidth] = useState(0)

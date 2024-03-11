@@ -20,7 +20,7 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
     maskWidth,
     mousePosition,
     primaryImagesLoaded,
-  } = useImgSlideEffect()
+  } = useImgSlideEffect({ onDismiss, opacity })
 
   return shouldShowFilter ? (
     <div
