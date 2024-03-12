@@ -44,7 +44,7 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
       >
         {primaryImagesLoaded && <Spinner />}
 
-        <div
+        {/* <div
           style={{ transform: 'translateX(100%)' }}
           className={
             'absolute -right-4 top-0 w-max mx-auto flex flex-col gap-y-1 transition-opacity'
@@ -52,7 +52,7 @@ const ImgSlideEffect = ({ onDismiss, opacity }) => {
         >
           <span className="text-slate-400 text-sm leading-none">client</span>
           <span className="font-bold text-lg leading-none">{randomImg?.client}</span>
-        </div>
+        </div> */}
 
         {primaryImages.length ? (
           <div className="w-full inset-0 absolute h-full overflow-hidden">
