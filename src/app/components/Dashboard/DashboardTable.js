@@ -22,6 +22,8 @@ import { columns } from './data'
 import { PlusIcon } from './PlusIcon'
 import { SearchIcon } from './SearchIcon'
 import NextLink from 'next/link'
+import { useEffect } from 'react'
+import Sortable from 'sortablejs'
 
 export default function DashboardTable() {
   const {
@@ -33,7 +35,87 @@ export default function DashboardTable() {
     onOpenChange,
     setFilterValue,
     handleDeleteWork,
+    setTableData,
   } = useDashboardTable()
+
+  useEffect(() => {
+    const tableBodyElement = document.querySelector('#my-table-body') // Asignado a la <TableBody>
+    if (!isLoading && tableBodyElement) {
+      const sortable = new Sortable(tableBodyElement, {
+        animation: 150,
+        handle: '.grab-handle', // Asegúrate de que tus filas tengan un área definida con esta clase para agarrarlas
+        onEnd: async event => {
+          const { oldIndex, newIndex } = event
+          if (oldIndex !== newIndex) {
+            // Crear una nueva copia de tableData con los elementos reordenados
+            const newData = Array.from(tableData)
+            newData.splice(newIndex, 0, newData.splice(oldIndex, 1)[0])
+
+            // Actualizar la clave 'order' de cada elemento para reflejar su nueva posición
+            newData.forEach((item, index) => {
+              item.order = index // Asegúrate de que la propiedad 'order' es la correcta para almacenar el índice
+            })
+
+            // Actualiza el estado con los datos reordenados
+            setTableData(newData)
+
+            // Realizar la actualización en el servidor
+            try {
+              const response = await fetch('/api/work/update-order', {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ works: newData }),
+              })
+              if (!response.ok) {
+                throw new Error('Network response was not ok.')
+              }
+              const result = await response.json()
+              console.log('Order update result:', result)
+            } catch (error) {
+              console.error('Error updating order:', error)
+            }
+          }
+        },
+      })
+
+      return () => {
+        sortable.destroy() // Limpieza al desmontar el componente
+      }
+    }
+  }, [isLoading, tableData])
+
+  // useEffect(() => {
+  //   const tableBodyElement = document.querySelector('#my-table-body') // Asignado a la <TableBody>
+  //   if (!isLoading && tableBodyElement) {
+  //     const sortable = new Sortable(tableBodyElement, {
+  //       animation: 150,
+  //       handle: '.grab-handle', // Asegúrate de que tus filas tengan un área definida con esta clase para agarrarlas
+  //       onEnd: event => {
+  //         const { oldIndex, newIndex } = event
+  //         if (oldIndex !== newIndex) {
+  //           // Crear una nueva copia de tableData con los elementos reordenados
+  //           const newData = Array.from(tableData)
+  //           newData.splice(newIndex, 0, newData.splice(oldIndex, 1)[0])
+
+  //           // Actualizar la clave 'order' de cada elemento para reflejar su nueva posición
+  //           newData.forEach((item, index) => {
+  //             item.order = index // Asegúrate de que la propiedad 'order' es la correcta para almacenar el índice
+  //           })
+
+  //           console.log('Nuevo orden de datos:', newData)
+  //           // Actualiza el estado con los datos reordenados
+  //           setTableData(newData)
+  //         }
+  //       },
+  //     })
+
+  //     return () => {
+  //       sortable.destroy() // Limpieza al desmontar el componente
+  //     }
+  //   }
+  // }, [isLoading, tableData]) // Dependencias incluyendo el indicador de carga y los datos de la tabla
 
   return (
     <>
@@ -72,7 +154,9 @@ export default function DashboardTable() {
             {column => (
               <TableColumn
                 key={column.uid}
-                align={column.uid === 'actions' ? 'center' : 'start'}
+                className={
+                  column.uid === 'order' || column.uid === 'actions' ? 'text-center' : ''
+                }
               >
                 {column.name}
               </TableColumn>
@@ -80,10 +164,11 @@ export default function DashboardTable() {
           </TableHeader>
           <TableBody
             className="w-full"
+            id="my-table-body"
             items={tableData}
             isLoading={isLoading}
             loadingContent={
-              <div className="z-10 flex items-center justify-center w-full h-full bg-default-200">
+              <div className="z-10 flex items-center justify-center w-full h-full bg-default-100">
                 <Spinner
                   label="Loading..."
                   color="primary"
@@ -93,8 +178,9 @@ export default function DashboardTable() {
           >
             {item => (
               <TableRow
+                data-id={item.id}
                 style={{ marginBottom: 'auto' }}
-                className="text-black"
+                className="text-black grab-handle"
                 key={item.id}
               >
                 {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}

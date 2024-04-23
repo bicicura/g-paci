@@ -110,6 +110,7 @@ const useDashboardTable = () => {
           slug: item.slug,
           avatar: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item?.slug}/${item?.works_images[0]?.img}`,
           images_count: imagesCount, // use the dynamic count from getImageCount
+          order: item.order,
         }
       })
 
@@ -143,6 +144,25 @@ const useDashboardTable = () => {
     const cellValue = user[columnKey]
 
     switch (columnKey) {
+      case 'order':
+        return (
+          <div className="grab-handle text-foreground-500 cursor-grab flex justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 9h16.5m-16.5 6.75h16.5"
+              />
+            </svg>
+          </div>
+        )
       case 'name':
         return (
           <User
@@ -173,7 +193,7 @@ const useDashboardTable = () => {
         )
       case 'actions':
         return (
-          <div className="relative flex items-center gap-4 text-black">
+          <div className="relative flex items-center justify-center gap-4 text-black">
             <Tooltip
               className="text-black"
               content="Editar"
@@ -210,6 +230,7 @@ const useDashboardTable = () => {
     setSelectedWork,
     setFilterValue,
     selectedWork,
+    setTableData,
     onOpenChange,
     filterValue,
     renderCell,
