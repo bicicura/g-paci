@@ -2,15 +2,14 @@ import { useState } from 'react'
 import slugify from 'slugify'
 import supabase from '../../../utils/supabaseClient'
 import { useRouter } from 'next/navigation'
-import { useSnackbar } from '../contexts/SnackbarContext'
 import { MAX_FILE_SIZE } from '../../../constants'
+import { toast } from 'sonner'
 
 const useCreateWork = () => {
   const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [files, setFiles] = useState([])
   const router = useRouter()
-  const { showSnackbar } = useSnackbar()
 
   const handleNameChange = event => {
     setName(event.target.value) // Actualiza el estado `name` con el valor actual del input
@@ -27,10 +26,7 @@ const useCreateWork = () => {
 
       // Show notification for each oversized file
       oversizedFiles.forEach(fileItem => {
-        showSnackbar(
-          `File "${fileItem.file.name}" is too large and has been removed.`,
-          'error'
-        )
+        toast.error(`El "${fileItem.file.name}" es muy pesado y se ha removido.`)
       })
     } else {
       // Update the files state if all files are within the size limit
@@ -152,13 +148,10 @@ const useCreateWork = () => {
     if (!validateForm()) {
       // Show error for oversized file
       if (!validateFileSize()) {
-        return showSnackbar(
-          'Uno o más archivos superan el tamaño máximo permitido.',
-          'error'
-        )
+        return toast.error('Uno o más archivos superan el tamaño máximo permitido.')
       }
       // Show error for other form validation failures
-      return showSnackbar('Por favor, completa todos los campos.', 'error')
+      return toast.error('Por favor, completa todos los campos.')
     }
 
     try {
@@ -176,10 +169,10 @@ const useCreateWork = () => {
       await uploadFilesToS3({ slug: uniqueSlug, workId })
 
       router.push('/dashboard')
-      showSnackbar('Work creado exitosamente.', 'success')
+      toast.success('Work creado exitosamente.')
     } catch (error) {
       console.error('Error during the upload process:', error)
-      showSnackbar('Hubo un error, intente más tarde.', 'error')
+      toast.error('Hubo un error, intente más tarde.')
     } finally {
       setIsLoading(false)
     }

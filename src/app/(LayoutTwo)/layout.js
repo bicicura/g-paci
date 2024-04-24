@@ -1,6 +1,7 @@
 import '../globals.css'
 import { Inter } from 'next/font/google'
 import DashboardNav from '../components/Dashboard/DashboardNav'
+import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,11 @@ export default function RootLayout({ children }) {
         <main className="max-w-3xl pb-16 mx-auto mt-16 ">
           <Providers>{children}</Providers>
         </main>
+        <Toaster
+          richColors
+          position="bottom-right"
+          closeButton
+        />
       </body>
     </html>
   )

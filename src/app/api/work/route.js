@@ -142,5 +142,28 @@ export async function DELETE(Request, context) {
 }
 
 const insertWork = async ({ name, slug, status }) => {
-  return await supabase.from('works').insert([{ name, slug, status }]).select()
+  const maxOrder = await getMaxOrder()
+  const newOrder = maxOrder + 1 // Incrementar el máximo order encontrado
+
+  // Inserta el nuevo trabajo con el 'order' calculado y devuelve el resultado
+  return await supabase
+    .from('works')
+    .insert([{ name, slug, status, order: newOrder }])
+    .select()
+}
+
+const getMaxOrder = async () => {
+  const { data, error } = await supabase
+    .from('works')
+    .select('order')
+    .order('order', { ascending: false })
+    .limit(1)
+
+  if (error) {
+    console.error('Error obteniendo el máximo order:', error.message)
+    return 0 // Devuelve 0 en caso de error para no romper la inserción
+  }
+
+  // Si no hay trabajos, el valor máximo de order será 0
+  return data.length > 0 ? data[0].order : 0
 }

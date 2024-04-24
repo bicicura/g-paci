@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useSnackbar } from '../contexts/SnackbarContext'
 import {
   MAX_FILE_SIZE,
   WORK_STATUS_ACTIVE,
   WORK_STATUS_INACTIVE,
 } from '../../../constants'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 const useEditInfo = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [primaryImage, setPrimaryImage] = useState(null)
   const [secondaryImage, setSecondaryImage] = useState(null)
-  const { showSnackbar } = useSnackbar()
   const router = useRouter()
   const [effectConfig, setEffectConfig] = useState({
     active: false,
@@ -96,11 +95,11 @@ const useEditInfo = () => {
 
   const handleSubmit = async () => {
     if (!validateFileSize()) {
-      return showSnackbar('El archivo supera el tamaño máximo permitido.', 'error')
+      return toast.error('El archivo supera el tamaño máximo permitido.')
     }
 
     if (!validateFileType()) {
-      return showSnackbar('El archivo no es del tipo de imagen permitido.', 'error')
+      return toast.error('El archivo no es del tipo de imagen permitido.')
     }
 
     setIsLoading(true)
@@ -137,10 +136,10 @@ const useEditInfo = () => {
 
       router.push('/dashboard')
       // como mostrar un mensaje de éxito al usuario o redirigir a otra página.
-      showSnackbar('Efecto actualizado con éxito', 'success') // Ejemplo de notificación de éxito
+      toast.success('Efecto actualizado con éxito')
     } catch (error) {
       console.error('Error al enviar la solicitud:', error)
-      showSnackbar('Error al actualizar el efecto', 'error') // Ejemplo de notificación de error
+      toast.error('Error al actualizar el efecto')
     } finally {
       setIsLoading(false) // Restablecer el estado de carga
     }

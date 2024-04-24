@@ -40,8 +40,8 @@ const NavigationProvider = ({ children }) => {
       // filter out if a work does not has any imgs
       const workWithImages = data.filter(item => item.works_images.length > 0)
 
-      // sort works by most recent ones
-      workWithImages.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
+      // sort works by order field, from lowest to highest
+      workWithImages.sort((a, b) => a.order - b.order)
 
       // Find the overview item
       const overview = workWithImages.find(item => item.slug === 'overview')
@@ -61,7 +61,6 @@ const NavigationProvider = ({ children }) => {
       // if there are works available and there is no overview and user is in index... redirect
       if (workWithImages.length && overview === undefined && pathname === '/') {
         const slug = workWithImages[0].slug
-        console.log(slug)
         router.push('/work/' + slug)
       }
     } catch (error) {

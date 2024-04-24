@@ -4,8 +4,8 @@ import supabase from '../../../utils/supabaseClient'
 import { EditIcon } from '../components/Dashboard/EditIcon'
 import { DeleteIcon } from '../components/Dashboard/DeleteIcon'
 import NextLink from 'next/link'
-import { useSnackbar } from '../contexts/SnackbarContext'
 import { WORK_STATUS_ACTIVE, WORK_STATUS_INACTIVE } from '../../../constants'
+import { toast } from 'sonner'
 
 const useDashboardTable = () => {
   const [filterValue, setFilterValue] = useState('')
@@ -13,7 +13,6 @@ const useDashboardTable = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [selectedWork, setSelectedWork] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const { showSnackbar } = useSnackbar()
 
   const [originalData, setOriginalData] = useState([])
 
@@ -39,18 +38,15 @@ const useDashboardTable = () => {
       await fetch(url, {
         method: 'DELETE',
       })
-      showSnackbar('Work eliminado exitosamente.', 'success')
+      toast.success('Work eliminado exitosamente.')
       try {
         await getTableData()
       } catch (error) {
-        showSnackbar(
-          'Se ha eliminado el work, pero hubo un error al refrescar la tabla.',
-          'error'
-        )
+        toast.error('Se ha eliminado el work, pero hubo un error al refrescar la tabla.')
       }
     } catch (error) {
       // show error message
-      showSnackbar('Hubo un error, intente más tarde.', 'error')
+      toast.error('Hubo un error, intente más tarde.')
     } finally {
       setIsLoading(false)
     }
@@ -64,7 +60,7 @@ const useDashboardTable = () => {
 
     if (error) {
       console.error('Error fetching image count:', error)
-      showSnackbar('Hubo un error, al obtener la cantidad de imagenes.', 'error')
+      toast.error('Hubo un error, al obtener la cantidad de imagenes.')
       return 0 // return 0 if there's an error
     }
 
@@ -83,14 +79,12 @@ const useDashboardTable = () => {
       `)
 
       if (error) {
-        showSnackbar(
-          'Hubo un error al obtener los registros, intente más tarde.',
-          'error'
-        )
+        toast.error('Hubo un error al obtener los registros, intente más tarde.')
         throw error
       }
 
-      data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
+      // sort works by order field, from lowest to highest
+      data.sort((a, b) => a.order - b.order)
 
       // sort the data, put the one with slug 'overview' first
       const overviewIndex = data.findIndex(item => item.slug === 'overview')

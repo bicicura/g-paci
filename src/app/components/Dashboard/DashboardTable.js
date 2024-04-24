@@ -24,6 +24,7 @@ import { SearchIcon } from './SearchIcon'
 import NextLink from 'next/link'
 import { useEffect } from 'react'
 import Sortable from 'sortablejs'
+import { toast } from 'sonner'
 
 export default function DashboardTable() {
   const {
@@ -72,8 +73,9 @@ export default function DashboardTable() {
                 throw new Error('Network response was not ok.')
               }
               const result = await response.json()
-              console.log('Order update result:', result)
+              toast.success('Works reordenados exitosamente.')
             } catch (error) {
+              toast.error('No se pudo reordenar los Works, intente más tarde.')
               console.error('Error updating order:', error)
             }
           }
@@ -86,41 +88,9 @@ export default function DashboardTable() {
     }
   }, [isLoading, tableData])
 
-  // useEffect(() => {
-  //   const tableBodyElement = document.querySelector('#my-table-body') // Asignado a la <TableBody>
-  //   if (!isLoading && tableBodyElement) {
-  //     const sortable = new Sortable(tableBodyElement, {
-  //       animation: 150,
-  //       handle: '.grab-handle', // Asegúrate de que tus filas tengan un área definida con esta clase para agarrarlas
-  //       onEnd: event => {
-  //         const { oldIndex, newIndex } = event
-  //         if (oldIndex !== newIndex) {
-  //           // Crear una nueva copia de tableData con los elementos reordenados
-  //           const newData = Array.from(tableData)
-  //           newData.splice(newIndex, 0, newData.splice(oldIndex, 1)[0])
-
-  //           // Actualizar la clave 'order' de cada elemento para reflejar su nueva posición
-  //           newData.forEach((item, index) => {
-  //             item.order = index // Asegúrate de que la propiedad 'order' es la correcta para almacenar el índice
-  //           })
-
-  //           console.log('Nuevo orden de datos:', newData)
-  //           // Actualiza el estado con los datos reordenados
-  //           setTableData(newData)
-  //         }
-  //       },
-  //     })
-
-  //     return () => {
-  //       sortable.destroy() // Limpieza al desmontar el componente
-  //     }
-  //   }
-  // }, [isLoading, tableData]) // Dependencias incluyendo el indicador de carga y los datos de la tabla
-
   return (
     <>
       <section className="">
-        {' '}
         <div className="flex justify-between mb-4">
           <Input
             isClearable

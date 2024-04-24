@@ -3,8 +3,8 @@ import { usePathname } from 'next/navigation'
 import supabase from '../../../utils/supabaseClient'
 import Sortable from 'sortablejs'
 import { useRouter } from 'next/navigation'
-import { useSnackbar } from '../contexts/SnackbarContext'
 import { WORK_STATUS_ACTIVE, WORK_STATUS_INACTIVE } from '../../../constants'
+import { toast } from 'sonner'
 
 const useEditWork = () => {
   const pathname = usePathname()
@@ -15,7 +15,6 @@ const useEditWork = () => {
   const sortableContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const { showSnackbar } = useSnackbar()
   const [deleteImgLoading, setDeleteImgLoading] = useState(false)
 
   const statusColorMap = {
@@ -76,9 +75,6 @@ const useEditWork = () => {
         .order('order', { ascending: true })
 
       if (error) throw error
-
-      console.log(data, 'data')
-
       setWorkImages(data)
     } catch (error) {
       console.error('Error fetching work images: ', error)
@@ -111,30 +107,27 @@ const useEditWork = () => {
           setWork({ ...work, status: WORK_STATUS_INACTIVE })
           try {
             await deleteImg({ id, img })
-            showSnackbar('Se ha eliminado la imagen con éxito.', 'success')
+            toast.success('Se ha eliminado la imagen con éxito.')
             await getWorkImages()
           } catch (error) {
-            showSnackbar(
-              'Ocurrió un error al eliminar la imagen, intente más tarde.',
-              'error'
-            )
+            toast.error('Ocurrió un error al eliminar la imagen, intente más tarde.')
           }
         } else {
           // Manejar la respuesta de error de la API
           console.error('Error al actualizar el estado:', result.error)
-          showSnackbar('Error al actualizar el estado del trabajo.', 'error')
+          toast.error('Error al actualizar el estado del trabajo.')
         }
       } catch (error) {
         // Manejar errores de la solicitud fetch
         console.error('Error en la solicitud:', error)
-        showSnackbar('Error al comunicarse con el servidor.', 'error')
+        toast.error('Error al comunicarse con el servidor.')
       } finally {
         setDeleteImgLoading(false)
       }
     } else {
       try {
         await deleteImg({ id, img })
-        showSnackbar('Se ha eliminado la imagen con éxito.', 'success')
+        toast.success('Se ha eliminado la imagen con éxito.')
         await getWorkImages()
       } catch (error) {
         console.error(error)
@@ -167,10 +160,7 @@ const useEditWork = () => {
 
   const handleSubmit = async () => {
     if (work.status === WORK_STATUS_ACTIVE && workImages.length === 0) {
-      return showSnackbar(
-        'Si el estado es activo, debes subir al menos 1 imagen.',
-        'error'
-      )
+      return toast.error('Si el estado es activo, debes subir al menos 1 imagen.')
     }
 
     try {
@@ -184,9 +174,9 @@ const useEditWork = () => {
       })
       await res.json()
       router.push('/dashboard')
-      showSnackbar('Work editado exitosamente.', 'success')
+      toast.success('Work editado exitosamente.')
     } catch (error) {
-      showSnackbar('Hubo un error, intente más tarde.', 'error')
+      toast.error('Hubo un error, intente más tarde.')
     } finally {
       setIsLoading(false)
     }
